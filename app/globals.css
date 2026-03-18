@@ -1,26 +1,42 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Primary Green */
+  --color-green-0: #F0F9E7;
+  --color-green-10: #DFF2CC;
+  --color-green-20: #C6E8A6;
+  --color-green-30: #A6DB75;
+  --color-green-40: #82CC41;
+  --color-green-50: #6BC20F;
+  --color-green-60: #4B8A09;
+  --color-green-70: #396907;
+  --color-green-80: #305706;
+  --color-green-90: #254405;
+  --color-gradient: #1EB400;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Semantic */
+  --color-danger-50: #EB003B;
+  --color-info-50: #2768FF;
+  --color-warning-50: #FFB724;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Grayscale */
+  --color-gray-5: #F8F8F8;
+  --color-gray-10: #F0F0F0;
+  --color-gray-20: #E4E4E4;
+  --color-gray-30: #D8D8D8;
+  --color-gray-40: #C6C6C6;
+  --color-gray-50: #8E8E8E;
+  --color-gray-60: #717171;
+  --color-gray-70: #555555;
+  --color-gray-80: #2D2D2D;
+  --color-gray-90: #1D1D1D;
+
+  --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Pretendard Variable", "Pretendard", sans-serif;
+  background: #ffffff;
+  color: #1D1D1D;
 }
