@@ -19,9 +19,9 @@ export default function SplashPage() {
       {/* 중앙 콘텐츠 */}
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
         <h1 className="text-center text-2xl font-bold leading-[1.5] text-black">
-          이제 여행을
+          여행지를
           <br />
-          시작해볼까요?
+          등록해볼까요?
         </h1>
         <div className="relative h-[198px] w-[120px]">
           <Image
