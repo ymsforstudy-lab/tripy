@@ -5,7 +5,7 @@
 - 프레임워크: Next.js 14 (App Router)
 - 스타일: Tailwind CSS
 - 언어: TypeScript
-- 데이터 저장: localStorage
+- 데이터 저장: Supabase
 - 배포: Vercel
 
 ---
@@ -60,23 +60,29 @@ style: 지출 등록 버튼 컬러 수정
 ## 폴더 구조
 
 ```
-src/
-├── app/
-│   ├── page.tsx              # 스플래시 (루트)
-│   ├── setup/page.tsx        # 여행 설정
-│   ├── budget/page.tsx       # 예산 설정
-│   ├── home/page.tsx         # 홈
-│   ├── expense/page.tsx      # 지출/예산 등록
-│   ├── travels/page.tsx      # 여행 관리
-│   └── mypage/page.tsx       # 마이페이지
-├── components/
-│   ├── layout/
-│   │   ├── BottomNav.tsx     # 하단 네비게이션
-│   │   └── Header.tsx        # 헤더 (햄버거 메뉴 포함)
-│   └── ui/                   # 공통 UI 컴포넌트
-└── lib/
-    ├── storage.ts            # localStorage 유틸
-    └── types.ts              # 타입 정의
+app/
+├── page.tsx                  # 스플래시 (루트)
+├── layout.tsx                # 루트 레이아웃
+├── nickname/page.tsx         # 닉네임 설정
+├── setup/
+│   ├── page.tsx              # 여행 설정
+│   ├── country/page.tsx      # 국가 선택
+│   └── region/page.tsx       # 지역 선택
+├── auth/
+│   └── callback/route.ts     # Supabase 인증 콜백
+├── budget/page.tsx           # 예산 설정 (예정)
+├── home/page.tsx             # 홈 (예정)
+├── expense/page.tsx          # 지출/예산 등록 (예정)
+├── travels/page.tsx          # 여행 관리 (예정)
+└── mypage/page.tsx           # 마이페이지 (예정)
+components/
+├── layout/
+│   ├── BottomNav.tsx         # 하단 네비게이션
+│   └── Header.tsx            # 헤더 (햄버거 메뉴 포함)
+└── ui/                       # 공통 UI 컴포넌트
+lib/
+├── supabase.ts               # Supabase 클라이언트
+└── types.ts                  # 타입 정의
 ```
 
 ---
@@ -194,3 +200,26 @@ max-width: 390px (모바일 기준)
 - 제목: `[feat] 홈 화면 구현` 형식
 - 스크린샷 또는 화면 녹화 첨부
 - 머지 전 빌드 에러 없어야 함
+
+---
+
+## 작업 규칙 (필수)
+
+1. 작업 전 `git pull origin main`
+2. `feature/화면명` 브랜치 생성 후 작업
+3. 작업 전 파일 구조 파악
+4. CLAUDE.md 읽고 진행
+5. 한 파트씩 수정 후 PR
+6. 한 파트 끝나면 `/clear` 또는 `/compact`
+7. 모델은 주로 Sonnet, 복잡한 설계만 Opus
+8. 항상 Plan 모드로 계획 먼저 세우고 확인 후 진행
+9. PR 올릴 때 팀원 노티
+10. 마지막 작업 후 `git commit + push`
+
+---
+
+## Supabase 테이블
+
+- **users**: 유저 정보 (display_name)
+- **trips**: 여행 정보 (국가, 날짜, 예산)
+- **expenses**: 지출 내역 (금액, 카테고리, 결제수단)
