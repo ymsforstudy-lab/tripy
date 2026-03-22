@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary Green */
+  /* ── Primary Green ── */
   --color-green-0: #F0F9E7;
   --color-green-10: #DFF2CC;
   --color-green-20: #C6E8A6;
@@ -13,14 +13,17 @@
   --color-green-70: #396907;
   --color-green-80: #305706;
   --color-green-90: #254405;
+  --color-green-120: #050A01;
   --color-gradient: #1EB400;
 
-  /* Semantic */
+  /* ── Semantic ── */
   --color-danger-50: #EB003B;
+  --color-info-5: #E9F0FF;
   --color-info-50: #2768FF;
   --color-warning-50: #FFB724;
 
-  /* Grayscale */
+  /* ── Grayscale ── */
+  --color-gray-white: #FFFFFF;
   --color-gray-5: #F8F8F8;
   --color-gray-10: #F0F0F0;
   --color-gray-20: #E4E4E4;
@@ -31,12 +34,42 @@
   --color-gray-70: #555555;
   --color-gray-80: #2D2D2D;
   --color-gray-90: #1D1D1D;
+  --color-gray-black: #000000;
 
+  /* ── Font Family ── */
   --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
+
+  /* ── Font Size (Figma Typography 변수) ── */
+  --font-size-title-xl: 24px;   /* 타이틀_볼드_XL */
+  --font-size-title-m: 20px;    /* 타이틀_볼드_M */
+  --font-size-body-l: 16px;     /* 바디_볼드_L */
+  --font-size-body-m: 14px;     /* 바디_볼드/미디움/레귤러_M */
+  --font-size-body-s: 12px;     /* 바디_볼드/레귤러_S */
+
+  /* ── Font Weight ── */
+  --font-weight-bold: 700;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+
+  /* ── Line Height ── */
+  --leading-default: 1.5;
+
+  /* ── Border Radius (Figma R* 변수) ── */
+  --radius-8: 8px;
+  --radius-12: 12px;   /* radius/xlarge2 */
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-30: 30px;
+
+  /* ── Spacing (Figma padding/gap 변수) ── */
+  --spacing-gap-3: 8px;    /* gap/3 */
+  --spacing-gap-5: 16px;   /* gap/5 */
+  --spacing-pad-6: 16px;   /* padding/6 */
+  --spacing-pad-8: 24px;   /* padding/8 */
 }
 
 body {
   font-family: "Pretendard Variable", "Pretendard", sans-serif;
-  background: #ffffff;
-  color: #1D1D1D;
+  background: var(--color-gray-white);
+  color: var(--color-gray-90);
 }

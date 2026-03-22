@@ -1,31 +1,34 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/src/lib/supabase";
+import { createServerSupabaseClient } from "@/src/lib/supabase-server";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
 
-  if (code) {
-    await supabase.auth.exchangeCodeForSession(code);
+  if (!code) {
+    return NextResponse.redirect(`${origin}/`);
   }
 
-  // 닉네임 설정 여부 확인 후 분기
+  const supabase = await createServerSupabaseClient();
+  await supabase.auth.exchangeCodeForSession(code);
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("display_name")
-      .eq("id", user.id)
-      .single();
-
-    if (!profile?.display_name) {
-      return NextResponse.redirect(`${origin}/nickname`);
-    }
-    return NextResponse.redirect(`${origin}/home`);
+  if (!user) {
+    return NextResponse.redirect(`${origin}/`);
   }
 
-  return NextResponse.redirect(`${origin}/`);
+  const { data: profile } = await supabase
+    .from("users")
+    .select("display_name")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.display_name) {
+    return NextResponse.redirect(`${origin}/nickname`);
+  }
+
+  return NextResponse.redirect(`${origin}/home`);
 }
