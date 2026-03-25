@@ -18,7 +18,7 @@ export default function SplashPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-gray-white">
+    <div className="flex h-screen flex-col bg-white">
       {/* 중앙 콘텐츠 */}
       <div className="flex flex-1 flex-col items-center justify-center gap-[34px]">
         {/* Tripy 로고 */}
@@ -43,7 +43,7 @@ export default function SplashPage() {
         {/* 구글 로그인 */}
         <button
           onClick={handleGoogleLogin}
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-gray-30 bg-gray-white text-base font-bold text-gray-50"
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-gray-30 bg-white text-base font-bold text-gray-50"
         >
           <GoogleIcon />
           구글 로그인
@@ -52,7 +52,7 @@ export default function SplashPage() {
         {/* 일단 둘러보기 */}
         <button
           onClick={() => router.push("/setup")}
-          className="flex h-14 w-full items-center justify-center rounded-xl border border-gray-30 bg-gray-white text-base font-bold text-gray-50"
+          className="flex h-14 w-full items-center justify-center rounded-xl border border-gray-30 bg-white text-base font-bold text-gray-50"
         >
           일단 둘러보기
         </button>

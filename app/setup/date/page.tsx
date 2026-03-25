@@ -70,7 +70,7 @@ export default function DatePage() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-gray-white">
+    <div className="relative flex h-screen flex-col bg-white">
       <Header onBack={handleBack} />
 
       <div className="px-4 pt-5">
@@ -142,7 +142,7 @@ export default function DatePage() {
           >
             <div
               className={`flex size-5 items-center justify-center rounded-full border-2 ${
-                isDayTrip ? "border-green-40 bg-green-40" : "border-gray-30 bg-gray-white"
+                isDayTrip ? "border-green-40 bg-green-40" : "border-gray-30 bg-white"
               }`}
             >
               {isDayTrip && (

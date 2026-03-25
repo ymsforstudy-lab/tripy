@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
 
 const CURRENCIES = ["KRW", "USD", "JPY", "EUR"] as const;
 type Currency = (typeof CURRENCIES)[number];
@@ -35,7 +36,7 @@ export default function BudgetPage() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-gray-white">
+    <div className="relative flex h-screen flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
@@ -48,7 +49,7 @@ export default function BudgetPage() {
         {/* 여행정보 카드 */}
         <div className="flex flex-col gap-3 rounded-xl bg-green-0 p-4">
           <span className="text-base font-bold tracking-[-0.32px] text-gray-90">여행정보</span>
-          <div className="flex flex-col gap-4 rounded-xl border border-green-10 bg-gray-white p-4">
+          <div className="flex flex-col gap-4 rounded-xl border border-green-10 bg-white p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-green-60">국가</span>
               <span className="text-sm text-gray-90 opacity-80">대한민국</span>
@@ -95,7 +96,7 @@ export default function BudgetPage() {
                 </svg>
               </button>
               {currencyOpen && (
-                <div className="absolute left-0 top-[52px] z-10 w-24 overflow-hidden rounded-xl border border-gray-30 bg-gray-white shadow-md">
+                <div className="absolute left-0 top-[52px] z-10 w-24 overflow-hidden rounded-xl border border-gray-30 bg-white shadow-md">
                   {CURRENCIES.map((c) => (
                     <button
                       key={c}
@@ -145,7 +146,7 @@ export default function BudgetPage() {
           >
             <div
               className={`flex size-5 items-center justify-center rounded-full border-2 ${
-                includeReserve ? "border-green-40 bg-green-40" : "border-gray-30 bg-gray-white"
+                includeReserve ? "border-green-40 bg-green-40" : "border-gray-30 bg-white"
               }`}
             >
               {includeReserve && (
@@ -171,7 +172,7 @@ export default function BudgetPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="mt-auto border-t border-gray-20 bg-gray-white px-4 pb-8 pt-4">
+      <div className="mt-auto border-t border-gray-20 bg-white px-4 pb-8 pt-4">
         <Button
           label="다음"
           onClick={() => setShowModal(true)}
@@ -185,9 +186,8 @@ export default function BudgetPage() {
       </div>
 
       {/* 확인 모달 */}
-      {showModal && (
-        <div className="absolute inset-0 z-50 flex flex-col justify-end bg-black/40">
-          <div className="rounded-t-2xl bg-gray-white px-4 pb-10 pt-6">
+      <Modal open={showModal} onClose={() => setShowModal(false)}>
+        <div className="rounded-t-2xl bg-white px-4 pb-10 pt-6">
             <div className="mb-5 flex items-center justify-between">
               <span className="text-xl font-bold tracking-[-0.4px] text-gray-90">
                 예산을 등록하시겠습니까?
@@ -222,8 +222,7 @@ export default function BudgetPage() {
               />
             </div>
           </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }
