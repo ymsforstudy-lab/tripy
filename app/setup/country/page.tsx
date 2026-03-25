@@ -74,7 +74,7 @@ export default function CountryPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-gray-white">
+    <div className="flex h-screen flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">

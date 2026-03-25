@@ -51,7 +51,7 @@ export default function SelectChip({
   const itemStyles =
     variant === "selected"
       ? "border-green-20 bg-green-0 font-medium"
-      : "border-gray-20 bg-gray-white font-normal";
+      : "border-gray-20 bg-white font-normal";
 
   return (
     <button

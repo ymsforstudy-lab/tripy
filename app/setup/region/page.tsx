@@ -42,7 +42,7 @@ export default function RegionPage() {
   const filtered = REGIONS.filter((r) => r.includes(search));
 
   return (
-    <div className="flex h-screen flex-col bg-gray-white">
+    <div className="flex h-screen flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">

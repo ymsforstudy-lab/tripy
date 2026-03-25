@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
 
 interface DateValue {
   year: number;
@@ -103,7 +104,7 @@ export default function CalendarModal({
     const inRange = start && end && isInRange(date, start, end);
 
     if (isStart || isEnd)
-      return "bg-green-50 text-gray-white font-bold rounded-full";
+      return "bg-green-50 text-white font-bold rounded-full";
     if (inRange)
       return "bg-green-10 text-gray-90 rounded-none";
     return "text-gray-90";
@@ -118,8 +119,8 @@ export default function CalendarModal({
     `${d.year}년 ${d.month}월 ${d.day}일`;
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-end bg-black/40">
-      <div className="rounded-t-2xl bg-gray-white px-4 pb-8 pt-6">
+    <Modal open={open} onClose={onClose}>
+      <div className="rounded-t-2xl bg-white px-4 pb-8 pt-6">
         {/* 헤더 */}
         <div className="mb-4 flex items-center justify-between">
           <span className="text-xl font-bold text-gray-90">날짜 선택</span>
@@ -216,6 +217,6 @@ export default function CalendarModal({
           />
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
