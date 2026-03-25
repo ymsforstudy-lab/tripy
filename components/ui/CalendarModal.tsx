@@ -118,8 +118,10 @@ export default function CalendarModal({
     `${d.year}년 ${d.month}월 ${d.day}일`;
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-end bg-black/40">
-      <div className="rounded-t-2xl bg-gray-white px-4 pb-8 pt-6">
+    <div className="absolute inset-0 z-50 flex flex-col justify-end">
+      {/* 오버레이 - 클릭 시 모달 닫힘 */}
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative z-10 rounded-t-2xl bg-gray-white px-4 pb-8 pt-6">
         {/* 헤더 */}
         <div className="mb-4 flex items-center justify-between">
           <span className="text-xl font-bold text-gray-90">날짜 선택</span>
