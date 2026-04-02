@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/constants/countries";
 
 type Trip = {
@@ -12,6 +12,12 @@ type Trip = {
   start_date: string;
   end_date: string;
 };
+
+// TODO: Supabase 연동 후 제거
+const MOCK_TRIPS: Trip[] = [
+  { id: "1", title: "일본 여행", start_date: "2026-03-20", end_date: "2026-04-10" },
+  { id: "2", title: "태국 여행", start_date: "2025-12-01", end_date: "2025-12-07" },
+];
 
 function extractEmojiFromTitle(title: string): string {
   const match = COUNTRIES.find((c) => title.includes(c.name));
@@ -35,15 +41,15 @@ function formatDate(dateStr: string): string {
   return dateStr.replace(/-/g, ".");
 }
 
-const PencilIcon = ({ color = "#6BC20F" }: { color?: string }) => (
+const ManageIcon = ({ color = "#6BC20F" }: { color?: string }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <path
-      d="M14.1667 2.5L17.5 5.83333L6.66667 16.6667H3.33333V13.3333L14.1667 2.5Z"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <g transform="translate(1.676, 3.332)">
+      <path
+        fillRule="nonzero"
+        fill={color}
+        d="M7.4917 11.6687 L16.6583 11.6687 L16.6583 13.3354 L7.4917 13.3354 L7.4917 11.6687 Z M9.4 0.2437 L7.9083 1.7354 L11.5833 5.4104 L13.075 3.9187 C13.2322 3.7616 13.3187 3.5493 13.3187 3.3312 C13.3187 3.1131 13.2322 2.9008 13.075 2.7437 L10.575 0.2437 C10.4179 0.0865 10.2056 0 9.9875 0 C9.7694 0 9.5572 0.0865 9.4 0.2437 Z M6.7333 2.9187 L0.2417 9.4104 C0.0846 9.5675 0 9.7798 0 10.002 L0 12.502 C0 12.9604 0.375 13.3354 0.8333 13.3354 L3.3333 13.3354 C3.5583 13.3354 3.7667 13.2437 3.925 13.0937 L10.4167 6.602 L6.7417 2.927 L6.7333 2.9187 Z"
+      />
+    </g>
   </svg>
 );
 
@@ -54,29 +60,33 @@ export default function TravelsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTrips() {
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log("[travels] session:", session);
+    // TODO: Supabase 연동 시 아래 주석 해제 후 mock 코드 제거
+    // async function fetchTrips() {
+    //   const { data: { session } } = await supabase.auth.getSession();
+    //   console.log("[travels] session:", session);
+    //
+    //   if (!session) {
+    //     router.push("/");
+    //     return;
+    //   }
+    //
+    //   const { data, error } = await supabase
+    //     .from("trips")
+    //     .select("id, title, start_date, end_date")
+    //     .eq("user_id", session.user.id)
+    //     .order("start_date", { ascending: false });
+    //
+    //   console.log("[travels] data:", data, "error:", error);
+    //
+    //   if (!error && data) {
+    //     setTrips(data);
+    //   }
+    //   setLoading(false);
+    // }
+    // fetchTrips();
 
-      if (!session) {
-        router.push("/");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, start_date, end_date")
-        .eq("user_id", session.user.id)
-        .order("start_date", { ascending: false });
-
-      console.log("[travels] data:", data, "error:", error);
-
-      if (!error && data) {
-        setTrips(data);
-      }
-      setLoading(false);
-    }
-    fetchTrips();
+    setTrips(MOCK_TRIPS);
+    setLoading(false);
   }, []);
 
   const today = new Date();
@@ -141,9 +151,11 @@ export default function TravelsPage() {
                 }`}
               >
                 {/* Flag */}
-                <span className="shrink-0 text-[40px] leading-[1.5] tracking-[0.4px]">
-                  {extractEmojiFromTitle(trip.title)}
-                </span>
+                <div className="flex shrink-0 size-[52px] items-center justify-center rounded-xl bg-white">
+                  <span className="text-[32px] leading-none">
+                    {extractEmojiFromTitle(trip.title)}
+                  </span>
+                </div>
 
                 {/* Trip info */}
                 <div className="flex flex-col gap-[5px]">
@@ -151,9 +163,13 @@ export default function TravelsPage() {
                     <span className="text-base font-bold text-black">
                       {trip.title}
                     </span>
-                    {isOngoing && (
-                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs font-bold text-info-50">
+                    {isOngoing ? (
+                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs text-info-50">
                         {dday}
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-gray-20 px-3 py-1 text-xs text-gray-60">
+                        종료
                       </span>
                     )}
                   </div>
@@ -164,8 +180,11 @@ export default function TravelsPage() {
                 </div>
 
                 {/* Edit icon */}
-                <button className="absolute right-3 top-[14px]">
-                  <PencilIcon color={isOngoing ? "#6BC20F" : "#8E8E8E"} />
+                <button
+                  className="absolute right-3 top-[14px]"
+                  onClick={() => router.push(`/travels/${trip.id}/edit`)}
+                >
+                  <ManageIcon color={isOngoing ? "#6BC20F" : "#8E8E8E"} />
                 </button>
               </div>
             );
@@ -176,18 +195,21 @@ export default function TravelsPage() {
       {/* Floating action button */}
       <div className="fixed bottom-[88px] left-1/2 flex w-full max-w-[390px] -translate-x-1/2 items-center justify-end gap-2 px-4">
         {/* Tooltip bubble */}
-        <div className="relative flex items-center">
+        <div className="relative">
           <div className="rounded-lg bg-info-5 px-[10px] py-[5px]">
             <span className="whitespace-nowrap text-xs text-info-50">
               새로운 여행지를 등록해 보세요!
             </span>
           </div>
-          {/* Pointer dot */}
-          <div className="size-2 rounded-full bg-info-5" />
+          {/* Triangle tail */}
+          <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 border-y-[6px] border-l-[6px] border-y-transparent border-l-info-5" />
         </div>
 
         {/* FAB */}
-        <button className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50">
+        <button
+          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50"
+          onClick={() => router.push("/setup/country")}
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M12 5V19M5 12H19"
