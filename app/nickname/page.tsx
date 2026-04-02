@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "@/src/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
@@ -15,8 +15,9 @@ const SearchIcon = (
   </svg>
 );
 
-export default function CountryPage() {
+export default function EditCountryPage() {
   const router = useRouter();
+  const { id } = useParams<{ id: string }>();
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -30,7 +31,12 @@ export default function CountryPage() {
 
   const handleNext = () => {
     if (!selected) return;
-    router.push(selected === "대한민국" ? "/setup/region" : "/setup/date");
+    if (selected === "대한민국") {
+      router.push(`/travels/${id}/edit/region`);
+    } else {
+      // TODO: 날짜 수정 페이지 연결 시 변경
+      router.push("/travels");
+    }
   };
 
   return (
@@ -39,7 +45,7 @@ export default function CountryPage() {
 
       <div className="px-4 pt-5">
         <h1 className="text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
-          떠날 여행지를<br />등록해주세요
+          여행지를<br />수정해주세요
         </h1>
       </div>
 
@@ -65,7 +71,6 @@ export default function CountryPage() {
       <div className="mt-4 h-2 border-t border-gray-30 bg-gray-10" />
 
       <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
-        {/* 검색 결과 없을 때 직접 입력 옵션 */}
         {noResults && (
           <button
             onClick={() => handleSelect(search)}

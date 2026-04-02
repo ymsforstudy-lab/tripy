@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
-import { supabase } from "@/src/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";

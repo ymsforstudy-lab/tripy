@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BottomNav from "@/components/layout/BottomNav";
-import { supabase } from "@/src/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 const CATEGORY_EMOJI: Record<string, string> = {
   accommodation: "🏠",
