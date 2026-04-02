@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 
 const CATEGORY_RANKING = [
@@ -25,6 +26,7 @@ const STATS = {
 };
 
 export default function MyPage() {
+  const router = useRouter();
   return (
     <div className="relative flex min-h-screen flex-col bg-white">
       {/* Header */}
@@ -40,7 +42,10 @@ export default function MyPage() {
         <div className="rounded-2xl border border-gray-20 bg-white p-4 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 opacity-80">
             {/* 아바타 */}
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-10">
+            <div
+              className="flex size-12 shrink-0 cursor-pointer items-center justify-center rounded-full bg-green-10"
+              onClick={() => router.push("/mypage/profile")}
+            >
               <span className="text-2xl">🐸</span>
             </div>
             {/* 닉네임 + 한마디 */}

@@ -39,21 +39,27 @@ export default function NicknamePage() {
   const handleComplete = async () => {
     if (checkStatus !== "available") return;
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase
-      .from("users")
-      .update({ display_name: nickname })
-      .eq("id", user.id);
-    router.replace("/setup");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      await supabase
+        .from("users")
+        .update({ display_name: nickname })
+        .eq("id", user.id);
+      router.replace("/setup");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputBorderClass =
     checkStatus === "available"
       ? "border-green-50"
-      : checkStatus === "idle" && nickname.length > 0
-        ? "border-gray-60"
-        : "border-gray-30";
+      : checkStatus === "taken" || checkStatus === "invalid"
+        ? "border-danger-50"
+        : nickname.length > 0
+          ? "border-gray-60"
+          : "border-gray-30";
 
   return (
     <div className="flex h-screen flex-col bg-white">
