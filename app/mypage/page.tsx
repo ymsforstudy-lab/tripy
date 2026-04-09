@@ -76,7 +76,10 @@ export default function MyPage() {
         </div>
 
         {/* 여행 통계 카드 */}
-        <div className="rounded-2xl border border-gray-20 bg-white p-4">
+        <div
+          className="rounded-2xl border border-gray-20 bg-white p-4 cursor-pointer active:opacity-70"
+          onClick={() => router.push("/travels")}
+        >
           <div className="flex flex-col gap-4">
             <div className="flex gap-1 text-base font-semibold">
               <span className="text-black">여행</span>
