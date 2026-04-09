@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
@@ -34,12 +34,24 @@ const SearchIcon = (
   </svg>
 );
 
-export default function RegionPage() {
+function RegionContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const country = searchParams.get("country") ?? "대한민국";
+
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
 
   const filtered = REGIONS.filter((r) => r.includes(search));
+
+  const handleNext = () => {
+    if (!selected) return;
+    const params = new URLSearchParams({
+      country,
+      region: selected,
+    });
+    router.push(`/setup/date?${params.toString()}`);
+  };
 
   return (
     <div className="flex h-screen flex-col bg-white">
@@ -61,7 +73,7 @@ export default function RegionPage() {
 
         <div className="mt-3 flex flex-wrap gap-2">
           <SelectChip
-            label="대한민국"
+            label={country}
             variant="tag"
             onRemove={() => router.back()}
           />
@@ -90,9 +102,17 @@ export default function RegionPage() {
 
       <BottomCTA
         label="다음"
-        onClick={() => router.push("/setup/date")}
+        onClick={handleNext}
         disabled={!selected}
       />
     </div>
+  );
+}
+
+export default function RegionPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><span className="text-sm text-gray-50">로딩 중...</span></div>}>
+      <RegionContent />
+    </Suspense>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import CalendarModal from "@/components/ui/CalendarModal";
+import { supabase } from "@/lib/supabase";
 
 interface DateValue {
   year: number;
@@ -32,6 +33,12 @@ function formatDate(d: DateValue) {
   return `${d.year}년 ${d.month}월 ${d.day}일`;
 }
 
+function toISODate(d: DateValue) {
+  const mm = String(d.month).padStart(2, "0");
+  const dd = String(d.day).padStart(2, "0");
+  return `${d.year}-${mm}-${dd}`;
+}
+
 function calcNights(start: DateValue, end: DateValue) {
   const s = new Date(start.year, start.month - 1, start.day);
   const e = new Date(end.year, end.month - 1, end.day);
@@ -39,28 +46,85 @@ function calcNights(start: DateValue, end: DateValue) {
   return diff;
 }
 
-export default function DatePage() {
+function DateContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const country = searchParams.get("country") ?? "";
+  const region = searchParams.get("region");
+
   const [step, setStep] = useState<Step>("input");
   const [departure, setDeparture] = useState<DateValue | null>(null);
   const [arrival, setArrival] = useState<DateValue | null>(null);
   const [isDayTrip, setIsDayTrip] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const destinationLabel = region ? `${country} ${region}` : country;
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUserId(session.user.id);
+      } else {
+        console.warn("[date] 세션 없음 — 로그인 필요");
+      }
+    });
+  }, []);
 
   const handleBack = () => {
     if (step === "confirm") setStep("input");
     else router.back();
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === "input") {
       setStep("confirm");
-    } else {
-      router.push("/setup/confirm");
+      return;
     }
+
+    // confirm 단계 → Supabase에 trip INSERT
+    if (!departure) return;
+
+    let currentUserId = userId;
+    if (!currentUserId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        currentUserId = session.user.id;
+        setUserId(currentUserId);
+      } else {
+        alert("로그인이 필요합니다. 다시 로그인해주세요.");
+        router.push("/");
+        return;
+      }
+    }
+    setSaving(true);
+
+    const startDate = toISODate(departure);
+    const endDate = isDayTrip || !arrival ? startDate : toISODate(arrival);
+
+    const { error } = await supabase.from("trips").insert({
+      user_id: currentUserId,
+      title: `${country} 여행`,
+      destination: region ?? null,
+      start_date: startDate,
+      end_date: endDate,
+      total_budget: 0,
+      currency: "KRW",
+      is_archived: false,
+    });
+
+    if (error) {
+      console.error("Trip 생성 실패:", error);
+      alert("여행 등록에 실패했습니다. 다시 시도해주세요.");
+      setSaving(false);
+      return;
+    }
+
+    router.push("/setup/confirm");
   };
 
-  const isNextEnabled = isDayTrip || (departure !== null);
+  const isNextEnabled = !saving && (isDayTrip || departure !== null);
 
   const nightsLabel = () => {
     if (!departure) return null;
@@ -87,7 +151,7 @@ export default function DatePage() {
           <div className="flex flex-col gap-2">
             <span className="text-base font-bold tracking-[-0.32px] text-gray-90">여행지</span>
             <div className="flex items-center gap-3 rounded-xl bg-gray-5 px-3 py-3">
-              <span className="flex-1 text-sm font-medium text-gray-90">대한민국 서울특별시</span>
+              <span className="flex-1 text-sm font-medium text-gray-90">{destinationLabel}</span>
               {SearchIcon}
             </div>
           </div>
@@ -170,7 +234,11 @@ export default function DatePage() {
       )}
 
       <div className="mt-auto">
-        <BottomCTA label="다음" onClick={handleNext} disabled={!isNextEnabled} />
+        <BottomCTA
+          label={saving ? "등록 중..." : "다음"}
+          onClick={handleNext}
+          disabled={!isNextEnabled}
+        />
       </div>
 
       {/* 캘린더 모달 */}
@@ -185,5 +253,13 @@ export default function DatePage() {
         initialArrival={arrival}
       />
     </div>
+  );
+}
+
+export default function DatePage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><span className="text-sm text-gray-50">로딩 중...</span></div>}>
+      <DateContent />
+    </Suspense>
   );
 }

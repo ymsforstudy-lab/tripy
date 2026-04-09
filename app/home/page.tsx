@@ -40,13 +40,13 @@ function formatDate(dateStr: string) {
 type Trip = {
   id: string;
   user_id: string;
-  country: string;
-  region: string | null;
+  title: string;
+  destination: string | null;
   start_date: string;
   end_date: string;
-  budget: number;
+  total_budget: number;
   currency: string;
-  status: string;
+  is_archived: boolean;
 };
 
 type Expense = {
@@ -54,7 +54,6 @@ type Expense = {
   trip_id: string;
   amount: number;
   currency: string;
-  payment_method: string;
   category: string;
   expense_date: string;
   description: string | null;
@@ -82,7 +81,7 @@ export default function HomePage() {
         .from("trips")
         .select("*")
         .eq("user_id", user.id)
-        .eq("status", "active")
+        .eq("is_archived", false)
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
@@ -117,7 +116,7 @@ export default function HomePage() {
       1,
       Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
     );
-    return Math.floor(trip.budget / days);
+    return Math.floor(trip.total_budget / days);
   })();
 
   const progressRatio =
@@ -127,11 +126,7 @@ export default function HomePage() {
     ? `${trip.start_date.replace(/-/g, ".")} ~ ${trip.end_date.replace(/-/g, ".")}`
     : "";
 
-  const tripName = trip
-    ? trip.region
-      ? `${trip.region} 여행`
-      : `${trip.country} 여행`
-    : "";
+  const tripName = trip ? trip.title : "";
 
   if (loading) {
     return (

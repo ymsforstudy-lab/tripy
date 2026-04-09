@@ -55,16 +55,16 @@ export default function ExpensePage() {
 
       const { data } = await supabase
         .from("trips")
-        .select("id, budget")
+        .select("id, total_budget")
         .eq("user_id", user.id)
-        .eq("status", "active")
+        .eq("is_archived", false)
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
 
       if (data) {
         setTripId(data.id);
-        setCurrentBudget(data.budget ?? 0);
+        setCurrentBudget(data.total_budget ?? 0);
       }
     }
     fetchTrip();
@@ -85,7 +85,6 @@ export default function ExpensePage() {
           trip_id: tripId,
           amount: Number(rawAmount),
           currency,
-          payment_method: paymentMethod,
           category: category || "etc",
           expense_date: date,
           description: description || null,
@@ -95,13 +94,14 @@ export default function ExpensePage() {
         const addedAmount = Number(rawAmount);
         const { error } = await supabase
           .from("trips")
-          .update({ budget: currentBudget + addedAmount })
+          .update({ total_budget: currentBudget + addedAmount })
           .eq("id", tripId);
         if (error) throw error;
       }
       router.push("/home");
     } catch (err) {
       console.error(err);
+      alert("저장에 실패했습니다. 다시 시도해주세요.");
       setSubmitting(false);
     }
   }
