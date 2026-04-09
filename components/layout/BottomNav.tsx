@@ -10,11 +10,17 @@ const TABS = [
     icon: (active: boolean) => (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path
-          d="M3.5 7.5L10 2L16.5 7.5V17H12.5V12.5H7.5V17H3.5V7.5Z"
+          d="M14.5 2.5L17.5 5.5L6.5 16.5H3.5V13.5L14.5 2.5Z"
           stroke={active ? "#FFFFFF" : "#555555"}
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+        />
+        <path
+          d="M3.5 17.5H16.5"
+          stroke={active ? "#FFFFFF" : "#555555"}
+          strokeWidth="1.5"
+          strokeLinecap="round"
         />
       </svg>
     ),
