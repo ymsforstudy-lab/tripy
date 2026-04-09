@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import BottomNav from "@/components/layout/BottomNav";
 import { supabase } from "@/lib/supabase";
+import HomeHeader from "@/components/home/HomeHeader";
+import BudgetCard from "@/components/home/BudgetCard";
+import HomeFilter from "@/components/home/HomeFilter";
+import FilterCategory from "@/components/home/FilterCategory";
 
 const CATEGORY_EMOJI: Record<string, string> = {
   accommodation: "🏠",
@@ -61,11 +64,53 @@ type Expense = {
   created_at: string;
 };
 
+const DUMMY_TRIP: Trip = {
+  id: "dummy-trip-1",
+  user_id: "user-1",
+  country: "일본",
+  region: "오사카",
+  start_date: "2024-03-20",
+  end_date: "2024-03-25",
+  budget: 1000000,
+  currency: "KRW",
+  status: "active",
+};
+
+const todayStr = new Date().toISOString().split("T")[0];
+
+const DUMMY_EXPENSES: Expense[] = [
+  {
+    id: "exp-1",
+    trip_id: "dummy-trip-1",
+    amount: 15000,
+    currency: "KRW",
+    payment_method: "card",
+    category: "food",
+    expense_date: todayStr,
+    description: "라멘",
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "exp-2",
+    trip_id: "dummy-trip-1",
+    amount: 50000,
+    currency: "KRW",
+    payment_method: "cash",
+    category: "shopping",
+    expense_date: todayStr,
+    description: "돈키호테",
+    created_at: new Date().toISOString(),
+  },
+];
+
 export default function HomePage() {
   const router = useRouter();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -74,7 +119,10 @@ export default function HomePage() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        router.push("/");
+        // user가 없으면 개발/테스트용으로 더미데이터를 강제 주입
+        setTrip(DUMMY_TRIP);
+        setExpenses(DUMMY_EXPENSES);
+        setLoading(false);
         return;
       }
 
@@ -97,6 +145,10 @@ export default function HomePage() {
           .order("created_at", { ascending: false });
 
         setExpenses(expenseData ?? []);
+      } else {
+        // 데이터가 없으면 더미 데이터 사용
+        setTrip(DUMMY_TRIP);
+        setExpenses(DUMMY_EXPENSES);
       }
 
       setLoading(false);
@@ -105,7 +157,12 @@ export default function HomePage() {
     fetchData();
   }, [router]);
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  const filteredExpenses =
+    selectedCategories.length > 0
+      ? expenses.filter((e) => selectedCategories.includes(e.category))
+      : expenses;
+
+  // 오늘 지출 합계
   const todayExpenses = expenses.filter((e) => e.expense_date === todayStr);
   const todayTotal = todayExpenses.reduce((sum, e) => sum + e.amount, 0);
 
@@ -135,136 +192,56 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="text-sm text-gray-50">로딩 중...</div>
       </div>
     );
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white pb-[80px]">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 pb-4 pt-6">
-        <Image src="/tripy-logo.svg" alt="Tripy" width={67} height={24} />
-        <button>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M4 6H20M4 12H20M4 18H20" stroke="#1D1D1D" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
+    <div className="relative mx-auto flex min-h-screen w-full max-w-[375px] flex-col bg-white pb-[84px] shadow-sm">
+      <HomeHeader />
 
-      {/* 오늘 나의 예산 섹션 */}
-      <div className="px-4">
-        <h1 className="text-[20px] font-bold leading-[1.5] text-green-70">
-          오늘 나의 예산
-        </h1>
-
-        {/* 예산 카드 */}
-        <div className="mt-2 flex flex-col items-end">
-          {/* 캐릭터 - 카드 위 형제 요소 */}
-          <Image src="/mascot.png" alt="mascot" width={68} height={64} className="mr-2" />
-
-          <div className="w-full rounded-[20px] border border-green-20 bg-green-10 p-4 shadow-[0px_4px_4px_0px_rgba(107,194,15,0.2)]">
-            <div className="flex flex-col gap-3">
-              {/* 오늘 쓴 돈 / 하루 예산 */}
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px] text-gray-80">오늘 쓴 돈</span>
-                  <div className="flex items-baseline gap-0.5 font-bold">
-                    <span className="text-[20px] text-black">
-                      {formatAmount(todayTotal)}
-                    </span>
-                    <span className="text-[14px] text-black">원</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-[14px]">
-                  <span className="text-gray-80">하루 예산</span>
-                  <div className="flex gap-0.5 text-gray-60">
-                    <span>{formatAmount(dailyBudget)}</span>
-                    <span>원</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 프로그레스 바 카드 */}
-              <div className="flex flex-col gap-2 rounded-xl bg-white px-[14px] py-4">
-                {todayTotal === 0 ? (
-                  <>
-                    <span className="text-[12px] text-gray-80">
-                      여행 소비를 계획해보세요.
-                    </span>
-                    <div className="h-[10px] rounded-[20px] bg-gray-30" />
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-1.5">
-                      <span className="rounded-[8px] bg-green-0 px-1 py-0.5 text-[10px] font-bold text-green-50">
-                        Good
-                      </span>
-                      <span className="text-[12px] text-gray-80">
-                        여행 소비 아주 훌륭한데요?
-                      </span>
-                    </div>
-                    <div className="relative h-[10px] w-full rounded-[20px] bg-gray-30">
-                      <div
-                        className="h-[10px] rounded-[20px] border border-[rgba(130,204,65,0.4)]"
-                        style={{
-                          width: `${progressRatio * 100}%`,
-                          background:
-                            "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(33,99,28,0.3) 100%), linear-gradient(90deg, #6BC20F 0%, #6BC20F 100%)",
-                        }}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="mt-4">
+        <BudgetCard
+          todayTotal={todayTotal}
+          dailyBudget={dailyBudget}
+          progressRatio={progressRatio}
+        />
       </div>
 
       {/* 구분선 */}
-      <div className="mt-6 h-2 border-t border-gray-30 bg-gray-10" />
+      <div className="mt-6 h-2 w-full border-t border-gray-30 bg-gray-10" />
 
       {/* 여행 정보 + 지출 리스트 */}
-      <div className="flex flex-col gap-1.5 px-4 pt-6">
-        {/* 여행 헤더 */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1">
-              <span className="text-[16px] font-bold leading-[1.5] text-gray-90">
-                {tripName || "여행 없음"}
-              </span>
-              {trip && (
-                <div className="flex h-5 items-center rounded-[30px] bg-info-5 px-2 py-1">
-                  <span className="text-[12px] text-info-50">진행중</span>
-                </div>
-              )}
-            </div>
-            {trip && (
-              <span className="text-[12px] text-gray-50">{tripDateStr}</span>
-            )}
-          </div>
-          {trip && (
-            <button className="flex size-10 items-center justify-center rounded-xl border border-gray-50 opacity-60">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M4 6H16M4 10H16M4 14H16" stroke="#555555" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="7" cy="6" r="1.5" fill="white" stroke="#555555" strokeWidth="1.2" />
-                <circle cx="13" cy="10" r="1.5" fill="white" stroke="#555555" strokeWidth="1.2" />
-                <circle cx="9" cy="14" r="1.5" fill="white" stroke="#555555" strokeWidth="1.2" />
-              </svg>
-            </button>
-          )}
-        </div>
+      <div className="relative flex flex-col gap-[6px] px-4 pt-6 pb-20">
+        <HomeFilter
+          tripName={tripName}
+          hasTrip={!!trip}
+          onFilterClick={() => setIsFilterOpen(!isFilterOpen)}
+        />
+
+        {isFilterOpen && (
+          <FilterCategory
+            selectedCategories={selectedCategories}
+            onToggle={(id) => {
+              setSelectedCategories((prev) =>
+                prev.includes(id)
+                  ? prev.filter((c) => c !== id)
+                  : [...prev, id]
+              );
+            }}
+            onClose={() => setIsFilterOpen(false)}
+          />
+        )}
 
         {/* 지출 리스트 */}
-        {expenses.length === 0 ? (
+        {filteredExpenses.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16">
             <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
               <circle cx="28" cy="28" r="27" stroke="#D8D8D8" strokeWidth="2" />
-              <circle cx="28" cy="28" r="3" fill="#8E8E8E" />
-              <path d="M28 18V26" stroke="#8E8E8E" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M28 34V38" stroke="#8E8E8E" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="28" cy="20" r="2.5" fill="#8E8E8E" />
+              <path d="M28 27V39" stroke="#8E8E8E" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
             <span className="text-[14px] text-gray-50">
               아직 등록된 지출 내역이 없어요.
@@ -272,12 +249,12 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="mt-2 flex flex-col gap-2">
-            {expenses.map((expense) => (
+            {filteredExpenses.map((expense) => (
               <div
                 key={expense.id}
                 className="flex items-center gap-4 overflow-hidden rounded-2xl bg-white px-2.5 py-3"
               >
-                <div className="flex items-center gap-2 flex-1">
+                <div className="flex flex-1 items-center gap-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5 text-[20px]">
                     {CATEGORY_EMOJI[expense.category] ?? "💰"}
                   </div>
@@ -300,30 +277,32 @@ export default function HomePage() {
       </div>
 
       {/* FAB 버튼 */}
-      <div className="fixed bottom-[100px] right-[calc(50%-187px)] flex items-center gap-2">
-        <div className="relative flex items-center">
-          <div className="rounded-[8px] bg-info-5 px-2.5 py-[5px]">
-            <span className="text-[12px] text-info-50">경비를 등록해 볼까요?</span>
+      <div className="pointer-events-none fixed bottom-[100px] left-1/2 z-40 w-[375px] -translate-x-1/2 px-4">
+        <div className="relative flex w-full justify-end">
+          <div className="pointer-events-auto flex items-center gap-2">
+            <div className="relative flex items-center">
+              <div className="rounded-[8px] bg-info-5 px-[10px] py-[5px]">
+                <span className="text-[12px] text-info-50">
+                  경비를 등록해 볼까요?
+                </span>
+              </div>
+              <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 flex h-2 w-2 items-center justify-center">
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <circle cx="4" cy="4" r="4" fill="#E9F0FF" />
+                </svg>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => router.push("/expense")}
+              className="flex size-11 items-center justify-center rounded-[30px] border border-green-40 bg-green-50 shadow-md"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
           </div>
-          {/* 말풍선 꼬리 */}
-          <div
-            className="absolute right-[-6px] top-[11px] h-2 w-2 bg-info-5"
-            style={{ clipPath: "polygon(0 0, 0 100%, 100% 50%)" }}
-          />
         </div>
-        <button
-          onClick={() => router.push("/expense")}
-          className="flex size-11 items-center justify-center rounded-[30px] border border-green-40 bg-green-50 shadow-md"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 5V19M5 12H19"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
       </div>
 
       <BottomNav />
