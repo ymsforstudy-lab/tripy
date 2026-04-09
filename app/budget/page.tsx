@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
+import { supabase } from "@/lib/supabase";
 
 const CURRENCIES = ["KRW", "USD", "JPY", "EUR"] as const;
 type Currency = (typeof CURRENCIES)[number];
@@ -21,15 +22,80 @@ function formatNumber(raw: string) {
   return digits ? Number(digits).toLocaleString("ko-KR") : "";
 }
 
+type TripInfo = {
+  id: string;
+  title: string;
+  destination: string | null;
+  start_date: string;
+  end_date: string;
+  currency: string;
+};
+
+function calcNights(start: string, end: string): string {
+  const s = new Date(start);
+  const e = new Date(end);
+  const nights = Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+  return `${nights}박${nights + 1}일`;
+}
+
 export default function BudgetPage() {
   const router = useRouter();
   const [currency, setCurrency] = useState<Currency>("KRW");
-  const [amount, setAmount] = useState("3,000,000");
+  const [amount, setAmount] = useState("");
   const [includeReserve, setIncludeReserve] = useState(false);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [tripInfo, setTripInfo] = useState<TripInfo | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const unit = CURRENCY_UNIT[currency];
+
+  useEffect(() => {
+    async function fetchTrip() {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log("[budget] user:", user, "authError:", authError);
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("trips")
+        .select("id, title, destination, start_date, end_date, currency")
+        .eq("user_id", user.id)
+        .eq("is_archived", false)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      console.log("[budget] trip data:", data, "error:", error);
+
+      if (data) {
+        setTripInfo(data);
+        if (data.currency) setCurrency(data.currency as Currency);
+      }
+    }
+    fetchTrip();
+  }, []);
+
+  async function handleRegister() {
+    if (!tripInfo) return;
+    setSaving(true);
+
+    const rawAmount = Number(amount.replace(/,/g, ""));
+    try {
+      const { error } = await supabase
+        .from("trips")
+        .update({
+          total_budget: rawAmount,
+          currency,
+        })
+        .eq("id", tripInfo.id);
+
+      if (error) throw error;
+      router.push("/home");
+    } catch (err) {
+      console.error(err);
+      alert("예산 등록에 실패했습니다. 다시 시도해주세요.");
+      setSaving(false);
+    }
+  }
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(formatNumber(e.target.value));
@@ -51,18 +117,30 @@ export default function BudgetPage() {
           <span className="text-base font-bold tracking-[-0.32px] text-gray-90">여행정보</span>
           <div className="flex flex-col gap-4 rounded-xl border border-green-10 bg-white p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-green-60">국가</span>
-              <span className="text-sm text-gray-90 opacity-80">대한민국</span>
+              <span className="text-sm font-medium text-green-60">여행</span>
+              <span className="text-sm text-gray-90 opacity-80">
+                {tripInfo?.title ?? "불러오는 중..."}
+              </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-green-60">도시명</span>
-              <span className="text-sm text-gray-90 opacity-80">부산광역시</span>
-            </div>
+            {tripInfo?.destination && (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-green-60">목적지</span>
+                <span className="text-sm text-gray-90 opacity-80">{tripInfo.destination}</span>
+              </div>
+            )}
             <div className="flex items-start justify-between">
               <span className="text-sm font-medium text-green-60">일정</span>
               <div className="flex flex-col items-end">
-                <span className="text-sm text-gray-90 opacity-80">2026.03.01 - 2026.03.04</span>
-                <span className="text-sm font-bold text-gray-90">3박4일</span>
+                <span className="text-sm text-gray-90 opacity-80">
+                  {tripInfo
+                    ? `${tripInfo.start_date.replace(/-/g, ".")} - ${tripInfo.end_date.replace(/-/g, ".")}`
+                    : "불러오는 중..."}
+                </span>
+                {tripInfo && (
+                  <span className="text-sm font-bold text-gray-90">
+                    {calcNights(tripInfo.start_date, tripInfo.end_date)}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -215,10 +293,10 @@ export default function BudgetPage() {
                 onClick={() => setShowModal(false)}
               />
               <Button
-                label="등록하기"
+                label={saving ? "등록 중..." : "등록하기"}
                 variant="primary"
                 fullWidth
-                onClick={() => router.push("/home")}
+                onClick={handleRegister}
               />
             </div>
           </div>

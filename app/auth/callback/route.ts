@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -9,26 +10,50 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/`);
   }
 
-  const supabase = await createServerSupabaseClient();
-  await supabase.auth.exchangeCodeForSession(code);
+  const cookieStore = await cookies();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = [];
 
-  if (!user) {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(items) {
+          items.forEach(({ name, value, options }) =>
+            cookiesToSet.push({ name, value, options: options as Record<string, unknown> })
+          );
+        },
+      },
+    }
+  );
+
+  const { data: sessionData } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (!sessionData.session) {
     return NextResponse.redirect(`${origin}/`);
   }
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("display_name")
-    .eq("id", user.id)
-    .single();
+  const { access_token, refresh_token } = sessionData.session;
 
-  if (!profile?.display_name) {
-    return NextResponse.redirect(`${origin}/nickname`);
-  }
+  // 세션 토큰을 URL hash로 전달 → 브라우저 클라이언트(localStorage)가 세션 설정
+  const hashParams = new URLSearchParams({
+    access_token,
+    refresh_token,
+    type: "recovery",
+  });
 
-  return NextResponse.redirect(`${origin}/home`);
+  const response = NextResponse.redirect(
+    `${origin}/auth/session-sync#${hashParams.toString()}`
+  );
+
+  // 서버 쿠키도 유지 (미들웨어 호환)
+  cookiesToSet.forEach(({ name, value, options }) =>
+    response.cookies.set(name, value, options)
+  );
+
+  return response;
 }

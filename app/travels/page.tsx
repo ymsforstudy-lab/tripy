@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
-// import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/constants/countries";
 
 type Trip = {
@@ -12,12 +12,6 @@ type Trip = {
   start_date: string;
   end_date: string;
 };
-
-// TODO: Supabase 연동 후 제거
-const MOCK_TRIPS: Trip[] = [
-  { id: "1", title: "일본 여행", start_date: "2026-03-20", end_date: "2026-04-10" },
-  { id: "2", title: "태국 여행", start_date: "2025-12-01", end_date: "2025-12-07" },
-];
 
 function extractEmojiFromTitle(title: string): string {
   const match = COUNTRIES.find((c) => title.includes(c.name));
@@ -60,34 +54,27 @@ export default function TravelsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Supabase 연동 시 아래 주석 해제 후 mock 코드 제거
-    // async function fetchTrips() {
-    //   const { data: { session } } = await supabase.auth.getSession();
-    //   console.log("[travels] session:", session);
-    //
-    //   if (!session) {
-    //     router.push("/");
-    //     return;
-    //   }
-    //
-    //   const { data, error } = await supabase
-    //     .from("trips")
-    //     .select("id, title, start_date, end_date")
-    //     .eq("user_id", session.user.id)
-    //     .order("start_date", { ascending: false });
-    //
-    //   console.log("[travels] data:", data, "error:", error);
-    //
-    //   if (!error && data) {
-    //     setTrips(data);
-    //   }
-    //   setLoading(false);
-    // }
-    // fetchTrips();
+    async function fetchTrips() {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    setTrips(MOCK_TRIPS);
-    setLoading(false);
-  }, []);
+      if (!user) {
+        router.push("/");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("trips")
+        .select("id, title, start_date, end_date")
+        .eq("user_id", user.id)
+        .order("start_date", { ascending: false });
+
+      if (!error && data) {
+        setTrips(data);
+      }
+      setLoading(false);
+    }
+    fetchTrips();
+  }, [router]);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

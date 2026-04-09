@@ -30,7 +30,12 @@ export default function CountryPage() {
 
   const handleNext = () => {
     if (!selected) return;
-    router.push(selected === "대한민국" ? "/setup/region" : "/setup/date");
+    const encoded = encodeURIComponent(selected);
+    router.push(
+      selected === "대한민국"
+        ? `/setup/region?country=${encoded}`
+        : `/setup/date?country=${encoded}`
+    );
   };
 
   return (

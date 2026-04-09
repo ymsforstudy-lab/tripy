@@ -1,11 +1,30 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function SplashPage() {
   const router = useRouter();
+
+  // OAuth 리다이렉트 후 세션 감지 → 자동 이동
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session?.user) {
+          const { data: profile } = await supabase
+            .from("users")
+            .select("display_name")
+            .eq("id", session.user.id)
+            .single();
+
+          router.replace(profile?.display_name ? "/home" : "/nickname");
+        }
+      }
+    );
+    return () => subscription.unsubscribe();
+  }, [router]);
 
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
