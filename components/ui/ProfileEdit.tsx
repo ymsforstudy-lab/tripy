@@ -10,7 +10,7 @@ export default function ProfileEdit({ onClick }: ProfileEditProps) {
       {/* 프로필 원형 배경 */}
       <div className="flex size-20 items-center justify-center rounded-full bg-green-10">
         <img
-          src="https://www.figma.com/api/mcp/asset/69303a63-00ae-47b9-bfe3-62d5ca5c6fff"
+          src="/icons/profile-avatar.svg"
           alt="profile character"
           className="h-[43px] w-[48px] object-contain"
         />
