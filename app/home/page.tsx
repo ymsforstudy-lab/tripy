@@ -211,6 +211,7 @@ export default function HomePage() {
         <HomeFilter
           tripName={tripName}
           hasTrip={!!trip}
+          tripDateRange={tripDateStr}
           onFilterClick={() => setIsFilterOpen(!isFilterOpen)}
         />
 
