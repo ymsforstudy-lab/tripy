@@ -9,10 +9,12 @@ export default function SplashPage() {
   const router = useRouter();
 
   // OAuth 리다이렉트 후 세션 감지 → 자동 이동
+  // INITIAL_SESSION: 이미 로그인된 상태로 /에 진입 시 자동 리다이렉트
+  // SIGNED_IN: OAuth 로그인 완료 시 리다이렉트
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === "SIGNED_IN" && session?.user) {
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session?.user) {
           const { data: profile } = await supabase
             .from("users")
             .select("display_name")

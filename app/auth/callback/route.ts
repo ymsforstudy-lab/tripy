@@ -40,10 +40,11 @@ export async function GET(request: Request) {
   const { access_token, refresh_token } = sessionData.session;
 
   // 세션 토큰을 URL hash로 전달 → 브라우저 클라이언트(localStorage)가 세션 설정
+  // type: "recovery"를 포함하면 Supabase 클라이언트가 PASSWORD_RECOVERY 이벤트를
+  // 발생시키며 내부 setSession()과 충돌 → session-sync에서 세션 설정 실패 후 /로 튕기는 원인
   const hashParams = new URLSearchParams({
     access_token,
     refresh_token,
-    type: "recovery",
   });
 
   const response = NextResponse.redirect(
