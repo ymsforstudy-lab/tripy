@@ -4,8 +4,7 @@ interface ProfileAvatarProps {
   className?: string;
 }
 
-const AVATAR_IMG =
-  "https://www.figma.com/api/mcp/asset/c5e0d5ca-2f21-483b-89d0-0677267a7cd7";
+const AVATAR_IMG = "/icons/profile-avatar.svg";
 
 export default function ProfileAvatar({
   size = 48,

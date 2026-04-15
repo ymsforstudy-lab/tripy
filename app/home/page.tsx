@@ -66,13 +66,13 @@ type Expense = {
 const DUMMY_TRIP: Trip = {
   id: "dummy-trip-1",
   user_id: "user-1",
-  country: "일본",
-  region: "오사카",
+  title: "오사카 여행",
+  destination: "일본 오사카",
   start_date: "2024-03-20",
   end_date: "2024-03-25",
-  budget: 1000000,
+  total_budget: 1000000,
   currency: "KRW",
-  status: "active",
+  is_archived: false,
 };
 
 const todayStr = new Date().toISOString().split("T")[0];
@@ -83,7 +83,6 @@ const DUMMY_EXPENSES: Expense[] = [
     trip_id: "dummy-trip-1",
     amount: 15000,
     currency: "KRW",
-    payment_method: "card",
     category: "food",
     expense_date: todayStr,
     description: "라멘",
@@ -94,7 +93,6 @@ const DUMMY_EXPENSES: Expense[] = [
     trip_id: "dummy-trip-1",
     amount: 50000,
     currency: "KRW",
-    payment_method: "cash",
     category: "shopping",
     expense_date: todayStr,
     description: "돈키호테",
