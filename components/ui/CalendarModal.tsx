@@ -16,6 +16,7 @@ interface CalendarModalProps {
   onSelect: (departure: DateValue, arrival: DateValue | null) => void;
   initialDeparture?: DateValue | null;
   initialArrival?: DateValue | null;
+  singleDate?: boolean;
 }
 
 const DAYS_OF_WEEK = ["일", "월", "화", "수", "목", "금", "토"];
@@ -52,6 +53,7 @@ export default function CalendarModal({
   onSelect,
   initialDeparture,
   initialArrival,
+  singleDate = false,
 }: CalendarModalProps) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -84,6 +86,12 @@ export default function CalendarModal({
 
   const handleDayClick = (day: number) => {
     const clicked: DateValue = { year: viewYear, month: viewMonth, day };
+    if (singleDate) {
+      setStart(clicked);
+      setEnd(null);
+      return;
+    }
+
     if (!start || (start && end)) {
       setStart(clicked);
       setEnd(null);
@@ -105,7 +113,7 @@ export default function CalendarModal({
 
     if (isStart || isEnd)
       return "bg-green-50 text-white font-bold rounded-full";
-    if (inRange)
+    if (!singleDate && inRange)
       return "bg-green-10 text-gray-90 rounded-none";
     return "text-gray-90";
   };
@@ -139,12 +147,16 @@ export default function CalendarModal({
         {/* 선택된 날짜 표시 */}
         <div className="mb-4 flex items-center gap-2 rounded-xl bg-gray-5 px-4 py-3 text-sm">
           <span className={start ? "font-medium text-gray-90" : "text-gray-50"}>
-            {start ? formatDate(start) : "출발일"}
+            {start ? formatDate(start) : singleDate ? "날짜" : "출발일"}
           </span>
-          <span className="text-gray-40">~</span>
-          <span className={end ? "font-medium text-gray-90" : "text-gray-50"}>
-            {end ? formatDate(end) : "도착일"}
-          </span>
+          {!singleDate && (
+            <>
+              <span className="text-gray-40">~</span>
+              <span className={end ? "font-medium text-gray-90" : "text-gray-50"}>
+                {end ? formatDate(end) : "도착일"}
+              </span>
+            </>
+          )}
         </div>
 
         {/* 월 이동 */}
