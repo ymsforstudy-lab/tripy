@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
+import CalendarModal from "@/components/ui/CalendarModal";
 import { supabase } from "@/lib/supabase";
 
 type Tab = "expense" | "budget";
@@ -11,11 +12,11 @@ type PaymentMethod = "card" | "cash";
 const CURRENCIES = ["KRW", "USD", "JPY", "EUR"] as const;
 type Currency = (typeof CURRENCIES)[number];
 
-const CURRENCY_COUNTRY: Record<Currency, string> = {
-  KRW: "대한민국",
-  USD: "미국",
-  JPY: "일본",
-  EUR: "유럽",
+const CURRENCY_UNIT: Record<Currency, string> = {
+  KRW: "원",
+  USD: "달러",
+  JPY: "엔화",
+  EUR: "유로",
 };
 
 const CATEGORIES = [
@@ -32,6 +33,21 @@ function formatNumber(raw: string) {
   return digits ? Number(digits).toLocaleString("ko-KR") : "";
 }
 
+function padNumber(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function parseDateValue(value: string) {
+  const matched = value.match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
+  if (!matched) return null;
+
+  return {
+    year: Number(matched[1]),
+    month: Number(matched[2]),
+    day: Number(matched[3]),
+  };
+}
+
 export default function ExpensePage() {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("expense");
@@ -41,6 +57,7 @@ export default function ExpensePage() {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState<string>("");
   const [date, setDate] = useState("");
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [tripId, setTripId] = useState<string | null>(null);
@@ -73,7 +90,7 @@ export default function ExpensePage() {
   const rawAmount = amount.replace(/,/g, "");
   const isExpenseValid =
     !!rawAmount && !!paymentMethod && !!date;
-  const isBudgetValid = !!rawAmount && !!paymentMethod && !!date;
+  const isBudgetValid = !!rawAmount && !!date;
 
   async function handleSubmit() {
     if (!tripId) return;
@@ -147,7 +164,7 @@ export default function ExpensePage() {
             className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2"
           >
             <span className="text-[12px] font-bold text-gray-90">
-              {currency}({CURRENCY_COUNTRY[currency]})
+              {currency}({CURRENCY_UNIT[currency]})
             </span>
             <svg
               width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -166,7 +183,7 @@ export default function ExpensePage() {
                     c === currency ? "bg-gray-5 font-medium text-gray-90" : "text-gray-90"
                   }`}
                 >
-                  {c}({CURRENCY_COUNTRY[c]})
+                  {c}({CURRENCY_UNIT[c]})
                 </button>
               ))}
             </div>
@@ -186,38 +203,40 @@ export default function ExpensePage() {
 
       {/* 폼 내용 */}
       <div className="mx-auto mt-6 flex w-[343px] flex-col gap-6 pb-32">
-        {/* 결제 수단 */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1">
-            <span className="text-[16px] font-bold text-black">결제 수단</span>
-            <span className="text-[10px] text-danger-50">*</span>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setPaymentMethod("card")}
-              className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
-                paymentMethod === "card"
-                  ? "bg-green-50 text-white"
-                  : "bg-gray-20 text-gray-70"
-              }`}
-            >
-              카드
-            </button>
-            <button
-              onClick={() => setPaymentMethod("cash")}
-              className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
-                paymentMethod === "cash"
-                  ? "bg-green-50 text-white"
-                  : "bg-gray-20 text-gray-70"
-              }`}
-            >
-              현금
-            </button>
-          </div>
-        </div>
-
         {/* 지출 추가 전용 필드 */}
         {tab === "expense" && (
+          <>
+          {/* 결제 수단 */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-1">
+              <span className="text-[16px] font-bold text-black">결제 수단</span>
+              <span className="text-[10px] text-danger-50">*</span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPaymentMethod("card")}
+                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
+                  paymentMethod === "card"
+                    ? "bg-green-50 text-white"
+                    : "bg-gray-20 text-gray-70"
+                }`}
+              >
+                카드
+              </button>
+              <button
+                onClick={() => setPaymentMethod("cash")}
+                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
+                  paymentMethod === "cash"
+                    ? "bg-green-50 text-white"
+                    : "bg-gray-20 text-gray-70"
+                }`}
+              >
+                현금
+              </button>
+            </div>
+          </div>
+
+          {/* 카테고리 */}
           <div className="flex flex-col gap-2">
             <span className="text-[16px] font-bold text-black">카테고리</span>
             <div className="flex items-center justify-between">
@@ -240,17 +259,18 @@ export default function ExpensePage() {
               ))}
             </div>
           </div>
+          </>
         )}
 
         {/* 날짜 */}
-        <div className={`flex ${tab === "budget" ? "items-center gap-4" : "flex-col gap-2"}`}>
-          <div className="flex items-center gap-1 shrink-0">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1">
             <span className="text-[16px] font-bold text-black">
               {tab === "expense" ? "지출 날짜" : "여행 날짜"}
             </span>
             <span className="text-[10px] text-danger-50">*</span>
           </div>
-          <div className={`flex items-center justify-between rounded-xl border border-gray-30 bg-white px-4 py-2.5 ${tab === "budget" ? "flex-1" : "w-full"}`}>
+          <div className="flex items-center justify-between rounded-xl border border-gray-30 bg-white px-4 py-2.5 w-full">
             <input
               type="text"
               value={date}
@@ -258,14 +278,16 @@ export default function ExpensePage() {
               placeholder="yyyy.mm.dd"
               className="flex-1 bg-transparent text-[14px] text-gray-50 outline-none placeholder:text-gray-50"
             />
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <rect x="2" y="4" width="16" height="14" rx="2" stroke="#2D2D2D" strokeWidth="1.4" />
-              <path d="M2 8H18" stroke="#2D2D2D" strokeWidth="1.4" />
-              <path d="M6 2V5M14 2V5" stroke="#2D2D2D" strokeWidth="1.4" strokeLinecap="round" />
-              <circle cx="6.5" cy="12" r="1" fill="#2D2D2D" />
-              <circle cx="10" cy="12" r="1" fill="#2D2D2D" />
-              <circle cx="13.5" cy="12" r="1" fill="#2D2D2D" />
-            </svg>
+            <button onClick={() => setCalendarOpen(true)} aria-label="날짜 선택 열기">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="2" y="4" width="16" height="14" rx="2" stroke="#2D2D2D" strokeWidth="1.4" />
+                <path d="M2 8H18" stroke="#2D2D2D" strokeWidth="1.4" />
+                <path d="M6 2V5M14 2V5" stroke="#2D2D2D" strokeWidth="1.4" strokeLinecap="round" />
+                <circle cx="6.5" cy="12" r="1" fill="#2D2D2D" />
+                <circle cx="10" cy="12" r="1" fill="#2D2D2D" />
+                <circle cx="13.5" cy="12" r="1" fill="#2D2D2D" />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -294,6 +316,19 @@ export default function ExpensePage() {
           추가하기
         </button>
       </div>
+
+      <CalendarModal
+        open={calendarOpen}
+        onClose={() => setCalendarOpen(false)}
+        singleDate={true}
+        initialDeparture={parseDateValue(date)}
+        initialArrival={null}
+        onSelect={(departure) => {
+          const formattedDate = `${departure.year}.${padNumber(departure.month)}.${padNumber(departure.day)}`;
+          setDate(formattedDate);
+          setCalendarOpen(false);
+        }}
+      />
     </div>
   );
 }
