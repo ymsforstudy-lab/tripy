@@ -15,13 +15,31 @@ export default function SplashPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session?.user) {
+          // 신규 익명 유저: users 테이블 row 생성 (기존 row 있으면 무시)
+          if (event === "SIGNED_IN" && session.user.is_anonymous) {
+            await supabase
+              .from("users")
+              .upsert({ id: session.user.id, display_name: null }, { onConflict: "id", ignoreDuplicates: true });
+          }
+
           const { data: profile } = await supabase
             .from("users")
             .select("display_name")
             .eq("id", session.user.id)
             .single();
 
-          router.replace(profile?.display_name ? "/home" : "/nickname");
+          if (profile?.display_name) {
+            router.replace("/home");
+          } else if (session.user.is_anonymous) {
+            // 익명 유저: 기존 여행 있으면 /home, 없으면 /setup
+            const { count } = await supabase
+              .from("trips")
+              .select("id", { count: "exact", head: true })
+              .eq("user_id", session.user.id);
+            router.replace(count && count > 0 ? "/home" : "/setup");
+          } else {
+            router.replace("/nickname");
+          }
         }
       }
     );
@@ -29,13 +47,28 @@ export default function SplashPage() {
   }, [router]);
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) console.error(error);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.is_anonymous) {
+      // 익명 세션을 Google 계정으로 업그레이드 (데이터 유지)
+      const { error } = await supabase.auth.linkIdentity({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) console.error(error);
+    } else {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) console.error(error);
+    }
+  };
+
+  const handleGuestBrowse = async () => {
+    const { error } = await supabase.auth.signInAnonymously();
+    if (error) {
+      alert("게스트 로그인에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -72,7 +105,7 @@ export default function SplashPage() {
 
         {/* 일단 둘러보기 */}
         <button
-          onClick={() => router.push("/setup")}
+          onClick={handleGuestBrowse}
           className="flex h-14 w-full items-center justify-center rounded-xl border border-gray-30 bg-white text-base font-bold text-gray-50"
         >
           일단 둘러보기
