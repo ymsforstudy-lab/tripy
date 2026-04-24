@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
@@ -54,6 +54,7 @@ export default function ExpensePage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [currency, setCurrency] = useState<Currency>("KRW");
   const [currencyOpen, setCurrencyOpen] = useState(false);
+  const [hoveredCurrency, setHoveredCurrency] = useState<Currency | null>(null);
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState<string>("");
   const [date, setDate] = useState("");
@@ -62,6 +63,27 @@ export default function ExpensePage() {
   const [submitting, setSubmitting] = useState(false);
   const [tripId, setTripId] = useState<string | null>(null);
   const [currentBudget, setCurrentBudget] = useState<number>(0);
+  const currencyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!currencyOpen) return;
+
+    function handleClickOutside(event: MouseEvent) {
+      if (currencyRef.current && !currencyRef.current.contains(event.target as Node)) {
+        setCurrencyOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setCurrencyOpen(false);
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currencyOpen]);
 
   useEffect(() => {
     async function fetchTrip() {
@@ -156,9 +178,9 @@ export default function ExpensePage() {
       </div>
 
       {/* 금액 입력 */}
-      <div className="mx-auto mt-3 flex w-[343px] items-center justify-between overflow-hidden rounded-[15px] bg-gray-5 px-4 py-5">
+      <div className="mx-auto mt-3 flex w-[343px] items-center justify-between rounded-[15px] bg-gray-5 px-4 py-5">
         {/* 통화 선택 */}
-        <div className="relative">
+        <div className="relative" ref={currencyRef}>
           <button
             onClick={() => setCurrencyOpen(!currencyOpen)}
             className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2"
@@ -168,24 +190,31 @@ export default function ExpensePage() {
             </span>
             <svg
               width="20" height="20" viewBox="0 0 20 20" fill="none"
-              className="rotate-90"
+              className={`transition-transform ${currencyOpen ? "-rotate-90" : "rotate-90"}`}
             >
               <path d="M7 5L12 10L7 15" stroke="#1D1D1D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           {currencyOpen && (
-            <div className="absolute left-0 top-[44px] z-20 w-40 overflow-hidden rounded-xl border border-gray-30 bg-white shadow-md">
-              {CURRENCIES.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => { setCurrency(c); setCurrencyOpen(false); }}
-                  className={`flex w-full items-center px-4 py-2 text-sm ${
-                    c === currency ? "bg-gray-5 font-medium text-gray-90" : "text-gray-90"
-                  }`}
-                >
-                  {c}({CURRENCY_UNIT[c]})
-                </button>
-              ))}
+            <div
+              className="absolute left-0 top-[44px] z-20 w-40 overflow-hidden rounded-xl border border-gray-30 bg-white shadow-md"
+              onMouseLeave={() => setHoveredCurrency(null)}
+            >
+              {CURRENCIES.map((c) => {
+                const isActive = hoveredCurrency ? c === hoveredCurrency : c === currency;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => { setCurrency(c); setCurrencyOpen(false); setHoveredCurrency(null); }}
+                    onMouseEnter={() => setHoveredCurrency(c)}
+                    className={`flex w-full items-center px-4 py-2 text-sm text-gray-90 transition-colors ${
+                      isActive ? "bg-gray-5 font-medium" : ""
+                    }`}
+                  >
+                    {c}({CURRENCY_UNIT[c]})
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
