@@ -154,9 +154,9 @@ export default function HomePage() {
 
         setExpenses(expenseData ?? []);
       } else {
-        // 데이터가 없으면 더미 데이터 사용
-        setTrip(DUMMY_TRIP);
-        setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
+        // 로그인했지만 여행이 없으면 setup으로 (더미는 비로그인 전용)
+        router.replace("/setup");
+        return;
       }
 
       setLoading(false);
