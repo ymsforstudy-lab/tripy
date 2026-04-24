@@ -174,8 +174,7 @@ export default function HomePage() {
     return Math.floor(trip.total_budget / days);
   })();
 
-  const progressRatio =
-    dailyBudget > 0 ? Math.min(todayTotal / dailyBudget, 1) : 0;
+  const progressRatio = dailyBudget > 0 ? todayTotal / dailyBudget : 0;
 
   const tripDateStr = trip
     ? `${trip.start_date.replace(/-/g, ".")} ~ ${trip.end_date.replace(/-/g, ".")}`

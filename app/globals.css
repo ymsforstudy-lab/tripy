@@ -17,7 +17,11 @@
   --color-gradient: #1EB400;
 
   /* ── Semantic ── */
+  --color-danger-5: #FEECF0;
   --color-danger-50: #EB003B;
+  --color-danger-60: #D50136;
+  --color-danger-70: #A0041E;
+  --color-danger-80: #8D0023;
   --color-info-5: #E9F0FF;
   --color-info-50: #2768FF;
   --color-warning-50: #FFB724;
