@@ -44,8 +44,7 @@ export default function NicknamePage() {
       if (!user) return;
       await supabase
         .from("users")
-        .update({ display_name: nickname })
-        .eq("id", user.id);
+        .upsert({ id: user.id, display_name: nickname }, { onConflict: "id" });
       router.replace("/setup");
     } finally {
       setLoading(false);
