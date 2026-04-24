@@ -112,10 +112,10 @@ export default function BudgetPage() {
       </div>
 
       <div className="mt-6 flex flex-col gap-5 px-4">
-        {/* 여행정보 카드 */}
-        <div className="flex flex-col gap-3 rounded-xl bg-green-0 p-4">
+        {/* 여행정보 섹션 */}
+        <div className="flex flex-col gap-3">
           <span className="text-base font-bold tracking-[-0.32px] text-gray-90">여행정보</span>
-          <div className="flex flex-col gap-4 rounded-xl border border-green-10 bg-white p-4">
+          <div className="flex flex-col gap-4 rounded-xl bg-green-0 p-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-green-60">여행</span>
               <span className="text-sm text-gray-90 opacity-80">
