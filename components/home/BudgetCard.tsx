@@ -1,4 +1,6 @@
 import TripyImage from "@/components/home/TripyImage";
+import StatusBadge from "@/components/ui/StatusBadge";
+import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
 
 interface BudgetCardProps {
   todayTotal: number;
@@ -15,6 +17,9 @@ export default function BudgetCard({
   dailyBudget,
   progressRatio,
 }: BudgetCardProps) {
+  const isOver = progressRatio > 1;
+  const hasSpending = todayTotal > 0;
+
   return (
     <div className="relative z-0 w-full px-4">
       <div className="relative flex h-[82px] items-center justify-between">
@@ -49,7 +54,7 @@ export default function BudgetCard({
 
           <div className="flex h-16 w-full flex-col items-center justify-center rounded-xl bg-white px-3.5">
             <div className="flex w-full max-w-[285px] flex-col gap-2">
-              {todayTotal === 0 ? (
+              {!hasSpending ? (
                 <>
                   <span className="whitespace-nowrap text-[12px] leading-[1.5] text-gray-80">
                     여행 소비를 계획해보세요.
@@ -58,24 +63,15 @@ export default function BudgetCard({
                 </>
               ) : (
                 <>
-                  <div className="flex items-center gap-1.5 leading-[1.5]">
-                    <span className="rounded bg-green-0 px-2 py-[2px] text-[10px] font-bold text-green-50">
-                      Good
-                    </span>
+                  <div className="flex items-center gap-1 leading-[1.5]">
+                    <StatusBadge variant={isOver ? "danger" : "good"} />
                     <span className="text-[12px] text-gray-80">
-                      여행 소비 아주 훌륭한데요?
+                      {isOver
+                        ? "지출이 여행 예산보다 초과되었어요!"
+                        : "여행 소비 아주 훌륭한데요?"}
                     </span>
                   </div>
-                  <div className="relative h-[10px] w-full rounded-[20px] bg-gray-30 overflow-hidden">
-                    <div
-                      className="h-full rounded-[20px]"
-                      style={{
-                        width: `${progressRatio * 100}%`,
-                        background:
-                          "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(33,99,28,0.3) 100%), linear-gradient(90deg, #6BC20F 0%, #6BC20F 100%)",
-                      }}
-                    />
-                  </div>
+                  <BudgetProgressBar ratio={progressRatio} />
                 </>
               )}
             </div>

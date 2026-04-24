@@ -76,6 +76,17 @@ const DUMMY_TRIP: Trip = {
 };
 
 const todayStr = new Date().toISOString().split("T")[0];
+const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
+
+function readLocalExpenses(): Expense[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(LOCAL_EXPENSES_KEY);
+    return raw ? (JSON.parse(raw) as Expense[]) : [];
+  } catch {
+    return [];
+  }
+}
 
 const DUMMY_EXPENSES: Expense[] = [
   {
@@ -118,7 +129,7 @@ export default function HomePage() {
       if (!user) {
         // user가 없으면 개발/테스트용으로 더미데이터를 강제 주입
         setTrip(DUMMY_TRIP);
-        setExpenses(DUMMY_EXPENSES);
+        setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
         setLoading(false);
         return;
       }
@@ -145,7 +156,7 @@ export default function HomePage() {
       } else {
         // 데이터가 없으면 더미 데이터 사용
         setTrip(DUMMY_TRIP);
-        setExpenses(DUMMY_EXPENSES);
+        setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
       }
 
       setLoading(false);
@@ -174,8 +185,7 @@ export default function HomePage() {
     return Math.floor(trip.total_budget / days);
   })();
 
-  const progressRatio =
-    dailyBudget > 0 ? Math.min(todayTotal / dailyBudget, 1) : 0;
+  const progressRatio = dailyBudget > 0 ? todayTotal / dailyBudget : 0;
 
   const tripDateStr = trip
     ? `${trip.start_date.replace(/-/g, ".")} ~ ${trip.end_date.replace(/-/g, ".")}`
