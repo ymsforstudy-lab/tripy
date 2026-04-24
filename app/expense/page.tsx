@@ -48,6 +48,13 @@ function parseDateValue(value: string) {
   };
 }
 
+function normalizeDate(value: string) {
+  return value.replace(/\./g, "-");
+}
+
+const FALLBACK_TRIP_ID = "dummy-trip-1";
+const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
+
 export default function ExpensePage() {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("expense");
@@ -68,7 +75,10 @@ export default function ExpensePage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setTripId(FALLBACK_TRIP_ID);
+        return;
+      }
 
       const { data } = await supabase
         .from("trips")
@@ -82,6 +92,8 @@ export default function ExpensePage() {
       if (data) {
         setTripId(data.id);
         setCurrentBudget(data.total_budget ?? 0);
+      } else {
+        setTripId(FALLBACK_TRIP_ID);
       }
     }
     fetchTrip();
@@ -97,6 +109,30 @@ export default function ExpensePage() {
     setSubmitting(true);
 
     try {
+      if (tripId === FALLBACK_TRIP_ID) {
+        if (tab === "expense") {
+          const newExpense = {
+            id: `dummy-${Date.now()}`,
+            trip_id: tripId,
+            amount: Number(rawAmount),
+            currency,
+            category: category || "etc",
+            expense_date: normalizeDate(date),
+            description: description || null,
+            created_at: new Date().toISOString(),
+          };
+          const existing = JSON.parse(
+            localStorage.getItem(LOCAL_EXPENSES_KEY) || "[]"
+          );
+          localStorage.setItem(
+            LOCAL_EXPENSES_KEY,
+            JSON.stringify([newExpense, ...existing])
+          );
+        }
+        router.push("/home");
+        return;
+      }
+
       if (tab === "expense") {
         const { error } = await supabase.from("expenses").insert({
           trip_id: tripId,
