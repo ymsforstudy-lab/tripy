@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/site-url";
 
 export default function SplashPage() {
   const router = useRouter();
@@ -52,13 +53,13 @@ export default function SplashPage() {
       // 익명 세션을 Google 계정으로 업그레이드 (데이터 유지)
       const { error } = await supabase.auth.linkIdentity({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: { redirectTo: `${getSiteUrl()}/auth/callback` },
       });
       if (error) console.error(error);
     } else {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: { redirectTo: `${getSiteUrl()}/auth/callback` },
       });
       if (error) console.error(error);
     }
