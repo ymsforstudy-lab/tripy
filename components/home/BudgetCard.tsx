@@ -1,11 +1,13 @@
 import TripyImage from "@/components/home/TripyImage";
 import StatusBadge from "@/components/ui/StatusBadge";
 import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
+import { getCurrencyUnit } from "@/lib/constants/currency";
 
 interface BudgetCardProps {
-  todayTotal: number;
-  dailyBudget: number;
+  totalSpent: number;
+  totalBudget: number;
   progressRatio: number;
+  currency?: string;
 }
 
 function formatAmount(amount: number) {
@@ -13,12 +15,14 @@ function formatAmount(amount: number) {
 }
 
 export default function BudgetCard({
-  todayTotal,
-  dailyBudget,
+  totalSpent,
+  totalBudget,
   progressRatio,
+  currency,
 }: BudgetCardProps) {
   const isOver = progressRatio > 1;
-  const hasSpending = todayTotal > 0;
+  const hasSpending = totalSpent > 0;
+  const unit = getCurrencyUnit(currency);
 
   return (
     <div className="relative z-0 w-full px-4">
@@ -35,19 +39,19 @@ export default function BudgetCard({
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <span className="text-[14px] leading-[1.5] text-gray-80">오늘 쓴 돈</span>
+              <span className="text-[14px] leading-[1.5] text-gray-80">총 지출</span>
               <div className="flex items-baseline gap-0.5 font-bold">
                 <span className="text-[20px] text-black">
-                  {formatAmount(todayTotal)}
+                  {formatAmount(totalSpent)}
                 </span>
-                <span className="text-[14px] font-bold leading-[1.5] text-black">원</span>
+                <span className="text-[14px] font-bold leading-[1.5] text-black">{unit}</span>
               </div>
             </div>
             <div className="flex items-center justify-between text-[14px] leading-[1.5]">
-              <span className="text-gray-80">하루 예산</span>
+              <span className="text-gray-80">여행 총 예산</span>
               <div className="flex gap-0.5 text-gray-60">
-                <span>{formatAmount(dailyBudget)}</span>
-                <span>원</span>
+                <span>{formatAmount(totalBudget)}</span>
+                <span>{unit}</span>
               </div>
             </div>
           </div>

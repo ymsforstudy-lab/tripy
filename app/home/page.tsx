@@ -8,6 +8,7 @@ import HomeHeader from "@/components/home/HomeHeader";
 import BudgetCard from "@/components/home/BudgetCard";
 import HomeFilter from "@/components/home/HomeFilter";
 import FilterCategory from "@/components/home/FilterCategory";
+import { getCurrencyUnit } from "@/lib/constants/currency";
 
 const CATEGORY_EMOJI: Record<string, string> = {
   accommodation: "🏠",
@@ -66,8 +67,8 @@ type Expense = {
 const DUMMY_TRIP: Trip = {
   id: "dummy-trip-1",
   user_id: "user-1",
-  title: "오사카 여행",
-  destination: "일본 오사카",
+  title: "일본 여행",
+  destination: "오사카",
   start_date: "2024-03-20",
   end_date: "2024-03-25",
   total_budget: 1000000,
@@ -170,26 +171,26 @@ export default function HomePage() {
       ? expenses.filter((e) => selectedCategories.includes(e.category))
       : expenses;
 
-  // 오늘 지출 합계
-  const todayExpenses = expenses.filter((e) => e.expense_date === todayStr);
-  const todayTotal = todayExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
 
-  const dailyBudget = (() => {
-    if (!trip) return 0;
-    const start = new Date(trip.start_date);
-    const end = new Date(trip.end_date);
-    const days = Math.max(
-      1,
-      Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
-    );
-    return Math.floor(trip.total_budget / days);
-  })();
-
-  const progressRatio = dailyBudget > 0 ? todayTotal / dailyBudget : 0;
+  const totalBudget = trip?.total_budget ?? 0;
+  const progressRatio = totalBudget > 0 ? totalSpent / totalBudget : 0;
 
   const tripDateStr = trip
     ? `${trip.start_date.replace(/-/g, ".")} ~ ${trip.end_date.replace(/-/g, ".")}`
     : "";
+
+  const nightsLabel = (() => {
+    if (!trip) return "";
+    const start = new Date(trip.start_date);
+    const end = new Date(trip.end_date);
+    const nights = Math.max(
+      0,
+      Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+    );
+    if (nights === 0) return "당일치기";
+    return `${nights}박 ${nights + 1}일`;
+  })();
 
   const tripName = trip ? trip.title : "";
 
@@ -207,9 +208,10 @@ export default function HomePage() {
 
       <div className="mt-4">
         <BudgetCard
-          todayTotal={todayTotal}
-          dailyBudget={dailyBudget}
+          totalSpent={totalSpent}
+          totalBudget={totalBudget}
           progressRatio={progressRatio}
+          currency={trip?.currency}
         />
       </div>
 
@@ -221,6 +223,8 @@ export default function HomePage() {
         <HomeFilter
           tripName={tripName}
           hasTrip={!!trip}
+          dateRange={tripDateStr}
+          nightsLabel={nightsLabel}
           onFilterClick={() => setIsFilterOpen(!isFilterOpen)}
         />
 
@@ -271,7 +275,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <span className="text-[14px] font-medium text-gray-90">
-                  -{formatAmount(expense.amount)}원
+                  -{formatAmount(expense.amount)}{getCurrencyUnit(expense.currency)}
                 </span>
               </div>
             ))}
