@@ -6,16 +6,7 @@ import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import { supabase } from "@/lib/supabase";
-
-const CURRENCIES = ["KRW", "USD", "JPY", "EUR"] as const;
-type Currency = (typeof CURRENCIES)[number];
-
-const CURRENCY_UNIT: Record<Currency, string> = {
-  KRW: "원",
-  USD: "달러",
-  JPY: "엔",
-  EUR: "유로",
-};
+import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 
 function formatNumber(raw: string) {
   const digits = raw.replace(/\D/g, "");

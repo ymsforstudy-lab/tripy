@@ -1,13 +1,21 @@
 interface HomeFilterProps {
   tripName: string;
   hasTrip: boolean;
+  dateRange?: string;
+  nightsLabel?: string;
   onFilterClick: () => void;
 }
 
-export default function HomeFilter({ tripName, hasTrip, onFilterClick }: HomeFilterProps) {
+export default function HomeFilter({
+  tripName,
+  hasTrip,
+  dateRange,
+  nightsLabel,
+  onFilterClick,
+}: HomeFilterProps) {
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex flex-col items-start justify-center">
+    <div className="flex w-full items-start justify-between">
+      <div className="flex flex-col items-start justify-center gap-0.5">
         <div className="flex items-center gap-1">
           <span className="whitespace-nowrap text-[16px] font-semibold leading-[1.5] text-gray-90">
             {hasTrip ? tripName : "여행 없음"}
@@ -18,6 +26,15 @@ export default function HomeFilter({ tripName, hasTrip, onFilterClick }: HomeFil
             </span>
           </div>
         </div>
+        {hasTrip && (dateRange || nightsLabel) && (
+          <div className="flex items-center gap-1 text-[12px] leading-[1.5] text-gray-50">
+            {dateRange && <span>{dateRange}</span>}
+            {dateRange && nightsLabel && (
+              <span aria-hidden className="inline-block size-[2px] rounded-full bg-gray-50" />
+            )}
+            {nightsLabel && <span>{nightsLabel}</span>}
+          </div>
+        )}
       </div>
       <button
         type="button"

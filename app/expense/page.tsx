@@ -5,19 +5,10 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
 import { supabase } from "@/lib/supabase";
+import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
-
-const CURRENCIES = ["KRW", "USD", "JPY", "EUR"] as const;
-type Currency = (typeof CURRENCIES)[number];
-
-const CURRENCY_UNIT: Record<Currency, string> = {
-  KRW: "원",
-  USD: "달러",
-  JPY: "엔화",
-  EUR: "유로",
-};
 
 const CATEGORIES = [
   { id: "accommodation", label: "숙소", emoji: "🏠" },
