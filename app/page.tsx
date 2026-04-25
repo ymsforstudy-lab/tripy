@@ -15,12 +15,6 @@ export default function SplashPage() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("[splash] onAuthStateChange", {
-          event,
-          hasSession: !!session,
-          userId: session?.user?.id,
-          isAnonymous: session?.user?.is_anonymous,
-        });
         if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session?.user) {
           // 신규 익명 유저: users 테이블 row 생성 (기존 row 있으면 무시)
           if (event === "SIGNED_IN" && session.user.is_anonymous) {
@@ -55,31 +49,19 @@ export default function SplashPage() {
 
   const handleGoogleLogin = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    console.log("[splash] handleGoogleLogin getUser", {
-      userId: user?.id,
-      isAnonymous: user?.is_anonymous,
-    });
     if (user?.is_anonymous) {
       // 익명 세션을 Google 계정으로 업그레이드 (데이터 유지)
-      const { data, error } = await supabase.auth.linkIdentity({
+      const { error } = await supabase.auth.linkIdentity({
         provider: "google",
         options: { redirectTo: `${getSiteUrl()}/auth/callback` },
       });
-      console.log("[splash] linkIdentity result", { data, error });
-      if (error) {
-        console.error(error);
-        alert(`linkIdentity 실패: ${error.message}`);
-      }
+      if (error) console.error(error);
     } else {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${getSiteUrl()}/auth/callback` },
       });
-      console.log("[splash] signInWithOAuth result", { data, error });
-      if (error) {
-        console.error(error);
-        alert(`signInWithOAuth 실패: ${error.message}`);
-      }
+      if (error) console.error(error);
     }
   };
 
