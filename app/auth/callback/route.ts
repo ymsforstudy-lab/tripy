@@ -31,7 +31,16 @@ export async function GET(request: Request) {
     }
   );
 
-  const { data: sessionData } = await supabase.auth.exchangeCodeForSession(code);
+  const { data: sessionData, error: exchangeError } =
+    await supabase.auth.exchangeCodeForSession(code);
+
+  console.log("[auth/callback] exchangeCodeForSession", {
+    hasSession: !!sessionData?.session,
+    userId: sessionData?.session?.user?.id,
+    isAnonymous: sessionData?.session?.user?.is_anonymous,
+    error: exchangeError?.message,
+    cookieNames: cookieStore.getAll().map((c) => c.name),
+  });
 
   if (!sessionData.session) {
     return NextResponse.redirect(`${origin}/`);

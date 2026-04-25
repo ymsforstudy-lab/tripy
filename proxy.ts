@@ -33,6 +33,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // /auth/* 는 OAuth 콜백 코드/code-verifier 쿠키를 다루는 라우트라
+    // 미들웨어가 쿠키 흐름에 끼어들면 PKCE 교환이 깨질 수 있어 제외.
+    "/((?!_next/static|_next/image|favicon.ico|auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
