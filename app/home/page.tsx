@@ -12,15 +12,8 @@ import BudgetCard from "@/components/home/BudgetCard";
 import HomeFilter from "@/components/home/HomeFilter";
 import FilterCategory from "@/components/home/FilterCategory";
 import { getCurrencyUnit } from "@/lib/constants/currency";
-
-const CATEGORY_EMOJI: Record<string, string> = {
-  accommodation: "🏠",
-  food: "🍴",
-  transport: "🚌",
-  activity: "🎿",
-  shopping: "🛍️",
-  etc: "➕",
-};
+import HintBubble from "@/components/ui/HintBubble";
+import CategoryIcon from "@/components/ui/CategoryIcon";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -194,7 +187,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative mx-auto flex min-h-screen w-full max-w-[375px] flex-col bg-white pb-[84px] shadow-sm">
+    <div className="relative mx-auto flex min-h-screen w-full max-w-[375px] flex-col bg-white pb-[84px]">
       <HomeHeader />
 
       <div className="mt-4">
@@ -253,8 +246,8 @@ export default function HomePage() {
                 className="flex items-center gap-4 overflow-hidden rounded-2xl bg-white px-2.5 py-3"
               >
                 <div className="flex flex-1 items-center gap-2">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5 text-[20px]">
-                    {CATEGORY_EMOJI[expense.category] ?? "💰"}
+                  <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5">
+                    <CategoryIcon category={expense.category} size={20} />
                   </div>
                   <div className="flex flex-col leading-[1.5]">
                     <span className="text-[14px] font-bold text-gray-90">
@@ -275,21 +268,10 @@ export default function HomePage() {
       </div>
 
       {/* FAB 버튼 */}
-      <div className="pointer-events-none fixed bottom-[100px] left-1/2 z-40 w-[375px] -translate-x-1/2 px-4">
+      <div className="pointer-events-none fixed bottom-[100px] left-1/2 z-40 w-full max-w-[375px] -translate-x-1/2 px-4">
         <div className="relative flex w-full justify-end">
           <div className="pointer-events-auto flex items-center gap-2">
-            <div className="relative flex items-center">
-              <div className="rounded-[8px] bg-info-5 px-[10px] py-[5px]">
-                <span className="text-[12px] text-info-50">
-                  경비를 등록해 볼까요?
-                </span>
-              </div>
-              <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 flex h-2 w-2 items-center justify-center">
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                  <circle cx="4" cy="4" r="4" fill="#E9F0FF" />
-                </svg>
-              </div>
-            </div>
+            <HintBubble />
             <Link
               href="/expense"
               className="flex size-11 items-center justify-center rounded-[30px] border border-green-40 bg-green-50 shadow-md"
