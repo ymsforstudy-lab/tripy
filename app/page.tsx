@@ -45,7 +45,8 @@ export default function SplashPage() {
       }
     );
     return () => subscription.unsubscribe();
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleGoogleLogin = async () => {
     const { data: { user } } = await supabase.auth.getUser();

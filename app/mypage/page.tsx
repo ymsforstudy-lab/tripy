@@ -62,7 +62,7 @@ export default function MyPage() {
 
       setTripCount(trips.length);
 
-      // 여행 일수 계산
+      // 여행 ��수 계산
       const days = trips.reduce((sum, trip) => {
         const start = new Date(trip.start_date);
         const end = new Date(trip.end_date);
@@ -101,7 +101,7 @@ export default function MyPage() {
           }));
         setCategoryRanking(sorted);
 
-        // 최근 업데이트 날짜
+        // 최근 업���이트 날짜
         const latest = expenses.reduce((max, e) =>
           e.created_at > max ? e.created_at : max,
           expenses[0].created_at
@@ -137,7 +137,7 @@ export default function MyPage() {
 
       {/* 프로필 카드 + 여행 통계 */}
       <div className="flex flex-col gap-4 px-4">
-        {/* 프로필 카드 */}
+        {/* 프��필 카드 */}
         <div className="rounded-2xl border border-gray-20 bg-white p-4 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 opacity-80">
             <Link href="/mypage/profile"><ProfileAvatar avatarUrl={avatarUrl} /></Link>
@@ -147,7 +147,7 @@ export default function MyPage() {
                 className="flex items-center gap-0.5"
               >
                 <span className="text-base font-semibold text-black">
-                  {nickname || "여행자"}
+                  {nickname || "여행���"}
                 </span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
@@ -210,12 +210,12 @@ export default function MyPage() {
         <div className="h-full border-t border-gray-30 bg-gray-10" />
       </div>
 
-      {/* 카테고리 내역 순위 */}
+      {/* ��테고리 내역 순위 */}
       <div className="flex flex-col gap-5 px-4 py-6">
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold text-black">카테고리 내역 순위</span>
           <span className="text-xs text-gray-60">
-            {lastUpdated ? `${lastUpdated} 업데이트` : "데이터 없음"}
+            {lastUpdated ? `${lastUpdated} 업데이트` : "데��터 없음"}
           </span>
         </div>
 

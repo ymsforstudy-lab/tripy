@@ -74,7 +74,6 @@ export default function ProfileEditPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 5MB 제한
     if (file.size > 5 * 1024 * 1024) {
       alert("이미지 크기는 5MB 이하만 가능해요.");
       return;
@@ -114,7 +113,6 @@ export default function ProfileEditPage() {
           const {
             data: { publicUrl },
           } = supabase.storage.from("avatars").getPublicUrl(filePath);
-          // 캐시 방지용 timestamp
           updates.avatar_url = `${publicUrl}?t=${Date.now()}`;
         }
       }
@@ -243,7 +241,7 @@ export default function ProfileEditPage() {
                 : "text-danger-50"
             }`}
           >
-            {checkStatus === "available" && "사용가능한 닉네임입니다."}
+            {checkStatus === "available" && "사용가능��� 닉네임입니다."}
             {checkStatus === "unchanged" && "현재 사용 중인 닉네임입니다."}
             {checkStatus === "taken" && "이미 사용 중인 닉네임이에요."}
             {checkStatus === "invalid" &&
