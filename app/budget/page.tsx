@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
+import BottomCTA from "@/components/ui/BottomCTA";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import { supabase } from "@/lib/supabase";
@@ -235,16 +236,13 @@ export default function BudgetPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="mt-auto border-t border-gray-20 bg-white px-4 pb-8 pt-4">
-        <Button
+      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2">
+        <BottomCTA
           label="다음"
           onClick={() => setShowModal(true)}
           disabled={!amount}
-        />
-        <Button
-          label="나중에 할게요"
-          variant="ghost"
-          onClick={() => router.push("/home")}
+          secondaryLabel="나중에 할게요"
+          onSecondaryClick={() => router.push("/home")}
         />
       </div>
 
