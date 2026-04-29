@@ -8,6 +8,7 @@ import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 type CategoryRank = {
   rank: number;
@@ -168,9 +169,7 @@ export default function MyPage() {
               </Link>
               <div className="flex items-center gap-1">
                 <span className="text-sm text-gray-60">꼼꼼한 가계부 지킴이!</span>
-                <div className="rounded-lg bg-green-0 px-1 py-0.5">
-                  <span className="text-xs text-green-50">Good</span>
-                </div>
+                <StatusBadge variant="good" />
               </div>
             </div>
           </div>
