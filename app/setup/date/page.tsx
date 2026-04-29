@@ -66,8 +66,6 @@ function DateContent() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
-      } else {
-        console.warn("[date] 세션 없음 — 로그인 필요");
       }
     });
   }, []);

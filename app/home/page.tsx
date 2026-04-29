@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import BottomNav from "@/components/layout/BottomNav";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTrip } from "@/contexts/TripContext";
 import HomeHeader from "@/components/home/HomeHeader";
 import BudgetCard from "@/components/home/BudgetCard";
 import HomeFilter from "@/components/home/HomeFilter";
@@ -114,6 +117,8 @@ const DUMMY_EXPENSES: Expense[] = [
 
 export default function HomePage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const { trip: cachedTrip, loading: tripLoading } = useTrip();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,49 +127,35 @@ export default function HomePage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    async function fetchData() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (authLoading || tripLoading) return;
 
-      if (!user) {
-        // user가 없으면 개발/테스트용으로 더미데이터를 강제 주입
-        setTrip(DUMMY_TRIP);
-        setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
-        setLoading(false);
-        return;
-      }
+    if (!user) {
+      setTrip(DUMMY_TRIP);
+      setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
+      setLoading(false);
+      return;
+    }
 
-      const { data: tripData } = await supabase
-        .from("trips")
+    if (!cachedTrip) {
+      router.replace("/setup");
+      return;
+    }
+
+    setTrip(cachedTrip as Trip);
+
+    async function fetchExpenses() {
+      const { data: expenseData } = await supabase
+        .from("expenses")
         .select("*")
-        .eq("user_id", user.id)
-        .eq("is_archived", false)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+        .eq("trip_id", cachedTrip!.id)
+        .order("created_at", { ascending: false });
 
-      if (tripData) {
-        setTrip(tripData);
-
-        const { data: expenseData } = await supabase
-          .from("expenses")
-          .select("*")
-          .eq("trip_id", tripData.id)
-          .order("created_at", { ascending: false });
-
-        setExpenses(expenseData ?? []);
-      } else {
-        // 로그인했지만 여행이 없으면 setup으로 (더미는 비로그인 전용)
-        router.replace("/setup");
-        return;
-      }
-
+      setExpenses(expenseData ?? []);
       setLoading(false);
     }
 
-    fetchData();
-  }, [router]);
+    fetchExpenses();
+  }, [authLoading, tripLoading, user, cachedTrip, router]);
 
   const filteredExpenses =
     selectedCategories.length > 0
@@ -299,15 +290,14 @@ export default function HomePage() {
                 </svg>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => router.push("/expense")}
+            <Link
+              href="/expense"
               className="flex size-11 items-center justify-center rounded-[30px] border border-green-40 bg-green-50 shadow-md"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round" />
               </svg>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

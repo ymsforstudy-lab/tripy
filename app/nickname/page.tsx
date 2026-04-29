@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 
@@ -10,15 +11,14 @@ type CheckStatus = "idle" | "available" | "taken" | "invalid";
 
 export default function NicknamePage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [nickname, setNickname] = useState("");
   const [checkStatus, setCheckStatus] = useState<CheckStatus>("idle");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) router.replace("/");
-    });
-  }, [router]);
+    if (!authLoading && !user) router.replace("/");
+  }, [authLoading, user, router]);
 
   const isValidNickname = (value: string) =>
     /^[가-힣a-zA-Z0-9]{3,10}$/.test(value);
@@ -37,11 +37,9 @@ export default function NicknamePage() {
   };
 
   const handleComplete = async () => {
-    if (checkStatus !== "available") return;
+    if (checkStatus !== "available" || !user) return;
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
       await supabase
         .from("users")
         .upsert({ id: user.id, display_name: nickname }, { onConflict: "id" });

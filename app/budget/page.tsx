@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import { supabase } from "@/lib/supabase";
+import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 
 function formatNumber(raw: string) {
@@ -31,6 +32,7 @@ function calcNights(start: string, end: string): string {
 
 export default function BudgetPage() {
   const router = useRouter();
+  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const [currency, setCurrency] = useState<Currency>("KRW");
   const [amount, setAmount] = useState("");
   const [includeReserve, setIncludeReserve] = useState(false);
@@ -42,28 +44,20 @@ export default function BudgetPage() {
   const unit = CURRENCY_UNIT[currency];
 
   useEffect(() => {
-    async function fetchTrip() {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      console.log("[budget] user:", user, "authError:", authError);
-      if (!user) return;
+    if (tripLoading) return;
 
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, destination, start_date, end_date, currency")
-        .eq("user_id", user.id)
-        .eq("is_archived", false)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-      console.log("[budget] trip data:", data, "error:", error);
-
-      if (data) {
-        setTripInfo(data);
-        if (data.currency) setCurrency(data.currency as Currency);
-      }
+    if (cachedTrip) {
+      setTripInfo({
+        id: cachedTrip.id,
+        title: cachedTrip.title,
+        destination: cachedTrip.destination,
+        start_date: cachedTrip.start_date,
+        end_date: cachedTrip.end_date,
+        currency: cachedTrip.currency,
+      });
+      if (cachedTrip.currency) setCurrency(cachedTrip.currency as Currency);
     }
-    fetchTrip();
-  }, []);
+  }, [tripLoading, cachedTrip]);
 
   async function handleRegister() {
     if (!tripInfo) return;
@@ -80,9 +74,9 @@ export default function BudgetPage() {
         .eq("id", tripInfo.id);
 
       if (error) throw error;
+      refreshTrip();
       router.push("/home");
     } catch (err) {
-      console.error(err);
       alert("예산 등록에 실패했습니다. 다시 시도해주세요.");
       setSaving(false);
     }

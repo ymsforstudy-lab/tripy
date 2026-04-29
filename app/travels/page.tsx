@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import BottomNav from "@/components/layout/BottomNav";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRIES } from "@/lib/constants/countries";
 
 type Trip = {
@@ -49,23 +51,24 @@ const ManageIcon = ({ color = "#6BC20F" }: { color?: string }) => (
 
 export default function TravelsPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<"ongoing" | "ended">("ongoing");
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!user) {
+      router.push("/");
+      return;
+    }
+
     async function fetchTrips() {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push("/");
-        return;
-      }
-
       const { data, error } = await supabase
         .from("trips")
         .select("id, title, start_date, end_date")
-        .eq("user_id", user.id)
+        .eq("user_id", user!.id)
         .order("start_date", { ascending: false });
 
       if (!error && data) {
@@ -74,7 +77,7 @@ export default function TravelsPage() {
       setLoading(false);
     }
     fetchTrips();
-  }, [router]);
+  }, [authLoading, user, router]);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -167,12 +170,12 @@ export default function TravelsPage() {
                 </div>
 
                 {/* Edit icon */}
-                <button
+                <Link
+                  href={`/travels/${trip.id}/edit`}
                   className="absolute right-3 top-[14px]"
-                  onClick={() => router.push(`/travels/${trip.id}/edit`)}
                 >
                   <ManageIcon color={isOngoing ? "#6BC20F" : "#8E8E8E"} />
-                </button>
+                </Link>
               </div>
             );
           })
@@ -193,9 +196,9 @@ export default function TravelsPage() {
         </div>
 
         {/* FAB */}
-        <button
+        <Link
+          href="/setup/country"
           className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50"
-          onClick={() => router.push("/setup/country")}
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -205,7 +208,7 @@ export default function TravelsPage() {
               strokeLinecap="round"
             />
           </svg>
-        </button>
+        </Link>
       </div>
 
       <BottomNav />

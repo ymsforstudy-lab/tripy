@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import ProfileEdit from "@/components/ui/ProfileEdit";
@@ -11,6 +12,7 @@ type CheckStatus = "idle" | "available" | "taken" | "invalid";
 
 export default function ProfileEditPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [nickname, setNickname] = useState("드리미");
   const [checkStatus, setCheckStatus] = useState<CheckStatus>("idle");
   const [loading, setLoading] = useState(false);
@@ -32,13 +34,9 @@ export default function ProfileEditPage() {
   };
 
   const handleComplete = async () => {
-    if (checkStatus !== "available") return;
+    if (checkStatus !== "available" || !user) return;
     setLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
       await supabase
         .from("users")
         .update({ display_name: nickname })
