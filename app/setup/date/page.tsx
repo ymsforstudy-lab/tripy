@@ -128,6 +128,7 @@ function DateContent() {
     if (!departure) return null;
     if (isDayTrip || !arrival) return "당일치기";
     const nights = calcNights(departure, arrival);
+    if (nights === 0) return "당일치기";
     return `${nights}박${nights + 1}일`;
   };
 
