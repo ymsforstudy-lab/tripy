@@ -27,7 +27,7 @@ export default function BottomCTA({
       {secondaryLabel && (
         <button
           onClick={onSecondaryClick}
-          className="mt-3 flex w-full items-center justify-center text-sm text-gray-50"
+          className="mt-3 flex w-full items-center justify-center text-sm text-gray-50 underline"
         >
           {secondaryLabel}
         </button>
