@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
@@ -15,6 +16,7 @@ type CategoryRank = {
 };
 
 export default function MyPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -23,6 +25,11 @@ export default function MyPage() {
   const [totalDays, setTotalDays] = useState(0);
   const [categoryRanking, setCategoryRanking] = useState<CategoryRank[]>([]);
   const [lastUpdated, setLastUpdated] = useState("");
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -250,10 +257,19 @@ export default function MyPage() {
         </div>
       </div>
 
-      {/* 하단 네비게이션 */}
-      <div className="mt-auto px-[47px]">
-        <BottomNav />
+      {/* 로그아웃 */}
+      <div className="mt-auto mb-[116px] flex flex-col items-center gap-3">
+        <div className="h-2 w-full border-t border-gray-30 bg-gray-10" />
+        <button
+          onClick={handleLogout}
+          className="w-full text-center text-sm leading-[1.5] text-gray-70"
+        >
+          로그아웃
+        </button>
       </div>
+
+      {/* 하단 네비게이션 */}
+      <BottomNav />
     </div>
   );
 }
