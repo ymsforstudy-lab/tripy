@@ -66,8 +66,6 @@ function DateContent() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUserId(session.user.id);
-      } else {
-        console.warn("[date] 세션 없음 — 로그인 필요");
       }
     });
   }, []);
@@ -130,6 +128,7 @@ function DateContent() {
     if (!departure) return null;
     if (isDayTrip || !arrival) return "당일치기";
     const nights = calcNights(departure, arrival);
+    if (nights === 0) return "당일치기";
     return `${nights}박${nights + 1}일`;
   };
 

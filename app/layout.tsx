@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { TripProvider } from "@/contexts/TripContext";
 
 export const metadata: Metadata = {
   title: "Tripy",
@@ -14,9 +16,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased">
-        <div className="mx-auto min-h-screen w-full max-w-[390px] bg-white">
-          {children}
-        </div>
+        <AuthProvider>
+          <TripProvider>
+            <div className="mx-auto min-h-screen w-full max-w-[390px] bg-white">
+              {children}
+            </div>
+          </TripProvider>
+        </AuthProvider>
       </body>
     </html>
   );

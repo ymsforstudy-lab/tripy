@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
+import BottomCTA from "@/components/ui/BottomCTA";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import { supabase } from "@/lib/supabase";
+import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 
 function formatNumber(raw: string) {
@@ -26,11 +28,13 @@ function calcNights(start: string, end: string): string {
   const s = new Date(start);
   const e = new Date(end);
   const nights = Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+  if (nights === 0) return "당일치기";
   return `${nights}박${nights + 1}일`;
 }
 
 export default function BudgetPage() {
   const router = useRouter();
+  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const [currency, setCurrency] = useState<Currency>("KRW");
   const [amount, setAmount] = useState("");
   const [includeReserve, setIncludeReserve] = useState(false);
@@ -42,28 +46,20 @@ export default function BudgetPage() {
   const unit = CURRENCY_UNIT[currency];
 
   useEffect(() => {
-    async function fetchTrip() {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      console.log("[budget] user:", user, "authError:", authError);
-      if (!user) return;
+    if (tripLoading) return;
 
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, destination, start_date, end_date, currency")
-        .eq("user_id", user.id)
-        .eq("is_archived", false)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-      console.log("[budget] trip data:", data, "error:", error);
-
-      if (data) {
-        setTripInfo(data);
-        if (data.currency) setCurrency(data.currency as Currency);
-      }
+    if (cachedTrip) {
+      setTripInfo({
+        id: cachedTrip.id,
+        title: cachedTrip.title,
+        destination: cachedTrip.destination,
+        start_date: cachedTrip.start_date,
+        end_date: cachedTrip.end_date,
+        currency: cachedTrip.currency,
+      });
+      if (cachedTrip.currency) setCurrency(cachedTrip.currency as Currency);
     }
-    fetchTrip();
-  }, []);
+  }, [tripLoading, cachedTrip]);
 
   async function handleRegister() {
     if (!tripInfo) return;
@@ -80,9 +76,9 @@ export default function BudgetPage() {
         .eq("id", tripInfo.id);
 
       if (error) throw error;
+      refreshTrip();
       router.push("/home");
     } catch (err) {
-      console.error(err);
       alert("예산 등록에 실패했습니다. 다시 시도해주세요.");
       setSaving(false);
     }
@@ -241,22 +237,19 @@ export default function BudgetPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="mt-auto border-t border-gray-20 bg-white px-4 pb-8 pt-4">
-        <Button
+      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2">
+        <BottomCTA
           label="다음"
           onClick={() => setShowModal(true)}
           disabled={!amount}
-        />
-        <Button
-          label="나중에 할게요"
-          variant="ghost"
-          onClick={() => router.push("/home")}
+          secondaryLabel="나중에 할게요"
+          onSecondaryClick={() => router.push("/home")}
         />
       </div>
 
       {/* 확인 모달 */}
       <Modal open={showModal} onClose={() => setShowModal(false)}>
-        <div className="rounded-t-2xl bg-white px-4 pb-10 pt-6">
+        <div className="w-full rounded-t-2xl bg-white px-4 pb-10 pt-6">
             <div className="mb-5 flex items-center justify-between">
               <span className="text-xl font-bold tracking-[-0.4px] text-gray-90">
                 예산을 등록하시겠습니까?

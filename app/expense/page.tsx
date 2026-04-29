@@ -4,12 +4,14 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
+import ExchangeDropdown from "@/components/ui/ExchangeDropdown";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
-
 const CATEGORIES = [
   { id: "accommodation", label: "숙소", emoji: "🏠" },
   { id: "food", label: "식비", emoji: "🍴" },
@@ -48,6 +50,8 @@ const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
 
 export default function ExpensePage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const [tab, setTab] = useState<Tab>("expense");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [currency, setCurrency] = useState<Currency>("KRW");
@@ -84,33 +88,20 @@ export default function ExpensePage() {
   }, [currencyOpen]);
 
   useEffect(() => {
-    async function fetchTrip() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        setTripId(FALLBACK_TRIP_ID);
-        return;
-      }
+    if (authLoading || tripLoading) return;
 
-      const { data } = await supabase
-        .from("trips")
-        .select("id, total_budget")
-        .eq("user_id", user.id)
-        .eq("is_archived", false)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (data) {
-        setTripId(data.id);
-        setCurrentBudget(data.total_budget ?? 0);
-      } else {
-        setTripId(FALLBACK_TRIP_ID);
-      }
+    if (!user) {
+      setTripId(FALLBACK_TRIP_ID);
+      return;
     }
-    fetchTrip();
-  }, []);
+
+    if (cachedTrip) {
+      setTripId(cachedTrip.id);
+      setCurrentBudget(cachedTrip.total_budget ?? 0);
+    } else {
+      setTripId(FALLBACK_TRIP_ID);
+    }
+  }, [authLoading, tripLoading, user, cachedTrip]);
 
   const rawAmount = amount.replace(/,/g, "");
   const isExpenseValid =
@@ -163,6 +154,7 @@ export default function ExpensePage() {
           .update({ total_budget: currentBudget + addedAmount })
           .eq("id", tripId);
         if (error) throw error;
+        refreshTrip();
       }
       router.push("/home");
     } catch (err) {
@@ -207,44 +199,7 @@ export default function ExpensePage() {
       {/* 금액 입력 */}
       <div className="mx-auto mt-3 flex w-[343px] items-center justify-between rounded-[15px] bg-gray-5 px-4 py-5">
         {/* 통화 선택 */}
-        <div className="relative" ref={currencyRef}>
-          <button
-            onClick={() => setCurrencyOpen(!currencyOpen)}
-            className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2"
-          >
-            <span className="text-[12px] font-bold text-gray-90">
-              {currency}({CURRENCY_UNIT[currency]})
-            </span>
-            <svg
-              width="20" height="20" viewBox="0 0 20 20" fill="none"
-              className={`transition-transform ${currencyOpen ? "-rotate-90" : "rotate-90"}`}
-            >
-              <path d="M7 5L12 10L7 15" stroke="#1D1D1D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          {currencyOpen && (
-            <div
-              className="absolute left-0 top-[44px] z-20 w-40 overflow-hidden rounded-xl border border-gray-30 bg-white shadow-md"
-              onMouseLeave={() => setHoveredCurrency(null)}
-            >
-              {CURRENCIES.map((c) => {
-                const isActive = hoveredCurrency ? c === hoveredCurrency : c === currency;
-                return (
-                  <button
-                    key={c}
-                    onClick={() => { setCurrency(c); setCurrencyOpen(false); setHoveredCurrency(null); }}
-                    onMouseEnter={() => setHoveredCurrency(c)}
-                    className={`flex w-full items-center px-4 py-2 text-sm text-gray-90 transition-colors ${
-                      isActive ? "bg-gray-5 font-medium" : ""
-                    }`}
-                  >
-                    {c}({CURRENCY_UNIT[c]})
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <ExchangeDropdown value={currency} onChange={setCurrency} />
 
         {/* 금액 */}
         <input
@@ -326,25 +281,37 @@ export default function ExpensePage() {
             </span>
             <span className="text-[10px] text-danger-50">*</span>
           </div>
-          <div className="flex items-center justify-between rounded-xl border border-gray-30 bg-white px-4 py-2.5 w-full">
-            <input
-              type="text"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              placeholder="yyyy.mm.dd"
-              className="flex-1 bg-transparent text-[14px] text-gray-50 outline-none placeholder:text-gray-50"
-            />
-            <button onClick={() => setCalendarOpen(true)} aria-label="날짜 선택 열기">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <rect x="2" y="4" width="16" height="14" rx="2" stroke="#2D2D2D" strokeWidth="1.4" />
-                <path d="M2 8H18" stroke="#2D2D2D" strokeWidth="1.4" />
-                <path d="M6 2V5M14 2V5" stroke="#2D2D2D" strokeWidth="1.4" strokeLinecap="round" />
-                <circle cx="6.5" cy="12" r="1" fill="#2D2D2D" />
-                <circle cx="10" cy="12" r="1" fill="#2D2D2D" />
-                <circle cx="13.5" cy="12" r="1" fill="#2D2D2D" />
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setCalendarOpen(true)}
+            className="flex w-full items-center justify-between rounded-xl bg-gray-5 px-3 py-3 text-left"
+            aria-label="날짜 선택 열기"
+          >
+            <span
+              className={`text-sm ${
+                date ? "font-medium text-gray-90" : "text-gray-50"
+              }`}
+            >
+              {date || "날짜"}
+            </span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect
+                x="1.5"
+                y="2.5"
+                width="13"
+                height="12"
+                rx="2"
+                stroke="#8E8E8E"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M5 1V4M11 1V4M1.5 6.5H14.5"
+                stroke="#8E8E8E"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
         </div>
 
         {/* 내용 */}
