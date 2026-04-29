@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import BottomNav from "@/components/layout/BottomNav";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
@@ -29,7 +29,6 @@ const STATS = {
 };
 
 export default function MyPage() {
-  const router = useRouter();
   return (
     <div className="relative flex min-h-screen flex-col bg-white">
       {/* Header */}
@@ -44,12 +43,12 @@ export default function MyPage() {
         {/* 프로필 카드 */}
         <div className="rounded-2xl border border-gray-20 bg-white p-4 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 opacity-80">
-            <ProfileAvatar onClick={() => router.push("/mypage/profile")} />
+            <Link href="/mypage/profile"><ProfileAvatar /></Link>
             <div className="flex flex-col gap-1">
               {/* 닉네임 + 오른쪽 chevron */}
-              <button
+              <Link
+                href="/mypage/profile"
                 className="flex items-center gap-0.5"
-                onClick={() => router.push("/mypage/profile")}
               >
                 <span className="text-base font-semibold text-black">
                   {USER.nickname}
@@ -63,7 +62,7 @@ export default function MyPage() {
                     strokeLinejoin="round"
                   />
                 </svg>
-              </button>
+              </Link>
               {/* 한마디 + 등급 */}
               <div className="flex items-center gap-1">
                 <span className="text-sm text-gray-60">{USER.tagline}</span>
@@ -76,9 +75,9 @@ export default function MyPage() {
         </div>
 
         {/* 여행 통계 카드 */}
-        <div
-          className="rounded-2xl border border-gray-20 bg-white p-4 cursor-pointer active:opacity-70"
-          onClick={() => router.push("/travels")}
+        <Link
+          href="/travels"
+          className="block rounded-2xl border border-gray-20 bg-white p-4 cursor-pointer active:opacity-70"
         >
           <div className="flex flex-col gap-4">
             <div className="flex gap-1 text-base font-semibold">
@@ -106,7 +105,7 @@ export default function MyPage() {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* 구분선 */}

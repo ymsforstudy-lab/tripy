@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 
 type Tab = "expense" | "budget";
@@ -48,6 +50,8 @@ const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
 
 export default function ExpensePage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const [tab, setTab] = useState<Tab>("expense");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [currency, setCurrency] = useState<Currency>("KRW");
@@ -84,33 +88,20 @@ export default function ExpensePage() {
   }, [currencyOpen]);
 
   useEffect(() => {
-    async function fetchTrip() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        setTripId(FALLBACK_TRIP_ID);
-        return;
-      }
+    if (authLoading || tripLoading) return;
 
-      const { data } = await supabase
-        .from("trips")
-        .select("id, total_budget")
-        .eq("user_id", user.id)
-        .eq("is_archived", false)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      if (data) {
-        setTripId(data.id);
-        setCurrentBudget(data.total_budget ?? 0);
-      } else {
-        setTripId(FALLBACK_TRIP_ID);
-      }
+    if (!user) {
+      setTripId(FALLBACK_TRIP_ID);
+      return;
     }
-    fetchTrip();
-  }, []);
+
+    if (cachedTrip) {
+      setTripId(cachedTrip.id);
+      setCurrentBudget(cachedTrip.total_budget ?? 0);
+    } else {
+      setTripId(FALLBACK_TRIP_ID);
+    }
+  }, [authLoading, tripLoading, user, cachedTrip]);
 
   const rawAmount = amount.replace(/,/g, "");
   const isExpenseValid =
@@ -163,6 +154,7 @@ export default function ExpensePage() {
           .update({ total_budget: currentBudget + addedAmount })
           .eq("id", tripId);
         if (error) throw error;
+        refreshTrip();
       }
       router.push("/home");
     } catch (err) {
