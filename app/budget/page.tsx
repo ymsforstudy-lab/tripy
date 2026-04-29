@@ -248,7 +248,7 @@ export default function BudgetPage() {
 
       {/* 확인 모달 */}
       <Modal open={showModal} onClose={() => setShowModal(false)}>
-        <div className="rounded-t-2xl bg-white px-4 pb-10 pt-6">
+        <div className="w-full rounded-t-2xl bg-white px-4 pb-10 pt-6">
             <div className="mb-5 flex items-center justify-between">
               <span className="text-xl font-bold tracking-[-0.4px] text-gray-90">
                 예산을 등록하시겠습니까?
