@@ -28,6 +28,7 @@ function calcNights(start: string, end: string): string {
   const s = new Date(start);
   const e = new Date(end);
   const nights = Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
+  if (nights === 0) return "당일치기";
   return `${nights}박${nights + 1}일`;
 }
 

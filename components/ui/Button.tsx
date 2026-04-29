@@ -18,7 +18,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "h-14 rounded-xl bg-green-50 text-base font-bold text-white disabled:opacity-40",
   secondary:
-    "h-14 rounded-xl border border-gray-30 text-sm text-gray-50 opacity-50 disabled:opacity-30",
+    "h-14 rounded-xl border border-gray-30 text-base text-gray-50 opacity-50 disabled:opacity-30",
   ghost:
     "text-sm text-gray-50 disabled:opacity-40",
 };

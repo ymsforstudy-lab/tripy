@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
+import ExchangeDropdown from "@/components/ui/ExchangeDropdown";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
@@ -11,7 +12,6 @@ import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/curren
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
-
 const CATEGORIES = [
   { id: "accommodation", label: "숙소", emoji: "🏠" },
   { id: "food", label: "식비", emoji: "🍴" },
@@ -199,44 +199,7 @@ export default function ExpensePage() {
       {/* 금액 입력 */}
       <div className="mx-auto mt-3 flex w-[343px] items-center justify-between rounded-[15px] bg-gray-5 px-4 py-5">
         {/* 통화 선택 */}
-        <div className="relative" ref={currencyRef}>
-          <button
-            onClick={() => setCurrencyOpen(!currencyOpen)}
-            className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2"
-          >
-            <span className="text-[12px] font-bold text-gray-90">
-              {currency}({CURRENCY_UNIT[currency]})
-            </span>
-            <svg
-              width="20" height="20" viewBox="0 0 20 20" fill="none"
-              className={`transition-transform ${currencyOpen ? "-rotate-90" : "rotate-90"}`}
-            >
-              <path d="M7 5L12 10L7 15" stroke="#1D1D1D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          {currencyOpen && (
-            <div
-              className="absolute left-0 top-[44px] z-20 w-40 overflow-hidden rounded-xl border border-gray-30 bg-white shadow-md"
-              onMouseLeave={() => setHoveredCurrency(null)}
-            >
-              {CURRENCIES.map((c) => {
-                const isActive = hoveredCurrency ? c === hoveredCurrency : c === currency;
-                return (
-                  <button
-                    key={c}
-                    onClick={() => { setCurrency(c); setCurrencyOpen(false); setHoveredCurrency(null); }}
-                    onMouseEnter={() => setHoveredCurrency(c)}
-                    className={`flex w-full items-center px-4 py-2 text-sm text-gray-90 transition-colors ${
-                      isActive ? "bg-gray-5 font-medium" : ""
-                    }`}
-                  >
-                    {c}({CURRENCY_UNIT[c]})
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <ExchangeDropdown value={currency} onChange={setCurrency} />
 
         {/* 금액 */}
         <input
