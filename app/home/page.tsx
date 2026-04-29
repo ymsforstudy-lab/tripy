@@ -10,15 +10,7 @@ import HomeFilter from "@/components/home/HomeFilter";
 import FilterCategory from "@/components/home/FilterCategory";
 import { getCurrencyUnit } from "@/lib/constants/currency";
 import HintBubble from "@/components/ui/HintBubble";
-
-const CATEGORY_EMOJI: Record<string, string> = {
-  accommodation: "🏠",
-  food: "🍴",
-  transport: "🚌",
-  activity: "🎿",
-  shopping: "🛍️",
-  etc: "➕",
-};
+import CategoryIcon from "@/components/ui/CategoryIcon";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -263,8 +255,8 @@ export default function HomePage() {
                 className="flex items-center gap-4 overflow-hidden rounded-2xl bg-white px-2.5 py-3"
               >
                 <div className="flex flex-1 items-center gap-2">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5 text-[20px]">
-                    {CATEGORY_EMOJI[expense.category] ?? "💰"}
+                  <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5">
+                    <CategoryIcon category={expense.category} size={20} />
                   </div>
                   <div className="flex flex-col leading-[1.5]">
                     <span className="text-[14px] font-bold text-gray-90">
