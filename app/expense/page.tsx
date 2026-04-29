@@ -318,25 +318,37 @@ export default function ExpensePage() {
             </span>
             <span className="text-[10px] text-danger-50">*</span>
           </div>
-          <div className="flex items-center justify-between rounded-xl border border-gray-30 bg-white px-4 py-2.5 w-full">
-            <input
-              type="text"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              placeholder="yyyy.mm.dd"
-              className="flex-1 bg-transparent text-[14px] text-gray-50 outline-none placeholder:text-gray-50"
-            />
-            <button onClick={() => setCalendarOpen(true)} aria-label="날짜 선택 열기">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <rect x="2" y="4" width="16" height="14" rx="2" stroke="#2D2D2D" strokeWidth="1.4" />
-                <path d="M2 8H18" stroke="#2D2D2D" strokeWidth="1.4" />
-                <path d="M6 2V5M14 2V5" stroke="#2D2D2D" strokeWidth="1.4" strokeLinecap="round" />
-                <circle cx="6.5" cy="12" r="1" fill="#2D2D2D" />
-                <circle cx="10" cy="12" r="1" fill="#2D2D2D" />
-                <circle cx="13.5" cy="12" r="1" fill="#2D2D2D" />
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setCalendarOpen(true)}
+            className="flex w-full items-center justify-between rounded-xl bg-gray-5 px-3 py-3 text-left"
+            aria-label="날짜 선택 열기"
+          >
+            <span
+              className={`text-sm ${
+                date ? "font-medium text-gray-90" : "text-gray-50"
+              }`}
+            >
+              {date || "날짜"}
+            </span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect
+                x="1.5"
+                y="2.5"
+                width="13"
+                height="12"
+                rx="2"
+                stroke="#8E8E8E"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M5 1V4M11 1V4M1.5 6.5H14.5"
+                stroke="#8E8E8E"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
         </div>
 
         {/* 내용 */}
