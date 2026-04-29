@@ -6,18 +6,12 @@ import Header from "@/components/layout/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
 import { supabase } from "@/lib/supabase";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
+import { CATEGORIES } from "@/lib/constants/categories";
+import CategoryIcon from "@/components/ui/CategoryIcon";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
 
-const CATEGORIES = [
-  { id: "accommodation", label: "숙소", emoji: "🏠" },
-  { id: "food", label: "식비", emoji: "🍴" },
-  { id: "transport", label: "교통", emoji: "🚌" },
-  { id: "activity", label: "액티비티", emoji: "🎿" },
-  { id: "shopping", label: "쇼핑", emoji: "🛍️" },
-  { id: "etc", label: "기타", emoji: "➕" },
-] as const;
 
 function formatNumber(raw: string) {
   const digits = raw.replace(/\D/g, "");
@@ -300,13 +294,13 @@ export default function ExpensePage() {
                 <div key={cat.id} className="flex flex-col items-center gap-2">
                   <button
                     onClick={() => setCategory(cat.id)}
-                    className={`flex size-12 items-center justify-center rounded-xl text-[22px] transition-all ${
+                    className={`flex size-12 items-center justify-center rounded-xl transition-all ${
                       category === cat.id
                         ? "border-[2.2px] border-green-50 bg-green-0"
                         : "bg-gray-10"
                     }`}
                   >
-                    {cat.emoji}
+                    <CategoryIcon category={cat.id} size={20} />
                   </button>
                   <span className={`text-[12px] ${category === cat.id ? "font-bold text-black" : "font-normal text-black"}`}>
                     {cat.label}
