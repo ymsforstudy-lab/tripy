@@ -39,6 +39,16 @@ function compareDates(a: DateValue, b: DateValue) {
   );
 }
 
+function isRangeStart(date: DateValue, start: DateValue | null) {
+  if (!start) return false;
+  return isSameDate(date, start);
+}
+
+function isRangeEnd(date: DateValue, end: DateValue | null) {
+  if (!end) return false;
+  return isSameDate(date, end);
+}
+
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
@@ -105,17 +115,19 @@ export default function CalendarModal({
     }
   };
 
-  const getDayStyle = (day: number) => {
+  const getDayCellState = (day: number) => {
     const date: DateValue = { year: viewYear, month: viewMonth, day };
-    const isStart = start && isSameDate(date, start);
-    const isEnd = end && isSameDate(date, end);
+    const isStart = isRangeStart(date, start);
+    const isEnd = isRangeEnd(date, end);
     const inRange = start && end && isInRange(date, start, end);
+    const isSameStartEnd = start && end && isSameDate(start, end);
 
-    if (isStart || isEnd)
-      return "bg-green-50 text-white font-bold rounded-full";
-    if (!singleDate && inRange)
-      return "bg-green-10 text-gray-90 rounded-none";
-    return "text-gray-90";
+    return {
+      isStart,
+      isEnd,
+      inRange: Boolean(inRange),
+      isSameStartEnd: Boolean(isSameStartEnd),
+    };
   };
 
   const cells: (number | null)[] = [
@@ -123,8 +135,10 @@ export default function CalendarModal({
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  const formatDate = (d: DateValue) =>
-    `${d.year}년 ${d.month}월 ${d.day}일`;
+  const formatDate = (d: DateValue) => `${d.year}년 ${d.month}월 ${d.day}일`;
+
+  const startLabel = start ? formatDate(start) : singleDate ? "날짜" : "출발일";
+  const endLabel = end ? formatDate(end) : "도착일";
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -145,17 +159,29 @@ export default function CalendarModal({
         </div>
 
         {/* 선택된 날짜 표시 */}
-        <div className="mb-4 flex items-center gap-2 rounded-xl bg-gray-5 px-4 py-3 text-sm">
-          <span className={start ? "font-medium text-gray-90" : "text-gray-50"}>
-            {start ? formatDate(start) : singleDate ? "날짜" : "출발일"}
-          </span>
-          {!singleDate && (
-            <>
-              <span className="text-gray-40">~</span>
-              <span className={end ? "font-medium text-gray-90" : "text-gray-50"}>
-                {end ? formatDate(end) : "도착일"}
+        <div className="mb-4 rounded-xl bg-gray-5 px-4 py-3 text-sm">
+          {singleDate ? (
+            <span className={start ? "font-medium text-gray-90" : "text-gray-50"}>
+              {startLabel}
+            </span>
+          ) : (
+            <div className="flex items-center">
+              <span
+                className={`flex-1 text-left ${
+                  start ? "font-medium text-gray-90" : "text-gray-50"
+                }`}
+              >
+                {startLabel}
               </span>
-            </>
+              <span className="w-6 text-center text-gray-40">~</span>
+              <span
+                className={`flex-1 text-right ${
+                  end ? "font-medium text-gray-90" : "text-gray-50"
+                }`}
+              >
+                {endLabel}
+              </span>
+            </div>
           )}
         </div>
 
@@ -202,12 +228,35 @@ export default function CalendarModal({
           {cells.map((day, i) => (
             <div key={i} className="py-0.5">
               {day ? (
-                <button
-                  onClick={() => handleDayClick(day)}
-                  className={`mx-auto flex size-9 items-center justify-center text-sm ${getDayStyle(day)}`}
-                >
-                  {day}
-                </button>
+                (() => {
+                  const { isStart, isEnd, inRange, isSameStartEnd } = getDayCellState(day);
+                  const showRightHalf = !singleDate && isStart && end && !isSameStartEnd;
+                  const showLeftHalf = !singleDate && isEnd && start && !isSameStartEnd;
+
+                  return (
+                    <div className="relative h-9 w-full">
+                      {inRange && (
+                        <div className="absolute inset-0 bg-green-10" />
+                      )}
+                      {showRightHalf && (
+                        <div className="absolute inset-y-0 left-1/2 right-0 bg-green-10" />
+                      )}
+                      {showLeftHalf && (
+                        <div className="absolute inset-y-0 left-0 right-1/2 bg-green-10" />
+                      )}
+                      <button
+                        onClick={() => handleDayClick(day)}
+                        className={`relative z-10 mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm ${
+                          isStart || isEnd
+                            ? "bg-gradient font-bold text-white"
+                            : "text-gray-90"
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    </div>
+                  );
+                })()
               ) : (
                 <div className="size-9" />
               )}
