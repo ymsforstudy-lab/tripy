@@ -1,21 +1,50 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
-import ProfileEdit from "@/components/ui/ProfileEdit";
 
-type CheckStatus = "idle" | "available" | "taken" | "invalid";
+type CheckStatus = "idle" | "available" | "taken" | "invalid" | "unchanged";
 
 export default function ProfileEditPage() {
   const router = useRouter();
-  const { user } = useAuth();
-  const [nickname, setNickname] = useState("드리미");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [originalNickname, setOriginalNickname] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [checkStatus, setCheckStatus] = useState<CheckStatus>("idle");
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadProfile() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      setUserId(user.id);
+
+      const { data: profile } = await supabase
+        .from("users")
+        .select("display_name, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.display_name) {
+        setOriginalNickname(profile.display_name);
+        setNickname(profile.display_name);
+      }
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      }
+    }
+    loadProfile();
+  }, []);
 
   const isValidNickname = (value: string) =>
     /^[가-힣a-zA-Z0-9]{3,10}$/.test(value);
@@ -23,6 +52,10 @@ export default function ProfileEditPage() {
   const handleCheck = async () => {
     if (!isValidNickname(nickname)) {
       setCheckStatus("invalid");
+      return;
+    }
+    if (nickname === originalNickname) {
+      setCheckStatus("unchanged");
       return;
     }
     const { data } = await supabase
@@ -33,22 +66,72 @@ export default function ProfileEditPage() {
     setCheckStatus(data ? "taken" : "available");
   };
 
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("이미지 크기는 5MB 이하만 가능해요.");
+      return;
+    }
+
+    setAvatarFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
+  };
+
+  const canComplete =
+    checkStatus === "available" ||
+    checkStatus === "unchanged" ||
+    (checkStatus === "idle" && avatarFile !== null && nickname === originalNickname);
+
   const handleComplete = async () => {
-    if (checkStatus !== "available" || !user) return;
+    if (!canComplete || !userId) return;
     setLoading(true);
     try {
-      await supabase
-        .from("users")
-        .update({ display_name: nickname })
-        .eq("id", user.id);
-      router.back();
+      const updates: Record<string, string> = {};
+
+      // 닉네임 변경
+      if (checkStatus === "available" && nickname !== originalNickname) {
+        updates.display_name = nickname;
+      }
+
+      // 아바타 업로드
+      if (avatarFile) {
+        const ext = avatarFile.name.split(".").pop() ?? "jpg";
+        const filePath = `${userId}/avatar.${ext}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("avatars")
+          .upload(filePath, avatarFile, { upsert: true });
+
+        if (!uploadError) {
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("avatars").getPublicUrl(filePath);
+          updates.avatar_url = `${publicUrl}?t=${Date.now()}`;
+        }
+      }
+
+      if (Object.keys(updates).length > 0) {
+        await supabase.from("users").update(updates).eq("id", userId);
+      }
+
+      router.push("/mypage");
+      router.refresh();
     } finally {
       setLoading(false);
     }
   };
 
+  const displayAvatar = avatarPreview ?? avatarUrl;
+
   const inputBorderClass =
-    checkStatus === "available"
+    checkStatus === "available" || checkStatus === "unchanged"
       ? "border-green-50"
       : checkStatus === "taken" || checkStatus === "invalid"
         ? "border-danger-50"
@@ -62,7 +145,46 @@ export default function ProfileEditPage() {
 
       {/* 프로필 이미지 */}
       <div className="mt-8 flex justify-center">
-        <ProfileEdit />
+        <div className="relative size-20">
+          <div
+            className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-green-10 cursor-pointer"
+            onClick={handleAvatarClick}
+          >
+            {displayAvatar ? (
+              <img
+                src={displayAvatar}
+                alt="프로필 사진"
+                className="size-full object-cover"
+              />
+            ) : (
+              <img
+                src="/icons/profile-avatar.svg"
+                alt="profile character"
+                className="h-[43px] w-[48px] object-contain"
+              />
+            )}
+          </div>
+          <button
+            onClick={handleAvatarClick}
+            className="absolute bottom-0 right-0 flex size-6 items-center justify-center rounded-full border border-green-40 bg-green-50"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M6 2.5V9.5M2.5 6H9.5"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </div>
       </div>
 
       {/* 닉네임 입력 */}
@@ -114,10 +236,13 @@ export default function ProfileEditPage() {
         {checkStatus !== "idle" && (
           <p
             className={`text-xs tracking-[-0.24px] ${
-              checkStatus === "available" ? "text-green-50" : "text-danger-50"
+              checkStatus === "available" || checkStatus === "unchanged"
+                ? "text-green-50"
+                : "text-danger-50"
             }`}
           >
-            {checkStatus === "available" && "사용가능한 닉네임입니다."}
+            {checkStatus === "available" && "사용가능��� 닉네임입니다."}
+            {checkStatus === "unchanged" && "현재 사용 중인 닉네임입니다."}
             {checkStatus === "taken" && "이미 사용 중인 닉네임이에요."}
             {checkStatus === "invalid" &&
               "숫자, 한글, 영문만 가능하고 3~10자이어야 해요."}
@@ -130,7 +255,7 @@ export default function ProfileEditPage() {
         <BottomCTA
           label="완료"
           onClick={handleComplete}
-          disabled={checkStatus !== "available" || loading}
+          disabled={!canComplete || loading}
         />
       </div>
     </div>
