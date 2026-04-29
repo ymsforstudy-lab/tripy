@@ -1,35 +1,132 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
-import { CategoryId } from "@/lib/constants/categories";
+import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
+import { supabase } from "@/lib/supabase";
 
-const CATEGORY_RANKING: { rank: number; categoryId: CategoryId; label: string }[] = [
-  { rank: 1, categoryId: "accommodation", label: "숙소" },
-  { rank: 2, categoryId: "food", label: "식비" },
-  { rank: 3, categoryId: "transport", label: "교통" },
-  { rank: 4, categoryId: "activity", label: "액티비티" },
-  { rank: 5, categoryId: "shopping", label: "쇼핑" },
-];
-
-// 목업 데이터 — 추후 Supabase 연동
-const USER = {
-  nickname: "드리미",
-  tagline: "꼼꼼한 가계부 지킴이!",
-  grade: "Good",
-};
-
-const STATS = {
-  tripCount: 3,
-  totalExpense: 2240000,
-  totalDays: 245,
+type CategoryRank = {
+  rank: number;
+  categoryId: CategoryId;
+  label: string;
 };
 
 export default function MyPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [nickname, setNickname] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [tripCount, setTripCount] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [totalDays, setTotalDays] = useState(0);
+  const [categoryRanking, setCategoryRanking] = useState<CategoryRank[]>([]);
+  const [lastUpdated, setLastUpdated] = useState("");
+
+  useEffect(() => {
+    async function fetchData() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      // 프로필 닉네임 + 아바타
+      const { data: profile } = await supabase
+        .from("users")
+        .select("display_name, avatar_url")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.display_name) {
+        setNickname(profile.display_name);
+      }
+      if (profile?.avatar_url) {
+        setAvatarUrl(profile.avatar_url);
+      }
+
+      // 전체 여행 조회
+      const { data: trips } = await supabase
+        .from("trips")
+        .select("id, start_date, end_date")
+        .eq("user_id", user.id);
+
+      if (!trips || trips.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      setTripCount(trips.length);
+
+      // 여행 일수 계산
+      const days = trips.reduce((sum, trip) => {
+        const start = new Date(trip.start_date);
+        const end = new Date(trip.end_date);
+        const diff = Math.floor(
+          (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+        ) + 1;
+        return sum + Math.max(diff, 0);
+      }, 0);
+      setTotalDays(days);
+
+      // 전체 지출 조회
+      const tripIds = trips.map((t) => t.id);
+      const { data: expenses } = await supabase
+        .from("expenses")
+        .select("amount, category, created_at")
+        .in("trip_id", tripIds);
+
+      if (expenses && expenses.length > 0) {
+        // 총 지출
+        const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+        setTotalExpense(total);
+
+        // 카테고리별 합산 → 순위
+        const categorySum: Record<string, number> = {};
+        expenses.forEach((e) => {
+          categorySum[e.category] = (categorySum[e.category] ?? 0) + e.amount;
+        });
+
+        const sorted = Object.entries(categorySum)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([catId], idx) => ({
+            rank: idx + 1,
+            categoryId: catId as CategoryId,
+            label: CATEGORY_MAP[catId as CategoryId]?.label ?? catId,
+          }));
+        setCategoryRanking(sorted);
+
+        // 최근 업데이트 날짜
+        const latest = expenses.reduce((max, e) =>
+          e.created_at > max ? e.created_at : max,
+          expenses[0].created_at
+        );
+        const latestDate = new Date(latest);
+        setLastUpdated(
+          `${latestDate.getMonth() + 1}/${latestDate.getDate()}`
+        );
+      }
+
+      setLoading(false);
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <span className="text-sm text-gray-50">로딩 중...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex min-h-screen flex-col bg-white">
       {/* Header */}
@@ -44,15 +141,14 @@ export default function MyPage() {
         {/* 프로필 카드 */}
         <div className="rounded-2xl border border-gray-20 bg-white p-4 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 opacity-80">
-            <ProfileAvatar onClick={() => router.push("/mypage/profile")} />
+            <ProfileAvatar onClick={() => router.push("/mypage/profile")} avatarUrl={avatarUrl} />
             <div className="flex flex-col gap-1">
-              {/* 닉네임 + 오른쪽 chevron */}
               <button
                 className="flex items-center gap-0.5"
                 onClick={() => router.push("/mypage/profile")}
               >
                 <span className="text-base font-semibold text-black">
-                  {USER.nickname}
+                  {nickname || "여행자"}
                 </span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
@@ -64,11 +160,10 @@ export default function MyPage() {
                   />
                 </svg>
               </button>
-              {/* 한마디 + 등급 */}
               <div className="flex items-center gap-1">
-                <span className="text-sm text-gray-60">{USER.tagline}</span>
+                <span className="text-sm text-gray-60">꼼꼼한 가계부 지킴이!</span>
                 <div className="rounded-lg bg-green-0 px-1 py-0.5">
-                  <span className="text-xs text-green-50">{USER.grade}</span>
+                  <span className="text-xs text-green-50">Good</span>
                 </div>
               </div>
             </div>
@@ -83,14 +178,16 @@ export default function MyPage() {
           <div className="flex flex-col gap-4">
             <div className="flex gap-1 text-base font-semibold">
               <span className="text-black">여행</span>
-              <span className="font-bold text-green-50">{STATS.tripCount}회째!</span>
+              <span className="font-bold text-green-50">
+                {tripCount > 0 ? `${tripCount}회째!` : "시작해보세요!"}
+              </span>
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex h-6 items-center gap-1">
                 <span className="text-sm text-gray-90">여행 지출 총액</span>
                 <div className="flex flex-1 items-center justify-end gap-0.5">
                   <span className="flex-1 text-right text-base font-semibold text-gray-90">
-                    {STATS.totalExpense.toLocaleString("ko-KR")}
+                    {totalExpense.toLocaleString("ko-KR")}
                   </span>
                   <span className="text-sm text-gray-90">원</span>
                 </div>
@@ -99,7 +196,7 @@ export default function MyPage() {
                 <span className="text-sm text-gray-90">여행 일수</span>
                 <div className="flex flex-1 items-center justify-end gap-0.5">
                   <span className="flex-1 text-right text-base font-semibold text-gray-90">
-                    {STATS.totalDays}
+                    {totalDays}
                   </span>
                   <span className="text-sm text-gray-90">일</span>
                 </div>
@@ -118,7 +215,9 @@ export default function MyPage() {
       <div className="flex flex-col gap-5 px-4 py-6">
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold text-black">카테고리 내역 순위</span>
-          <span className="text-xs text-gray-60">3/24 업데이트</span>
+          <span className="text-xs text-gray-60">
+            {lastUpdated ? `${lastUpdated} 업데이트` : "데이터 없음"}
+          </span>
         </div>
 
         {/* 수평 스크롤 */}
@@ -131,21 +230,24 @@ export default function MyPage() {
             msOverflowStyle: "none",
           } as React.CSSProperties}
         >
-          {CATEGORY_RANKING.map((item) => (
-            <div
-              key={item.rank}
-              className="flex w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-xl bg-gray-5 p-4"
-            >
-              {/* 순위 배지 */}
-              <div className="flex size-5 items-center justify-center rounded-lg bg-gray-20">
-                <span className="text-[10px] text-gray-60">{item.rank}</span>
+          {categoryRanking.length > 0 ? (
+            categoryRanking.map((item) => (
+              <div
+                key={item.rank}
+                className="flex w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-xl bg-gray-5 p-4"
+              >
+                <div className="flex size-5 items-center justify-center rounded-lg bg-gray-20">
+                  <span className="text-[10px] text-gray-60">{item.rank}</span>
+                </div>
+                <CategoryIcon category={item.categoryId} size={24} className="m-[10px]" />
+                <span className="text-xs text-black">{item.label}</span>
               </div>
-              {/* 카테고리 아이콘 */}
-              <CategoryIcon category={item.categoryId} size={24} className="m-[10px]" />
-              {/* 카테고리명 */}
-              <span className="text-xs text-black">{item.label}</span>
+            ))
+          ) : (
+            <div className="flex w-full items-center justify-center py-4">
+              <span className="text-sm text-gray-50">아직 지출 내역이 없어요</span>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
