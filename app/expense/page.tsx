@@ -41,6 +41,18 @@ function parseDateValue(value: string) {
   };
 }
 
+function parseIsoDateValue(value: string | null | undefined) {
+  if (!value) return null;
+  const matched = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!matched) return null;
+
+  return {
+    year: Number(matched[1]),
+    month: Number(matched[2]),
+    day: Number(matched[3]),
+  };
+}
+
 function normalizeDate(value: string) {
   return value.replace(/\./g, "-");
 }
@@ -107,6 +119,8 @@ export default function ExpensePage() {
   const isExpenseValid =
     !!rawAmount && !!paymentMethod && !!date;
   const isBudgetValid = !!rawAmount && !!date;
+  const tripStartDate = parseIsoDateValue(cachedTrip?.start_date);
+  const tripEndDate = parseIsoDateValue(cachedTrip?.end_date);
 
   async function handleSubmit() {
     if (!tripId) return;
@@ -346,6 +360,8 @@ export default function ExpensePage() {
         singleDate={true}
         initialDeparture={parseDateValue(date)}
         initialArrival={null}
+        minDate={tripStartDate}
+        maxDate={tripEndDate}
         onSelect={(departure) => {
           const formattedDate = `${departure.year}.${padNumber(departure.month)}.${padNumber(departure.day)}`;
           setDate(formattedDate);
