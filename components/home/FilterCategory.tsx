@@ -19,7 +19,7 @@ export default function FilterCategory({
   onClose,
 }: FilterCategoryProps) {
   return (
-    <div className="absolute top-[42px] right-0 z-50 flex w-[211px] flex-col rounded-2xl border border-gray-40 bg-white p-4">
+    <div className="absolute top-[78px] right-4 z-50 flex w-[211px] flex-col rounded-2xl border border-gray-40 bg-white p-4">
       <div className="flex w-full flex-col gap-3">
         <div className="mb-1 flex w-full items-center justify-between">
           <span className="text-[14px] font-bold leading-[1.5] text-gray-90">
