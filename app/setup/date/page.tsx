@@ -1,11 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import CalendarModal from "@/components/ui/CalendarModal";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTrip } from "@/contexts/TripContext";
 
 interface DateValue {
   year: number;
@@ -49,6 +51,8 @@ function calcNights(start: DateValue, end: DateValue) {
 function DateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const { refresh } = useTrip();
   const country = searchParams.get("country") ?? "";
   const region = searchParams.get("region");
 
@@ -58,17 +62,8 @@ function DateContent() {
   const [isDayTrip, setIsDayTrip] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
 
   const destinationLabel = region ? `${country} ${region}` : country;
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserId(session.user.id);
-      }
-    });
-  }, []);
 
   const handleBack = () => {
     if (step === "confirm") setStep("input");
@@ -84,17 +79,10 @@ function DateContent() {
     // confirm 단계 → Supabase에 trip INSERT
     if (!departure) return;
 
-    let currentUserId = userId;
-    if (!currentUserId) {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        currentUserId = session.user.id;
-        setUserId(currentUserId);
-      } else {
-        alert("로그인이 필요합니다. 다시 로그인해주세요.");
-        router.push("/");
-        return;
-      }
+    if (!user) {
+      alert("로그인이 필요합니다. 다시 로그인해주세요.");
+      router.push("/");
+      return;
     }
     setSaving(true);
 
@@ -102,7 +90,7 @@ function DateContent() {
     const endDate = isDayTrip || !arrival ? startDate : toISODate(arrival);
 
     const { error } = await supabase.from("trips").insert({
-      user_id: currentUserId,
+      user_id: user.id,
       title: `${country} 여행`,
       destination: region ?? null,
       start_date: startDate,
@@ -119,6 +107,7 @@ function DateContent() {
       return;
     }
 
+    await refresh();
     router.push("/setup/confirm");
   };
 
