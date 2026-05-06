@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
+import Input from "@/components/ui/Input";
 
 type CheckStatus = "idle" | "available" | "taken" | "invalid";
 
@@ -49,14 +50,23 @@ export default function NicknamePage() {
     }
   };
 
-  const inputBorderClass =
+  const inputVariant =
     checkStatus === "available"
-      ? "border-green-50"
+      ? "success"
       : checkStatus === "taken" || checkStatus === "invalid"
-        ? "border-danger-50"
+        ? "error"
         : nickname.length > 0
-          ? "border-gray-60"
-          : "border-gray-30";
+          ? "focused"
+          : "default";
+
+  const helperText =
+    checkStatus === "available"
+      ? "사용가능한 닉네임입니다."
+      : checkStatus === "taken"
+        ? "이미 사용 중인 닉네임이에요."
+        : checkStatus === "invalid"
+          ? "숫자, 한글, 영문만 가능하고 3~10자이어야 해요."
+          : undefined;
 
   return (
     <div className="flex h-screen flex-col bg-white">
@@ -70,40 +80,42 @@ export default function NicknamePage() {
       </div>
 
       {/* 입력 영역 */}
-      <div className="mt-16 flex gap-2 px-4">
-        <div
-          className={`flex flex-1 items-center rounded-xl border bg-gray-5 px-3 py-3 ${inputBorderClass}`}
-        >
-          <input
-            type="text"
+      <div className="mt-16 flex items-start gap-2 px-4">
+        <div className="flex-1">
+          <Input
             value={nickname}
-            onChange={(e) => {
-              setNickname(e.target.value);
+            onChange={(value) => {
+              setNickname(value);
               setCheckStatus("idle");
             }}
             placeholder="최대 10자 입력해 주세요."
             maxLength={10}
-            className="flex-1 bg-transparent text-sm font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50"
+            variant={inputVariant}
+            helperText={helperText}
+            icon={
+              nickname.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNickname("");
+                    setCheckStatus("idle");
+                  }}
+                  className="ml-2 shrink-0"
+                  aria-label="닉네임 지우기"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="8" fill="#C6C6C6" />
+                    <path
+                      d="M5 5L11 11M11 5L5 11"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              ) : null
+            }
           />
-          {nickname.length > 0 && (
-            <button
-              onClick={() => {
-                setNickname("");
-                setCheckStatus("idle");
-              }}
-              className="ml-2 shrink-0"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle cx="8" cy="8" r="8" fill="#C6C6C6" />
-                <path
-                  d="M5 5L11 11M11 5L5 11"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          )}
         </div>
         <button
           onClick={handleCheck}
@@ -113,19 +125,6 @@ export default function NicknamePage() {
           중복확인
         </button>
       </div>
-
-      {/* 상태 메시지 */}
-      {checkStatus !== "idle" && (
-        <p
-          className={`mt-1 px-4 text-xs tracking-[-0.24px] ${
-            checkStatus === "available" ? "text-green-50" : "text-danger-50"
-          }`}
-        >
-          {checkStatus === "available" && "사용가능한 닉네임입니다."}
-          {checkStatus === "taken" && "이미 사용 중인 닉네임이에요."}
-          {checkStatus === "invalid" && "숫자, 한글, 영문만 가능하고 3~10자이어야 해요."}
-        </p>
-      )}
 
       {/* 하단 CTA */}
       <div className="mt-auto">
