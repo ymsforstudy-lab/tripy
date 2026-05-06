@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
+import Input from "@/components/ui/Input";
 
 type CheckStatus = "idle" | "available" | "taken" | "invalid" | "unchanged";
 
@@ -130,14 +131,25 @@ export default function ProfileEditPage() {
 
   const displayAvatar = avatarPreview ?? avatarUrl;
 
-  const inputBorderClass =
+  const inputVariant =
     checkStatus === "available" || checkStatus === "unchanged"
-      ? "border-green-50"
+      ? "success"
       : checkStatus === "taken" || checkStatus === "invalid"
-        ? "border-danger-50"
+        ? "error"
         : nickname.length > 0
-          ? "border-gray-60"
-          : "border-gray-30";
+          ? "focused"
+          : "default";
+
+  const helperText =
+    checkStatus === "available"
+      ? "사용가능한 닉네임입니다."
+      : checkStatus === "unchanged"
+        ? "현재 사용 중인 닉네임입니다."
+        : checkStatus === "taken"
+          ? "이미 사용 중인 닉네임이에요."
+          : checkStatus === "invalid"
+            ? "숫자, 한글, 영문만 가능하고 3~10자이어야 해요."
+            : undefined;
 
   return (
     <div className="flex h-screen flex-col bg-white">
@@ -188,66 +200,50 @@ export default function ProfileEditPage() {
       </div>
 
       {/* 닉네임 입력 */}
-      <div className="mt-10 flex flex-col gap-1 px-4">
-        <div className="flex gap-2">
-          <div
-            className={`flex flex-1 items-center rounded-xl border bg-gray-5 px-3 py-3 ${inputBorderClass}`}
-          >
-            <input
-              type="text"
-              value={nickname}
-              onChange={(e) => {
-                setNickname(e.target.value);
-                setCheckStatus("idle");
-              }}
-              placeholder="최대 10자 입력해 주세요."
-              maxLength={10}
-              className="flex-1 bg-transparent text-sm font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50"
-            />
-            {nickname.length > 0 && (
-              <button
-                onClick={() => {
-                  setNickname("");
-                  setCheckStatus("idle");
-                }}
-                className="ml-2 shrink-0"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="8" fill="#C6C6C6" />
-                  <path
-                    d="M5 5L11 11M11 5L5 11"
-                    stroke="white"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
-          <button
-            onClick={handleCheck}
-            disabled={nickname.length === 0}
-            className="flex h-12 w-[88px] shrink-0 items-center justify-center rounded-xl bg-green-50 text-base font-bold text-white disabled:opacity-50"
-          >
-            중복확인
-          </button>
+      <div className="mt-10 flex items-start gap-2 px-4">
+        <div className="flex-1">
+          <Input
+            value={nickname}
+            onChange={(value) => {
+              setNickname(value);
+              setCheckStatus("idle");
+            }}
+            placeholder="최대 10자 입력해 주세요."
+            maxLength={10}
+            variant={inputVariant}
+            helperText={helperText}
+            icon={
+              nickname.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNickname("");
+                    setCheckStatus("idle");
+                  }}
+                  className="ml-2 shrink-0"
+                  aria-label="닉네임 지우기"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="8" fill="#C6C6C6" />
+                    <path
+                      d="M5 5L11 11M11 5L5 11"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
+              ) : null
+            }
+          />
         </div>
-
-        {checkStatus !== "idle" && (
-          <p
-            className={`text-xs tracking-[-0.24px] ${
-              checkStatus === "available" || checkStatus === "unchanged"
-                ? "text-green-50"
-                : "text-danger-50"
-            }`}
-          >
-            {checkStatus === "available" && "사용가능��� 닉네임입니다."}
-            {checkStatus === "unchanged" && "현재 사용 중인 닉네임입니다."}
-            {checkStatus === "taken" && "이미 사용 중인 닉네임이에요."}
-            {checkStatus === "invalid" &&
-              "숫자, 한글, 영문만 가능하고 3~10자이어야 해요."}
-          </p>
-        )}
+        <button
+          onClick={handleCheck}
+          disabled={nickname.length === 0}
+          className="flex h-12 w-[88px] shrink-0 items-center justify-center rounded-xl bg-green-50 text-base font-bold text-white disabled:opacity-50"
+        >
+          중복확인
+        </button>
       </div>
 
       {/* 하단 CTA */}
