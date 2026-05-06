@@ -268,7 +268,7 @@ export default function HomePage() {
       </div>
 
       {/* FAB 버튼 */}
-      <div className="pointer-events-none fixed bottom-[100px] left-1/2 z-40 w-full max-w-[375px] -translate-x-1/2 px-4">
+      <div className="pointer-events-none fixed bottom-[116px] left-1/2 z-40 w-full max-w-[375px] -translate-x-1/2 px-4">
         <div className="relative flex w-full justify-end">
           <div className="pointer-events-auto flex items-center gap-2">
             <HintBubble />
