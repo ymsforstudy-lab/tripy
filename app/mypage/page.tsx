@@ -109,7 +109,7 @@ export default function MyPage() {
           }));
         setCategoryRanking(sorted);
 
-        // 최근 업���이트 날짜
+        // 최근 업데이트 날짜
         const latest = expenses.reduce((max, e) =>
           e.created_at > max ? e.created_at : max,
           expenses[0].created_at
@@ -155,7 +155,7 @@ export default function MyPage() {
                 className="flex items-center gap-0.5"
               >
                 <span className="text-base font-semibold text-black">
-                  {nickname || "여행���"}
+                  {nickname || "여행자"}
                 </span>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
