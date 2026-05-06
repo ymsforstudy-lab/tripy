@@ -9,16 +9,17 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
+import CategoryIcon from "@/components/ui/CategoryIcon";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
 const CATEGORIES = [
-  { id: "accommodation", label: "숙소", emoji: "🏠" },
-  { id: "food", label: "식비", emoji: "🍴" },
-  { id: "transport", label: "교통", emoji: "🚌" },
-  { id: "activity", label: "액티비티", emoji: "🎿" },
-  { id: "shopping", label: "쇼핑", emoji: "🛍️" },
-  { id: "etc", label: "기타", emoji: "➕" },
+  { id: "accommodation", label: "숙소" },
+  { id: "food", label: "식비" },
+  { id: "transport", label: "교통" },
+  { id: "activity", label: "액티비티" },
+  { id: "shopping", label: "쇼핑" },
+  { id: "etc", label: "기타" },
 ] as const;
 
 function formatNumber(raw: string) {
@@ -269,13 +270,13 @@ export default function ExpensePage() {
                 <div key={cat.id} className="flex flex-col items-center gap-2">
                   <button
                     onClick={() => setCategory(cat.id)}
-                    className={`flex size-12 items-center justify-center rounded-xl text-[22px] transition-all ${
+                    className={`flex size-12 items-center justify-center rounded-xl transition-all ${
                       category === cat.id
                         ? "border-[2.2px] border-green-50 bg-green-0"
                         : "bg-gray-10"
                     }`}
                   >
-                    {cat.emoji}
+                    <CategoryIcon category={cat.id} size={20} />
                   </button>
                   <span className={`text-[12px] ${category === cat.id ? "font-bold text-black" : "font-normal text-black"}`}>
                     {cat.label}
