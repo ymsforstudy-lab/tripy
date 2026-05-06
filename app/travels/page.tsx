@@ -183,7 +183,7 @@ export default function TravelsPage() {
       </div>
 
       {/* Floating action button */}
-      <div className="fixed bottom-[88px] left-1/2 flex w-full max-w-[390px] -translate-x-1/2 items-center justify-end gap-2 px-4">
+      <div className="fixed bottom-[116px] left-1/2 flex w-full max-w-[390px] -translate-x-1/2 items-center justify-end gap-2 px-4">
         {/* Tooltip bubble */}
         <div className="relative">
           <div className="rounded-lg bg-info-5 px-[10px] py-[5px]">
