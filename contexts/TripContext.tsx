@@ -20,13 +20,13 @@ type TripState = {
   trip: Trip | null;
   loading: boolean;
   /** 캐시를 무효화하고 다시 fetch */
-  refresh: () => void;
+  refresh: () => Promise<void>;
 };
 
 const TripContext = createContext<TripState>({
   trip: null,
   loading: true,
-  refresh: () => {},
+  refresh: async () => {},
 });
 
 export function TripProvider({ children }: { children: ReactNode }) {
@@ -60,10 +60,10 @@ export function TripProvider({ children }: { children: ReactNode }) {
     fetchTrip(user.id);
   }, [authLoading, user, fetchTrip]);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     if (user) {
       setLoading(true);
-      fetchTrip(user.id);
+      await fetchTrip(user.id);
     }
   }, [user, fetchTrip]);
 

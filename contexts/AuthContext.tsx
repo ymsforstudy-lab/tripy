@@ -16,16 +16,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 초기 유저 확인
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setLoading(false);
-    });
-
-    // 인증 상태 변경 구독
+    // onAuthStateChange는 INITIAL_SESSION 이벤트로 초기 세션도 전달하므로
+    // 별도 getUser() 호출 없이 단일 구독으로 처리하여 auth lock 충돌 방지
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
+        setLoading(false);
       }
     );
 
