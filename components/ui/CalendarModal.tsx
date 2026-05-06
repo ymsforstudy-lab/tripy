@@ -17,6 +17,8 @@ interface CalendarModalProps {
   initialDeparture?: DateValue | null;
   initialArrival?: DateValue | null;
   singleDate?: boolean;
+  minDate?: DateValue | null;
+  maxDate?: DateValue | null;
 }
 
 const DAYS_OF_WEEK = ["일", "월", "화", "수", "목", "금", "토"];
@@ -64,6 +66,8 @@ export default function CalendarModal({
   initialDeparture,
   initialArrival,
   singleDate = false,
+  minDate = null,
+  maxDate = null,
 }: CalendarModalProps) {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -96,6 +100,13 @@ export default function CalendarModal({
 
   const handleDayClick = (day: number) => {
     const clicked: DateValue = { year: viewYear, month: viewMonth, day };
+    if (
+      (minDate && compareDates(clicked, minDate) < 0) ||
+      (maxDate && compareDates(clicked, maxDate) > 0)
+    ) {
+      return;
+    }
+
     if (singleDate) {
       setStart(clicked);
       setEnd(null);
@@ -121,12 +132,16 @@ export default function CalendarModal({
     const isEnd = isRangeEnd(date, end);
     const inRange = start && end && isInRange(date, start, end);
     const isSameStartEnd = start && end && isSameDate(start, end);
+    const isDisabled =
+      (minDate && compareDates(date, minDate) < 0) ||
+      (maxDate && compareDates(date, maxDate) > 0);
 
     return {
       isStart,
       isEnd,
       inRange: Boolean(inRange),
       isSameStartEnd: Boolean(isSameStartEnd),
+      isDisabled: Boolean(isDisabled),
     };
   };
 
@@ -229,7 +244,8 @@ export default function CalendarModal({
             <div key={i} className="py-0.5">
               {day ? (
                 (() => {
-                  const { isStart, isEnd, inRange, isSameStartEnd } = getDayCellState(day);
+                  const { isStart, isEnd, inRange, isSameStartEnd, isDisabled } =
+                    getDayCellState(day);
                   const showRightHalf = !singleDate && isStart && end && !isSameStartEnd;
                   const showLeftHalf = !singleDate && isEnd && start && !isSameStartEnd;
 
@@ -245,11 +261,15 @@ export default function CalendarModal({
                         <div className="absolute inset-y-0 left-0 right-1/2 bg-green-10" />
                       )}
                       <button
+                        type="button"
+                        disabled={isDisabled}
                         onClick={() => handleDayClick(day)}
                         className={`relative z-10 mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm ${
                           isStart || isEnd
                             ? "bg-gradient font-bold text-white"
-                            : "text-gray-90"
+                            : isDisabled
+                              ? "cursor-not-allowed text-gray-30 opacity-50"
+                              : "text-gray-90"
                         }`}
                       >
                         {day}
