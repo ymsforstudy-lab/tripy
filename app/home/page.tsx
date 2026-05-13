@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import BottomNav from "@/components/layout/BottomNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,8 +11,9 @@ import BudgetCard from "@/components/home/BudgetCard";
 import HomeFilter from "@/components/home/HomeFilter";
 import FilterCategory from "@/components/home/FilterCategory";
 import { getCurrencyUnit } from "@/lib/constants/currency";
-import HintBubble from "@/components/ui/HintBubble";
 import CategoryIcon from "@/components/ui/CategoryIcon";
+import FAB from "@/components/ui/FAB";
+import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -232,11 +232,7 @@ export default function HomePage() {
         {/* 지출 리스트 */}
         {filteredExpenses.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16">
-            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-              <circle cx="28" cy="28" r="27" stroke="#D8D8D8" strokeWidth="2" />
-              <circle cx="28" cy="20" r="2.5" fill="#8E8E8E" />
-              <path d="M28 27V39" stroke="#8E8E8E" strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
+            <CircleAlertInfo />
             <span className="text-[14px] text-gray-50">
               아직 등록된 지출 내역이 없어요.
             </span>
@@ -271,21 +267,7 @@ export default function HomePage() {
       </div>
 
       {/* FAB 버튼 */}
-      <div className="pointer-events-none fixed bottom-[116px] left-1/2 z-40 w-full max-w-[375px] -translate-x-1/2 px-4">
-        <div className="relative flex w-full justify-end">
-          <div className="pointer-events-auto flex items-center gap-2">
-            <HintBubble />
-            <Link
-              href="/expense"
-              className="flex size-11 items-center justify-center rounded-[30px] border border-green-40 bg-green-50 shadow-md"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 5V19M5 12H19" stroke="white" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </div>
+      <FAB href="/expense" tooltipText="경비를 등록해 볼까요?" />
 
       <BottomNav />
     </div>

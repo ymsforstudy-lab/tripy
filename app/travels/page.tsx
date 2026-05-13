@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import BottomNav from "@/components/layout/BottomNav";
+import FAB from "@/components/ui/FAB";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRIES } from "@/lib/constants/countries";
@@ -183,34 +184,8 @@ export default function TravelsPage() {
         )}
       </div>
 
-      {/* Floating action button */}
-      <div className="fixed bottom-[116px] left-1/2 flex w-full max-w-[390px] -translate-x-1/2 items-center justify-end gap-2 px-4">
-        {/* Tooltip bubble */}
-        <div className="relative">
-          <div className="rounded-lg bg-info-5 px-[10px] py-[5px]">
-            <span className="whitespace-nowrap text-xs text-info-50">
-              새로운 여행지를 등록해 보세요!
-            </span>
-          </div>
-          {/* Triangle tail */}
-          <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 border-y-[6px] border-l-[6px] border-y-transparent border-l-info-5" />
-        </div>
-
-        {/* FAB */}
-        <Link
-          href="/setup/country"
-          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 5V19M5 12H19"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </Link>
-      </div>
+      {/* FAB 버튼 */}
+      <FAB href="/setup/country" tooltipText="새로운 여행지를 등록해 보세요!" />
 
       <BottomNav />
     </div>
