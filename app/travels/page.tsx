@@ -7,6 +7,7 @@ import BottomNav from "@/components/layout/BottomNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRIES } from "@/lib/constants/countries";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 type Trip = {
   id: string;
@@ -123,7 +124,7 @@ export default function TravelsPage() {
       <div className="flex flex-1 flex-col gap-4 px-4 pb-36 pt-4">
         {loading ? (
           <div className="flex flex-1 items-center justify-center py-20">
-            <span className="text-sm text-gray-50">로딩 중...</span>
+            <LoadingScreen />
           </div>
         ) : displayTrips.length === 0 ? (
           <div className="flex flex-1 items-center justify-center py-20">

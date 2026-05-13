@@ -9,6 +9,7 @@ import CategoryIcon from "@/components/ui/CategoryIcon";
 import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
 import StatusBadge from "@/components/ui/StatusBadge";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 type CategoryRank = {
   rank: number;
@@ -127,11 +128,7 @@ export default function MyPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <span className="text-sm text-gray-50">로딩 중...</span>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
