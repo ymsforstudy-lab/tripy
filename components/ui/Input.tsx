@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 type InputVariant = "default" | "focused" | "success" | "error";
 
@@ -46,6 +46,15 @@ export default function Input({
   maxLength,
   onChange,
 }: InputProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
+  const effectiveVariant =
+    variant === "success" || variant === "error"
+      ? variant
+      : isFocused
+        ? "focused"
+        : variant;
+
   return (
     <div className="flex flex-col gap-1">
       {label && (
@@ -55,8 +64,8 @@ export default function Input({
       <div
         className={[
           "flex items-center gap-2 rounded-xl border px-3 py-3",
-          borderStyles[variant],
-          bgStyles[variant],
+          borderStyles[effectiveVariant],
+          bgStyles[effectiveVariant],
           disabled ? "opacity-50" : "",
         ]
           .filter(Boolean)
@@ -68,6 +77,8 @@ export default function Input({
           maxLength={maxLength}
           disabled={disabled}
           onChange={(e) => onChange?.(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           className="flex-1 bg-transparent text-sm font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50 disabled:cursor-not-allowed"
         />
         {icon && <span className="shrink-0 text-gray-50">{icon}</span>}
