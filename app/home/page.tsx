@@ -14,6 +14,7 @@ import FilterCategory from "@/components/home/FilterCategory";
 import { getCurrencyUnit } from "@/lib/constants/currency";
 import HintBubble from "@/components/ui/HintBubble";
 import CategoryIcon from "@/components/ui/CategoryIcon";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -115,6 +116,12 @@ export default function HomePage() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
+  const [minLoadDone, setMinLoadDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadDone(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -178,12 +185,8 @@ export default function HomePage() {
 
   const tripName = trip ? trip.title : "";
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="text-sm text-gray-50">로딩 중...</div>
-      </div>
-    );
+  if (loading || !minLoadDone) {
+    return <LoadingScreen />;
   }
 
   return (
