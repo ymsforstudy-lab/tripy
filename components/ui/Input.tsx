@@ -23,6 +23,13 @@ const borderStyles: Record<InputVariant, string> = {
   error: "border-danger-50",
 };
 
+const bgStyles: Record<InputVariant, string> = {
+  default: "bg-gray-5",
+  focused: "bg-white",
+  success: "bg-white",
+  error: "bg-white",
+};
+
 const helperTextStyles: Record<Exclude<InputVariant, "default" | "focused">, string> = {
   success: "text-green-50",
   error: "text-danger-50",
@@ -47,8 +54,9 @@ export default function Input({
 
       <div
         className={[
-          "flex items-center gap-2 rounded-xl border bg-gray-5 px-3 py-3",
+          "flex items-center gap-2 rounded-xl border px-3 py-3",
           borderStyles[variant],
+          bgStyles[variant],
           disabled ? "opacity-50" : "",
         ]
           .filter(Boolean)
