@@ -10,6 +10,7 @@ import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
 import StatusBadge from "@/components/ui/StatusBadge";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import IconSetting from "@/components/ui/IconSetting";
 
 type CategoryRank = {
   rank: number;
@@ -134,16 +135,19 @@ export default function MyPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-white">
       {/* Header */}
-      <div className="flex items-center justify-center pb-4 pt-6">
+      <div className="relative flex items-center justify-center pb-4 px-4 pt-6">
         <span className="text-base font-semibold leading-[1.5] text-gray-90">
           마이페이지
         </span>
+        <button aria-label="설정" className="absolute right-4 flex size-6 items-center justify-center text-gray-70">
+          <IconSetting size={20} />
+        </button>
       </div>
 
       {/* 프로필 카드 + 여행 통계 */}
       <div className="flex flex-col gap-4 px-4">
         {/* 프��필 카드 */}
-        <div className="rounded-2xl border border-gray-20 bg-white p-4 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+        <div className="rounded-2xl border border-gray-20 bg-white p-4 drop-shadow-[0px_2px_2px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 opacity-80">
             <Link href="/mypage/profile"><ProfileAvatar avatarUrl={avatarUrl} /></Link>
             <div className="flex flex-col gap-1">
@@ -154,10 +158,10 @@ export default function MyPage() {
                 <span className="text-base font-semibold text-black">
                   {nickname || "여행자"}
                 </span>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-gray-90">
                   <path
                     d="M6 10L8 8L6 6"
-                    stroke="#1D1D1D"
+                    stroke="currentColor"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -216,7 +220,7 @@ export default function MyPage() {
       {/* ��테고리 내역 순위 */}
       <div className="flex flex-col gap-5 px-4 py-6">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-black">카테고리 내역 순위</span>
+          <span className="text-sm font-bold text-black">카테고리 내역 순위</span>
           <span className="text-xs text-gray-60">
             {lastUpdated ? `${lastUpdated} 업데이트` : "데��터 없음"}
           </span>
