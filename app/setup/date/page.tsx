@@ -19,15 +19,15 @@ type Step = "input" | "confirm";
 
 const CalendarIcon = (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <rect x="1.5" y="2.5" width="13" height="12" rx="2" stroke="#8E8E8E" strokeWidth="1.5" />
-    <path d="M5 1V4M11 1V4M1.5 6.5H14.5" stroke="#8E8E8E" strokeWidth="1.5" strokeLinecap="round" />
+    <rect x="1.5" y="2.5" width="13" height="12" rx="2" stroke="var(--color-gray-50)" strokeWidth="1.5" />
+    <path d="M5 1V4M11 1V4M1.5 6.5H14.5" stroke="var(--color-gray-50)" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
 const SearchIcon = (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="7" cy="7" r="5.5" stroke="#8E8E8E" strokeWidth="1.5" />
-    <path d="M11 11L14 14" stroke="#8E8E8E" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="7" cy="7" r="5.5" stroke="var(--color-gray-50)" strokeWidth="1.5" />
+    <path d="M11 11L14 14" stroke="var(--color-gray-50)" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -212,8 +212,8 @@ function DateContent() {
       {step === "confirm" && (
         <div className="mx-4 mt-4 flex items-center gap-2 rounded-lg bg-info-5 px-4 py-3">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <circle cx="8" cy="8" r="7" stroke="#2768FF" strokeWidth="1.5" />
-            <path d="M8 7V11M8 5V5.5" stroke="#2768FF" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="8" cy="8" r="7" stroke="var(--color-info-50)" strokeWidth="1.5" />
+            <path d="M8 7V11M8 5V5.5" stroke="var(--color-info-50)" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
           <span className="text-xs tracking-[-0.24px] text-info-50">
             여행 일정은 나중에 변경할 수 있어요!

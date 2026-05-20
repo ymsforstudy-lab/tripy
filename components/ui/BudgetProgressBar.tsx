@@ -5,12 +5,12 @@ interface BudgetProgressBarProps {
 
 const GOOD_FILL_STYLE = {
   background:
-    "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(33,99,28,0.3) 100%), linear-gradient(90deg, #6BC20F 0%, #6BC20F 100%)",
+    "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(33,99,28,0.3) 100%), linear-gradient(90deg, var(--color-green-50) 0%, var(--color-green-50) 100%)",
 };
 
 const DANGER_FILL_STYLE = {
   background:
-    "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(221,46,68,0.3) 100%), linear-gradient(90deg, #8D0023 0%, #8D0023 100%)",
+    "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(221,46,68,0.3) 100%), linear-gradient(90deg, var(--color-danger-80) 0%, var(--color-danger-80) 100%)",
 };
 
 export default function BudgetProgressBar({ ratio, className = "" }: BudgetProgressBarProps) {

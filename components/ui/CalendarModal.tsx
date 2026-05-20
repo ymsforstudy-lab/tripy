@@ -165,7 +165,7 @@ export default function CalendarModal({
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
                 d="M4 4L16 16M16 4L4 16"
-                stroke="#1D1D1D"
+                stroke="var(--color-gray-90)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
               />
@@ -206,7 +206,7 @@ export default function CalendarModal({
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
                 d="M13 16L7 10L13 4"
-                stroke="#1D1D1D"
+                stroke="var(--color-gray-90)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -220,7 +220,7 @@ export default function CalendarModal({
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
                 d="M7 4L13 10L7 16"
-                stroke="#1D1D1D"
+                stroke="var(--color-gray-90)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"

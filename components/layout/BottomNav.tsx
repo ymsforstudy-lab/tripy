@@ -80,10 +80,10 @@ export default function BottomNav() {
                   className="flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-2xl border border-green-50"
                   style={{
                     background:
-                      "linear-gradient(180deg, #6BC20F 0%, rgba(107, 194, 15, 0) 100%), linear-gradient(90deg, #1EB400 0%, #1EB400 100%)",
+                      "linear-gradient(180deg, var(--color-green-50) 0%, transparent 100%), linear-gradient(90deg, var(--color-gradient) 0%, var(--color-gradient) 100%)",
                   }}
                 >
-                  <Icon color="#FFFFFF" />
+                  <Icon color="white" />
                   <span className="text-[12px] font-normal leading-[1.5] text-white">
                     {label}
                   </span>
@@ -92,7 +92,7 @@ export default function BottomNav() {
             );
           }
 
-          const color = isActive ? "#6BC20F" : "#555555";
+          const color = isActive ? "var(--color-green-50)" : "var(--color-gray-70)";
 
           return (
             <Link key={href} href={href}>

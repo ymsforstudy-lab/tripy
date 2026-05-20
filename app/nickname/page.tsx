@@ -104,7 +104,7 @@ export default function NicknamePage() {
                   aria-label="닉네임 지우기"
                 >
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="8" fill="#C6C6C6" />
+                    <circle cx="8" cy="8" r="8" fill="var(--color-gray-40)" />
                     <path
                       d="M5 5L11 11M11 5L5 11"
                       stroke="white"
