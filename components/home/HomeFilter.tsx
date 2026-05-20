@@ -20,8 +20,8 @@ export default function HomeFilter({
           <span className="truncate text-[16px] font-semibold leading-[1.5] text-gray-90">
             {hasTrip ? tripName : "여행 없음"}
           </span>
-          <div className="flex h-5 items-center justify-center rounded-[30px] bg-info-5 px-2 py-1">
-            <span className="whitespace-nowrap text-[12px] font-bold leading-[1.5] text-info-50">
+          <div className={`flex h-5 items-center justify-center rounded-[30px] px-2 py-1 ${hasTrip ? "bg-info-5" : "bg-gray-5"}`}>
+            <span className={`whitespace-nowrap text-[12px] leading-[1.5] ${hasTrip ? "font-bold text-info-50" : "font-normal text-gray-50"}`}>
               {hasTrip ? "진행중" : "대기중"}
             </span>
           </div>
