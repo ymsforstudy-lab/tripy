@@ -39,7 +39,7 @@ export default function BudgetCard({
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <span className="text-[14px] leading-[1.5] text-gray-80">총 지출</span>
+              <span className="text-[14px] leading-[1.5] text-gray-80">오늘 쓴 돈</span>
               <div className="flex items-baseline gap-0.5 font-bold">
                 <span className="text-[20px] text-black">
                   {formatAmount(totalSpent)}
@@ -48,7 +48,7 @@ export default function BudgetCard({
               </div>
             </div>
             <div className="flex items-center justify-between text-[14px] leading-[1.5]">
-              <span className="text-gray-80">여행 총 예산</span>
+              <span className="text-gray-80">하루 예산</span>
               <div className="flex gap-0.5 text-gray-60">
                 <span>{formatAmount(totalBudget)}</span>
                 <span>{unit}</span>
