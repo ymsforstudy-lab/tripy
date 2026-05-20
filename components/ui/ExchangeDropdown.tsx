@@ -50,7 +50,7 @@ export default function ExchangeDropdown({
         >
           <path
             d="M7 5L12 10L7 15"
-            stroke="#1D1D1D"
+            stroke="var(--color-gray-90)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

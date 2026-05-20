@@ -13,7 +13,7 @@ export default function Header({ onBack, title, onClose }: HeaderProps) {
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path
             d="M15 18L9 12L15 6"
-            stroke="#1D1D1D"
+            stroke="var(--color-gray-90)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -30,7 +30,7 @@ export default function Header({ onBack, title, onClose }: HeaderProps) {
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M18 6L6 18M6 6L18 18"
-              stroke="#1D1D1D"
+              stroke="var(--color-gray-90)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"

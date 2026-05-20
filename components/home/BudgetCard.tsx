@@ -27,7 +27,7 @@ export default function BudgetCard({
   return (
     <div className="relative z-0 w-full px-4">
       <div className="relative flex h-[82px] items-center justify-between">
-        <h1 className="text-[20px] font-bold leading-[1.5] text-[#396907]">
+        <h1 className="text-[20px] font-bold leading-[1.5] text-green-70">
           오늘 나의 예산
         </h1>
         <div className="absolute right-0 bottom-0 flex items-end">
