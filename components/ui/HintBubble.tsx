@@ -19,7 +19,7 @@ export default function HintBubble({
         viewBox="0 0 6 8"
         fill="none"
       >
-        <path d="M0 0L6 4L0 8V0Z" fill="#E9F0FF" />
+        <path d="M0 0L6 4L0 8V0Z" fill="var(--color-info-5)" />
       </svg>
     </div>
   );

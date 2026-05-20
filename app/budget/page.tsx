@@ -157,7 +157,7 @@ export default function BudgetPage() {
                   width="16" height="16" viewBox="0 0 16 16" fill="none"
                   className={`transition-transform ${currencyOpen ? "rotate-180" : ""}`}
                 >
-                  <path d="M4 6L8 10L12 6" stroke="#1D1D1D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M4 6L8 10L12 6" stroke="var(--color-gray-90)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
               {currencyOpen && (
@@ -196,7 +196,7 @@ export default function BudgetPage() {
               {amount && (
                 <button onClick={() => setAmount("")} className="shrink-0">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="8" fill="#C6C6C6" />
+                    <circle cx="8" cy="8" r="8" fill="var(--color-gray-40)" />
                     <path d="M5 5L11 11M11 5L5 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 </button>
@@ -228,8 +228,8 @@ export default function BudgetPage() {
       {/* 안내 배너 */}
       <div className="mx-4 mt-4 flex items-center gap-2 rounded-lg bg-info-5 px-4 py-3">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="7" stroke="#2768FF" strokeWidth="1.5" />
-          <path d="M8 7V11M8 5V5.5" stroke="#2768FF" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="8" cy="8" r="7" stroke="var(--color-info-50)" strokeWidth="1.5" />
+          <path d="M8 7V11M8 5V5.5" stroke="var(--color-info-50)" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
         <span className="text-xs tracking-[-0.24px] text-info-50">
           비상금은 여행예산의 10% 정도로 책정하는게 좋아요
@@ -256,7 +256,7 @@ export default function BudgetPage() {
               </span>
               <button onClick={() => setShowModal(false)}>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M4 4L16 16M16 4L4 16" stroke="#1D1D1D" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M4 4L16 16M16 4L4 16" stroke="var(--color-gray-90)" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </button>
             </div>

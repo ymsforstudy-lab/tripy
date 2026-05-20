@@ -43,12 +43,12 @@ export default function HomeFilter({
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-50 p-1.5 opacity-60"
       >
         <svg width="20" height="20" viewBox="0 0 19.2 19.2" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3.59998 1.19998L3.59997 18" stroke="#2D2D2D" strokeWidth="1.68" strokeLinecap="round"/>
-          <path d="M9.59998 1.19998L9.59997 18" stroke="#2D2D2D" strokeWidth="1.68" strokeLinecap="round"/>
-          <path d="M15.6 1.19998L15.6 18" stroke="#2D2D2D" strokeWidth="1.68" strokeLinecap="round"/>
-          <rect x="1.80091" y="6.83998" width="3.6" height="3.6" rx="1.8" fill="white" stroke="#2D2D2D" strokeWidth="1.68"/>
-          <rect x="8.03998" y="10.44" width="3.6" height="3.6" rx="1.8" fill="white" stroke="#2D2D2D" strokeWidth="1.68"/>
-          <rect x="13.8009" y="4.43998" width="3.6" height="3.6" rx="1.8" fill="white" stroke="#2D2D2D" strokeWidth="1.68"/>
+          <path d="M3.59998 1.19998L3.59997 18" stroke="var(--color-gray-80)" strokeWidth="1.68" strokeLinecap="round"/>
+          <path d="M9.59998 1.19998L9.59997 18" stroke="var(--color-gray-80)" strokeWidth="1.68" strokeLinecap="round"/>
+          <path d="M15.6 1.19998L15.6 18" stroke="var(--color-gray-80)" strokeWidth="1.68" strokeLinecap="round"/>
+          <rect x="1.80091" y="6.83998" width="3.6" height="3.6" rx="1.8" fill="white" stroke="var(--color-gray-80)" strokeWidth="1.68"/>
+          <rect x="8.03998" y="10.44" width="3.6" height="3.6" rx="1.8" fill="white" stroke="var(--color-gray-80)" strokeWidth="1.68"/>
+          <rect x="13.8009" y="4.43998" width="3.6" height="3.6" rx="1.8" fill="white" stroke="var(--color-gray-80)" strokeWidth="1.68"/>
         </svg>
       </button>
     </div>
