@@ -9,7 +9,7 @@ export default function IconSetting({ className = "", color = "currentColor", si
     <svg
       width={size}
       height={size}
-      viewBox="0 0 15.4426 16"
+      viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}

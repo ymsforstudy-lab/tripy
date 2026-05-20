@@ -135,12 +135,11 @@ export default function MyPage() {
   return (
     <div className="relative flex min-h-screen flex-col bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 pl-4 pr-4 pt-6">
-        <div className="size-6 opacity-0" />
+      <div className="relative flex items-center justify-center pb-4 px-4 pt-6">
         <span className="text-base font-semibold leading-[1.5] text-gray-90">
           마이페이지
         </span>
-        <button aria-label="설정" className="flex size-6 items-center justify-center text-gray-70">
+        <button aria-label="설정" className="absolute right-4 flex size-6 items-center justify-center text-gray-70">
           <IconSetting size={20} />
         </button>
       </div>
