@@ -10,7 +10,7 @@ import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
 import StatusBadge from "@/components/ui/StatusBadge";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import IconSetting from "@/components/ui/IconSetting";
+import IconSetting from "@/components/icons/IconSetting";
 
 type CategoryRank = {
   rank: number;
