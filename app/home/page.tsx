@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,6 +15,7 @@ import CategoryIcon from "@/components/ui/CategoryIcon";
 import FAB from "@/components/ui/FAB";
 import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import Toast from "@/components/ui/Toast";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -111,17 +112,27 @@ const DUMMY_EXPENSES: Expense[] = [
 
 export default function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { trip: cachedTrip, loading: tripLoading } = useTrip();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [minLoadDone, setMinLoadDone] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setMinLoadDone(true), 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (searchParams.get("toast") === "expense") {
+      setToastVisible(true);
+      const timer = setTimeout(() => setToastVisible(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -268,6 +279,8 @@ export default function HomePage() {
 
       {/* FAB 버튼 */}
       <FAB href="/expense" tooltipText="경비를 등록해 볼까요?" />
+
+      <Toast message="경비 등록이 완료되었습니다." visible={toastVisible} />
 
       <BottomNav />
     </div>
