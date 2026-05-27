@@ -139,7 +139,11 @@ export default function MyPage() {
         <span className="text-base font-semibold leading-[1.5] text-gray-90">
           마이페이지
         </span>
-        <button aria-label="설정" className="absolute right-4 flex size-6 items-center justify-center text-gray-70">
+        <button
+          aria-label="설정"
+          onClick={() => router.push("/mypage/settings")}
+          className="absolute right-4 flex size-6 items-center justify-center text-gray-70"
+        >
           <IconSetting size={20} />
         </button>
       </div>
