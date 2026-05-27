@@ -3,17 +3,20 @@
 import { useRouter } from "next/navigation";
 import Header from "@/components/layout/Header";
 
+const PRIVACY_POLICY_URL =
+  "https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be";
+
 const SECTION_1 = [
   { label: "공지사항" },
   { label: "이용안내" },
 ];
 
 const SECTION_2 = [
-  { label: "이용 약관" },
-  { label: "개인정보 처리방침" },
-  { label: "피드백 남기기" },
-  { label: "트리피 메일 문의" },
-  { label: "탈퇴하기" },
+  { label: "이용 약관", href: null },
+  { label: "개인정보 처리방침", href: PRIVACY_POLICY_URL },
+  { label: "피드백 남기기", href: null },
+  { label: "트리피 메일 문의", href: null },
+  { label: "탈퇴하기", href: null },
 ];
 
 export default function SettingsPage() {
@@ -38,15 +41,27 @@ export default function SettingsPage() {
       <div className="mt-7 h-2 border-t border-gray-30 bg-gray-10" />
 
       <div className="mt-7 flex flex-col">
-        {SECTION_2.map((item) => (
-          <button
-            key={item.label}
-            type="button"
-            className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
-          >
-            {item.label}
-          </button>
-        ))}
+        {SECTION_2.map((item) =>
+          item.href ? (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
+            >
+              {item.label}
+            </a>
+          ) : (
+            <button
+              key={item.label}
+              type="button"
+              className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
+            >
+              {item.label}
+            </button>
+          )
+        )}
       </div>
     </div>
   );
