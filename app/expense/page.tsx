@@ -148,7 +148,7 @@ export default function ExpensePage() {
             JSON.stringify([newExpense, ...existing])
           );
         }
-        router.push("/home");
+        router.push("/home?toast=expense");
         return;
       }
 
@@ -171,7 +171,7 @@ export default function ExpensePage() {
         if (error) throw error;
         refreshTrip();
       }
-      router.push("/home");
+      router.push("/home?toast=expense");
     } catch (err) {
       console.error(err);
       alert("저장에 실패했습니다. 다시 시도해주세요.");
