@@ -225,9 +225,11 @@ export default function MyPage() {
       <div className="flex flex-col gap-5 px-4 py-6">
         <div className="flex items-center justify-between">
           <span className="text-sm font-bold text-black">카테고리 내역 순위</span>
-          <span className="text-xs text-gray-60">
-            {lastUpdated ? `${lastUpdated} 업데이트` : "데��터 없음"}
-          </span>
+          {lastUpdated && (
+            <span className="text-xs text-gray-60">
+              {lastUpdated} 업데이트
+            </span>
+          )}
         </div>
 
         {/* 수평 스크롤 */}
@@ -254,8 +256,17 @@ export default function MyPage() {
               </div>
             ))
           ) : (
-            <div className="flex w-full items-center justify-center py-4">
-              <span className="text-sm text-gray-50">아직 지출 내역이 없어요</span>
+            <div className="flex w-full flex-col items-center gap-[10px] py-4">
+              <div className="relative h-[62px] w-[60px] overflow-hidden">
+                <img
+                  src="/tripy-mypage.png"
+                  alt="트리피 캐릭터"
+                  className="absolute h-[157.8%] left-[-6%] max-w-none top-[-40.85%] w-[113.04%]"
+                />
+              </div>
+              <span className="text-xs text-gray-60">
+                지출 추가하면 카테고리 별 순위를 확인할 수 있어요.
+              </span>
             </div>
           )}
         </div>
