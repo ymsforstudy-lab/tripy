@@ -78,9 +78,9 @@ function DateContent() {
     // confirm 단계 → Supabase에 trip INSERT
     if (!departure || saving) return;
 
-    // 실제 Supabase 세션 유효성 재확인 (토큰 만료 대비)
-    const { data: authData, error: authError } = await supabase.auth.getUser();
-    if (authError || !authData.user) {
+    // 로컬 세션 확인 (getSession은 캐시만 읽어 auth lock 충돌 없음)
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) {
       alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       router.push("/");
       return;
@@ -92,7 +92,7 @@ function DateContent() {
     const endDate = isDayTrip || !arrival ? startDate : toISODate(arrival);
 
     const { error } = await supabase.from("trips").insert({
-      user_id: authData.user.id,
+      user_id: session.user.id,
       title: `${country} 여행`,
       destination: region ?? null,
       start_date: startDate,
