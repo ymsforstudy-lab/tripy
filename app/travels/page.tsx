@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { COUNTRIES } from "@/lib/constants/countries";
 import LoadingScreen from "@/components/ui/LoadingScreen";
+import DeleteConfirmModal from "@/components/ui/DeleteConfirmModal";
 
 type Trip = {
   id: string;
@@ -66,6 +67,7 @@ export default function TravelsPage() {
   const [activeTab, setActiveTab] = useState<"ongoing" | "ended">("ongoing");
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -89,6 +91,13 @@ export default function TravelsPage() {
     }
     fetchTrips();
   }, [authLoading, user, router]);
+
+  async function handleDeleteConfirm() {
+    if (!deleteTargetId) return;
+    await supabase.from("trips").delete().eq("id", deleteTargetId);
+    setTrips((prev) => prev.filter((t) => t.id !== deleteTargetId));
+    setDeleteTargetId(null);
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -189,7 +198,10 @@ export default function TravelsPage() {
                     <ManageIcon />
                   </Link>
                 ) : (
-                  <button className="absolute right-3 top-[14px]">
+                  <button
+                    className="absolute right-3 top-[14px]"
+                    onClick={() => setDeleteTargetId(trip.id)}
+                  >
                     <DeleteIcon />
                   </button>
                 )}
@@ -201,6 +213,12 @@ export default function TravelsPage() {
 
       {/* FAB 버튼 */}
       <FAB href="/setup/country" tooltipText="새로운 여행지를 등록해 보세요!" />
+
+      <DeleteConfirmModal
+        open={deleteTargetId !== null}
+        onCancel={() => setDeleteTargetId(null)}
+        onConfirm={handleDeleteConfirm}
+      />
 
       <BottomNav />
     </div>
