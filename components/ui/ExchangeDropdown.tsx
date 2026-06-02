@@ -68,7 +68,7 @@ export default function ExchangeDropdown({
                 onChange(code);
                 setOpen(false);
               }}
-              className={`flex w-full items-center px-4 py-2 text-sm ${
+              className={`flex w-full items-center px-4 py-2 text-sm transition-colors hover:bg-gray-5 ${
                 code === value
                   ? "bg-gray-5 font-medium text-gray-90"
                   : "text-gray-90"

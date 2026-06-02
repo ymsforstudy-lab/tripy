@@ -50,8 +50,8 @@ export default function SelectChip({
   // 리스트 아이템 형태: 목록에서 선택/미선택 상태
   const itemStyles =
     variant === "selected"
-      ? "border-green-20 bg-green-0 font-medium"
-      : "border-gray-20 bg-white font-normal";
+      ? "border-green-20 bg-green-0 font-medium hover:bg-green-10"
+      : "border-gray-20 bg-white font-normal hover:bg-gray-5";
 
   return (
     <button
