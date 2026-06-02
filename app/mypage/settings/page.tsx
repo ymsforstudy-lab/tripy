@@ -16,7 +16,7 @@ const SECTION_2 = [
   { label: "개인정보 처리방침", href: PRIVACY_POLICY_URL },
   { label: "피드백 남기기", href: null },
   { label: "트리피 메일 문의", href: null },
-  { label: "탈퇴하기", href: null },
+  { label: "탈퇴하기", href: "/mypage/delete-account" },
 ];
 
 export default function SettingsPage() {
@@ -42,7 +42,7 @@ export default function SettingsPage() {
 
       <div className="mt-7 flex flex-col">
         {SECTION_2.map((item) =>
-          item.href ? (
+          item.href?.startsWith("http") ? (
             <a
               key={item.label}
               href={item.href}
@@ -52,6 +52,15 @@ export default function SettingsPage() {
             >
               {item.label}
             </a>
+          ) : item.href ? (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => router.push(item.href!)}
+              className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
+            >
+              {item.label}
+            </button>
           ) : (
             <button
               key={item.label}
