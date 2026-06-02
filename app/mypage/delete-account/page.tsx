@@ -35,7 +35,7 @@ export default function DeleteAccountPage() {
         await supabase.from("users").delete().eq("id", user.id);
       }
       await supabase.auth.signOut();
-      router.push("/");
+      router.push("/mypage/delete-account/complete");
     } catch {
       alert("탈퇴 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
       setSubmitting(false);
