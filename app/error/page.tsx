@@ -22,7 +22,7 @@ export default function ErrorPage() {
         </div>
         <div className="relative h-[198px] w-[120px]">
           <Image
-            src="/mascot.png"
+            src="/tripy-error.png"
             alt="오류 마스코트"
             fill
             className="object-contain"
