@@ -6,7 +6,6 @@ import Header from "@/components/layout/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import CalendarModal from "@/components/ui/CalendarModal";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
 
 interface DateValue {
@@ -51,7 +50,6 @@ function calcNights(start: DateValue, end: DateValue) {
 function DateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useAuth();
   const { refresh } = useTrip();
   const country = searchParams.get("country") ?? "";
   const region = searchParams.get("region");
@@ -72,25 +70,29 @@ function DateContent() {
 
   const handleNext = async () => {
     if (step === "input") {
+      if (!departure) return;
       setStep("confirm");
       return;
     }
 
     // confirm 단계 → Supabase에 trip INSERT
-    if (!departure) return;
+    if (!departure || saving) return;
 
-    if (!user) {
-      alert("로그인이 필요합니다. 다시 로그인해주세요.");
+    // 실제 Supabase 세션 유효성 재확인 (토큰 만료 대비)
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData.user) {
+      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       router.push("/");
       return;
     }
+
     setSaving(true);
 
     const startDate = toISODate(departure);
     const endDate = isDayTrip || !arrival ? startDate : toISODate(arrival);
 
     const { error } = await supabase.from("trips").insert({
-      user_id: user.id,
+      user_id: authData.user.id,
       title: `${country} 여행`,
       destination: region ?? null,
       start_date: startDate,
@@ -111,7 +113,7 @@ function DateContent() {
     router.push("/setup/confirm");
   };
 
-  const isNextEnabled = !saving && (isDayTrip || departure !== null);
+  const isNextEnabled = !saving && departure !== null;
 
   const nightsLabel = () => {
     if (!departure) return null;
