@@ -110,6 +110,15 @@ const DUMMY_EXPENSES: Expense[] = [
   },
 ];
 
+export default function HomePage() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <HomePageContent />
+    </Suspense>
+  );
+}
+
+
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();

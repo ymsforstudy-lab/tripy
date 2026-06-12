@@ -7,6 +7,7 @@ import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
 import SelectChip from "@/components/ui/SelectChip";
 import { COUNTRIES } from "@/lib/constants/countries";
+import { supabase } from "@/lib/supabase";
 
 const SearchIcon = (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -29,14 +30,25 @@ export default function EditCountryPage() {
     setSearch("");
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!selected) return;
     if (selected === "대한민국") {
       router.push(`/travels/${id}/edit/region`);
-    } else {
-      // TODO: 날짜 수정 페이지 연결 시 변경
-      router.push("/travels");
+      return;
     }
+
+    const { error } = await supabase
+      .from("trips")
+      .update({ title: `${selected} 여행`, destination: null })
+      .eq("id", id);
+
+    if (error) {
+      console.error("여행지 수정 실패:", error);
+      alert("여행지 수정에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    router.push("/travels");
   };
 
   return (
