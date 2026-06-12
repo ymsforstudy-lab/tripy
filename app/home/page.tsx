@@ -295,11 +295,3 @@ function HomePageContent() {
     </div>
   );
 }
-
-export default function HomePage() {
-  return (
-    <Suspense>
-      <HomePageContent />
-    </Suspense>
-  );
-}
