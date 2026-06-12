@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import TripyCharacter from "@/components/ui/TripyCharacter";
 
 export default function DeleteAccountCompletePage() {
   const router = useRouter();
@@ -47,17 +48,7 @@ export default function DeleteAccountCompletePage() {
 
         {/* 캐릭터 이미지 */}
         <div className="flex items-center justify-center">
-          <div className="relative h-[220px] w-[180px] p-2">
-            <div className="relative h-full w-[172px] overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/tripy-complete.png"
-                alt="트리피 캐릭터"
-                className="absolute left-0 max-w-none w-full pointer-events-none"
-                style={{ height: "125.69%", top: "-8.28%" }}
-              />
-            </div>
-          </div>
+          <TripyCharacter type={1} />
         </div>
       </div>
     </div>

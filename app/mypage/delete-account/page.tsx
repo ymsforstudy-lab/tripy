@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Header from "@/components/layout/Header";
+import TripyCharacter from "@/components/ui/TripyCharacter";
 import { supabase } from "@/lib/supabase";
 
 const REASONS = [
@@ -121,13 +121,8 @@ export default function DeleteAccountPage() {
       </div>
 
       {/* 마스코트 이미지 - Figma 위치 고정 */}
-      <div className="absolute top-[58%] h-[220px] w-[180px] pointer-events-none" style={{ left: "calc(50% + 9.06px)" }}>
-        <Image
-          src="/tripy-delete.png"
-          alt="트리피 캐릭터"
-          fill
-          className="object-contain object-center"
-        />
+      <div className="absolute top-[58%] pointer-events-none" style={{ left: "calc(50% + 9.06px)" }}>
+        <TripyCharacter type={2} />
       </div>
 
       {/* 하단 탈퇴 버튼 */}

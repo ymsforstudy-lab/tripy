@@ -118,6 +118,7 @@ export default function HomePage() {
   );
 }
 
+
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
