@@ -16,7 +16,7 @@ export default function SetupConfirmPage() {
         <h1 className="text-center text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
           이제 예산을<br />등록해 볼까요?
         </h1>
-        <TripyCharacter type={3} />
+        <TripyCharacter type={6} />
       </div>
 
       <BottomCTA label="다음" onClick={() => router.push("/budget")} />

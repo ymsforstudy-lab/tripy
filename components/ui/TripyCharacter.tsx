@@ -56,9 +56,9 @@ const TYPE_CONFIG: Record<
     },
   },
   6: {
-    containerW: 138,
-    containerH: 198,
-    objectFit: "object-bottom object-cover",
+    containerW: 180,
+    containerH: 220,
+    objectFit: "object-contain",
   },
 };
 
