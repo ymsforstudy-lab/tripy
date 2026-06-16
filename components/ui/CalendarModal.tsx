@@ -70,8 +70,9 @@ export default function CalendarModal({
   maxDate = null,
 }: CalendarModalProps) {
   const today = new Date();
-  const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth() + 1);
+  const initialView = initialDeparture ?? minDate ?? { year: today.getFullYear(), month: today.getMonth() + 1, day: 1 };
+  const [viewYear, setViewYear] = useState(initialView.year);
+  const [viewMonth, setViewMonth] = useState(initialView.month);
   const [start, setStart] = useState<DateValue | null>(initialDeparture ?? null);
   const [end, setEnd] = useState<DateValue | null>(initialArrival ?? null);
 
