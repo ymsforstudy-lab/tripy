@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import BottomNav from "@/components/ui/BottomNav";
 import FAB from "@/components/ui/FAB";
@@ -146,8 +147,24 @@ export default function TravelsPage() {
             <LoadingScreen />
           </div>
         ) : displayTrips.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center py-20">
-            <span className="text-sm text-gray-50">여행이 없습니다.</span>
+          <div className="flex flex-1 flex-col items-center justify-center gap-1">
+            <Image
+              src="/icons/character-3.png"
+              alt="트리피 캐릭터"
+              width={120}
+              height={147}
+              className="mb-3"
+            />
+            <span className="text-sm font-bold text-gray-60">
+              {activeTab === "ongoing"
+                ? "등록된 여행이 없어요."
+                : "종료된 여행이 없어요."}
+            </span>
+            <span className="text-xs text-gray-60">
+              {activeTab === "ongoing"
+                ? "새로운 여행지를 등록해 볼까요?"
+                : "완료된 여행 기록은 여기서 볼 수 있어요!"}
+            </span>
           </div>
         ) : (
           displayTrips.map((trip) => {
