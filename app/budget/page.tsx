@@ -237,7 +237,7 @@ export default function BudgetPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2">
+      <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 sm:max-w-[390px]">
         <BottomCTA
           label="다음"
           onClick={() => setShowModal(true)}
