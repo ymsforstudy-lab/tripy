@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import BottomNav from "@/components/layout/BottomNav";
+import BottomNav from "@/components/ui/BottomNav";
 import FAB from "@/components/ui/FAB";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";

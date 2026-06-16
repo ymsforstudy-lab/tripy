@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";

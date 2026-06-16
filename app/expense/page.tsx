@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
 import ExchangeDropdown from "@/components/ui/ExchangeDropdown";
 import { supabase } from "@/lib/supabase";

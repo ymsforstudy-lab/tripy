@@ -1,4 +1,4 @@
-import TripyImage from "@/components/home/TripyImage";
+import TripyImage from "@/components/ui/TripyImage";
 import StatusBadge from "@/components/ui/StatusBadge";
 import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
 import { getCurrencyUnit } from "@/lib/constants/currency";
