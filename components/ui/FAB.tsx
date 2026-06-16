@@ -8,7 +8,7 @@ interface FABProps {
 
 export default function FAB({ href, tooltipText }: FABProps) {
   return (
-    <div className="pointer-events-none fixed bottom-[116px] left-1/2 z-40 w-full max-w-[375px] -translate-x-1/2 px-4">
+    <div className="pointer-events-none fixed bottom-[116px] left-1/2 z-40 w-full -translate-x-1/2 px-4 sm:max-w-[390px]">
       <div className="flex w-full justify-end">
         <div className="pointer-events-auto flex items-center gap-2">
           {tooltipText && <HintBubble text={tooltipText} />}
