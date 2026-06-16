@@ -76,10 +76,7 @@ app/
 ├── travels/page.tsx          # 여행 관리 (예정)
 └── mypage/page.tsx           # 마이페이지 (예정)
 components/
-├── layout/
-│   ├── BottomNav.tsx         # 하단 네비게이션
-│   └── Header.tsx            # 헤더 (햄버거 메뉴 포함)
-└── ui/                       # 공통 UI 컴포넌트
+└── ui/                       # 모든 UI 컴포넌트 (Header, BottomNav 포함)
 lib/
 ├── supabase.ts               # Supabase 클라이언트
 └── types.ts                  # 타입 정의

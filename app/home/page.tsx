@@ -2,14 +2,14 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import BottomNav from "@/components/layout/BottomNav";
+import BottomNav from "@/components/ui/BottomNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
-import HomeHeader from "@/components/home/HomeHeader";
-import BudgetCard from "@/components/home/BudgetCard";
-import HomeFilter from "@/components/home/HomeFilter";
-import FilterCategory from "@/components/home/FilterCategory";
+import HomeHeader from "@/components/ui/HomeHeader";
+import BudgetCard from "@/components/ui/BudgetCard";
+import HomeFilter from "@/components/ui/HomeFilter";
+import FilterCategory from "@/components/ui/FilterCategory";
 import { getCurrencyUnit } from "@/lib/constants/currency";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import FAB from "@/components/ui/FAB";
