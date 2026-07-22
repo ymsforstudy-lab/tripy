@@ -128,7 +128,7 @@ function DateContent() {
       <Header onBack={handleBack} />
 
       <div className="px-4 pt-5">
-        <h1 className="text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           {step === "confirm"
             ? <>여행지 정보를<br />확인해주세요!</>
             : <>여행 일정을<br />등록해주세요</>}

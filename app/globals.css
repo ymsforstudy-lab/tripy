@@ -49,6 +49,7 @@
   --font-size-body-l: 16px;     /* 바디_볼드_L */
   --font-size-body-m: 14px;     /* 바디_볼드/미디움/레귤러_M */
   --font-size-body-s: 12px;     /* 바디_볼드/레귤러_S */
+  --font-size-caption-s: 10px;  /* 캡션_레귤러_S */
 
   /* ── Font Weight ── */
   --font-weight-bold: 700;

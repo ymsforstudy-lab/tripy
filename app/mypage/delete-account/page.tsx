@@ -51,12 +51,12 @@ export default function DeleteAccountPage() {
         {/* 타이틀 */}
         <div className="flex flex-col gap-4">
           <div className="py-1">
-            <h1 className="text-2xl font-semibold leading-[1.5] text-black">
+            <h1 className="text-2xl font-semibold leading-default text-black">
               떠나신다니 아쉬워요.<br />
               정말 탈퇴하시겠어요?
             </h1>
           </div>
-          <p className="text-[14px] leading-[1.5] text-gray-60">
+          <p className="text-body-m leading-default text-gray-60">
             회원 탈퇴 시 계정 정보 및 이용 내역이 삭제되며,<br />
             삭제된 정보는 복구할 수 없습니다.
           </p>
@@ -71,7 +71,7 @@ export default function DeleteAccountPage() {
               onClick={() => setReasonOpen((prev) => !prev)}
               className="flex h-12 w-full items-center justify-between rounded-xl border border-gray-30 bg-white px-4 py-2"
             >
-              <span className={`text-[14px] leading-[1.5] ${selectedReason ? "text-gray-90" : "text-gray-60"}`}>
+              <span className={`text-body-m leading-default ${selectedReason ? "text-gray-90" : "text-gray-60"}`}>
                 {selectedReason ?? "떠나시는 이유가 있을까요?"}
               </span>
               <svg
@@ -92,7 +92,7 @@ export default function DeleteAccountPage() {
                       setSelectedReason(reason);
                       setReasonOpen(false);
                     }}
-                    className={`flex w-full items-center px-4 py-3 text-[14px] leading-[1.5] transition-colors hover:bg-gray-5 ${
+                    className={`flex w-full items-center px-4 py-3 text-body-m leading-default transition-colors hover:bg-gray-5 ${
                       selectedReason === reason ? "bg-gray-5 font-medium text-gray-90" : "text-gray-90"
                     }`}
                   >
@@ -110,9 +110,9 @@ export default function DeleteAccountPage() {
                 value={content}
                 onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
                 placeholder="내용을 입력해 주세요"
-                className="flex-1 resize-none bg-transparent text-[14px] leading-[1.5] text-gray-90 outline-none placeholder:text-gray-50"
+                className="flex-1 resize-none bg-transparent text-body-m leading-default text-gray-90 outline-none placeholder:text-gray-50"
               />
-              <span className="self-end text-[12px] leading-[1.5] text-gray-50">
+              <span className="self-end text-body-s leading-default text-gray-50">
                 {content.length}/{MAX_LENGTH}
               </span>
             </div>
@@ -131,7 +131,7 @@ export default function DeleteAccountPage() {
           type="button"
           onClick={handleDelete}
           disabled={submitting}
-          className="flex h-14 w-full items-center justify-center rounded-xl bg-green-50 text-base font-semibold leading-[1.5] text-white disabled:opacity-50"
+          className="flex h-14 w-full items-center justify-center rounded-xl bg-green-50 text-base font-semibold leading-default text-white disabled:opacity-50"
         >
           {submitting ? "처리 중..." : "탈퇴하기"}
         </button>

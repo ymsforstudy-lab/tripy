@@ -18,9 +18,9 @@ interface ButtonProps {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "rounded-xl bg-green-50 text-base font-semibold leading-[1.5] text-white disabled:opacity-50",
+    "rounded-xl bg-green-50 text-base font-semibold leading-default text-white disabled:opacity-50",
   secondary:
-    "rounded-xl border border-gray-50 bg-white text-base font-semibold leading-[1.5] text-gray-80 opacity-50 disabled:border-gray-30 disabled:bg-gray-20 disabled:text-gray-40",
+    "rounded-xl border border-gray-50 bg-white text-base font-semibold leading-default text-gray-80 opacity-50 disabled:border-gray-30 disabled:bg-gray-20 disabled:text-gray-40",
   ghost:
     "text-sm text-gray-50 disabled:opacity-40",
 };

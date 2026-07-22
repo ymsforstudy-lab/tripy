@@ -74,7 +74,7 @@ export default function NicknamePage() {
 
       {/* 타이틀 */}
       <div className="px-4 pt-5">
-        <h1 className="text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           닉네임을<br />입력해 주세요
         </h1>
       </div>

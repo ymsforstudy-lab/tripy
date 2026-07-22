@@ -58,7 +58,7 @@ function RegionContent() {
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
-        <h1 className="text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           떠날 여행지를<br />등록해주세요
         </h1>
       </div>

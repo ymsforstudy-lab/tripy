@@ -31,7 +31,7 @@ export default function SettingsPage() {
           <button
             key={item.label}
             type="button"
-            className="flex w-full items-center p-4 text-left text-[14px] font-medium leading-[1.5] text-black"
+            className="flex w-full items-center p-4 text-left text-body-m font-medium leading-default text-black"
           >
             {item.label}
           </button>
@@ -48,7 +48,7 @@ export default function SettingsPage() {
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
+              className="flex w-full items-center px-4 py-3 text-left text-body-m font-medium leading-default text-gray-70"
             >
               {item.label}
             </a>
@@ -57,7 +57,7 @@ export default function SettingsPage() {
               key={item.label}
               type="button"
               onClick={() => router.push(item.href!)}
-              className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
+              className="flex w-full items-center px-4 py-3 text-left text-body-m font-medium leading-default text-gray-70"
             >
               {item.label}
             </button>
@@ -65,7 +65,7 @@ export default function SettingsPage() {
             <button
               key={item.label}
               type="button"
-              className="flex w-full items-center px-4 py-3 text-left text-[14px] font-medium leading-[1.5] text-gray-70"
+              className="flex w-full items-center px-4 py-3 text-left text-body-m font-medium leading-default text-gray-70"
             >
               {item.label}
             </button>

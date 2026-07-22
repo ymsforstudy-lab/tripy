@@ -253,7 +253,7 @@ function HomePageContent() {
         {filteredExpenses.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16">
             <CircleAlertInfo />
-            <span className="text-[14px] text-gray-50">
+            <span className="text-body-m text-gray-50">
               아직 등록된 지출 내역이 없어요.
             </span>
           </div>
@@ -268,16 +268,16 @@ function HomePageContent() {
                   <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5">
                     <CategoryIcon category={expense.category} size={20} />
                   </div>
-                  <div className="flex flex-col leading-[1.5]">
-                    <span className="text-[14px] font-bold text-gray-90">
+                  <div className="flex flex-col leading-default">
+                    <span className="text-body-m font-bold text-gray-90">
                       {CATEGORY_LABEL[expense.category] ?? expense.category}
                     </span>
-                    <span className="text-[12px] text-gray-50">
+                    <span className="text-body-s text-gray-50">
                       {formatDate(expense.expense_date)}
                     </span>
                   </div>
                 </div>
-                <span className="text-[14px] font-medium text-gray-90">
+                <span className="text-body-m font-medium text-gray-90">
                   -{formatAmount(expense.amount)}{getCurrencyUnit(expense.currency)}
                 </span>
               </div>
