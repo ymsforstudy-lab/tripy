@@ -10,8 +10,8 @@ import { COUNTRIES } from "@/lib/constants/countries";
 
 const SearchIcon = (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="7" cy="7" r="5.5" stroke="#8E8E8E" strokeWidth="1.5" />
-    <path d="M11 11L14 14" stroke="#8E8E8E" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="7" cy="7" r="5.5" stroke="var(--color-gray-50)" strokeWidth="1.5" />
+    <path d="M11 11L14 14" stroke="var(--color-gray-50)" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -39,7 +39,7 @@ export default function CountryPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
@@ -69,7 +69,7 @@ export default function CountryPage() {
 
       <div className="mt-4 h-2 border-t border-gray-30 bg-gray-10" />
 
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+      <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4 pb-24">
         {/* 검색 결과 없을 때 직접 입력 옵션 */}
         {noResults && (
           <button
@@ -77,7 +77,7 @@ export default function CountryPage() {
             className="flex items-center gap-2 rounded-xl border border-dashed border-gray-30 px-6 py-4 text-sm text-gray-60"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3V13M3 8H13" stroke="#717171" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M8 3V13M3 8H13" stroke="var(--color-gray-60)" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <span>
               <span className="font-medium text-gray-90">'{search}'</span> 직접 입력하기

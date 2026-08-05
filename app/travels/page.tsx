@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import BottomNav from "@/components/ui/BottomNav";
 import FAB from "@/components/ui/FAB";
@@ -40,7 +41,7 @@ function formatDate(dateStr: string): string {
   return dateStr.replace(/-/g, ".");
 }
 
-const ManageIcon = ({ color = "#6BC20F" }: { color?: string }) => (
+const ManageIcon = ({ color = "var(--color-green-50)" }: { color?: string }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <g transform="translate(1.676, 3.332)">
       <path
@@ -56,7 +57,7 @@ const DeleteIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path
       d="M5.27 5.27a.75.75 0 0 1 1.06 0L10 8.94l3.67-3.67a.75.75 0 1 1 1.06 1.06L11.06 10l3.67 3.67a.75.75 0 1 1-1.06 1.06L10 11.06l-3.67 3.67a.75.75 0 0 1-1.06-1.06L8.94 10 5.27 6.33a.75.75 0 0 1 0-1.06Z"
-      fill="#8E8E8E"
+      fill="var(--color-gray-50)"
     />
   </svg>
 );
@@ -146,8 +147,24 @@ export default function TravelsPage() {
             <LoadingScreen />
           </div>
         ) : displayTrips.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center py-20">
-            <span className="text-sm text-gray-50">여행이 없습니다.</span>
+          <div className="flex flex-1 flex-col items-center justify-center gap-1">
+            <Image
+              src="/icons/character-3.png"
+              alt="트리피 캐릭터"
+              width={120}
+              height={147}
+              className="mb-3"
+            />
+            <span className="text-sm font-bold text-gray-60">
+              {activeTab === "ongoing"
+                ? "등록된 여행이 없어요."
+                : "종료된 여행이 없어요."}
+            </span>
+            <span className="text-xs text-gray-60">
+              {activeTab === "ongoing"
+                ? "새로운 여행지를 등록해 볼까요?"
+                : "완료된 여행 기록은 여기서 볼 수 있어요!"}
+            </span>
           </div>
         ) : (
           displayTrips.map((trip) => {

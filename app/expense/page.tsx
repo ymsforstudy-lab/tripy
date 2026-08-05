@@ -316,12 +316,12 @@ export default function ExpensePage() {
                 width="13"
                 height="12"
                 rx="2"
-                stroke="#8E8E8E"
+                stroke="var(--color-gray-50)"
                 strokeWidth="1.5"
               />
               <path
                 d="M5 1V4M11 1V4M1.5 6.5H14.5"
-                stroke="#8E8E8E"
+                stroke="var(--color-gray-50)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
               />

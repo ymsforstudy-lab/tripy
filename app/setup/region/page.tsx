@@ -29,8 +29,8 @@ const REGIONS = [
 
 const SearchIcon = (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="7" cy="7" r="5.5" stroke="#8E8E8E" strokeWidth="1.5" />
-    <path d="M11 11L14 14" stroke="#8E8E8E" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="7" cy="7" r="5.5" stroke="var(--color-gray-50)" strokeWidth="1.5" />
+    <path d="M11 11L14 14" stroke="var(--color-gray-50)" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -54,7 +54,7 @@ function RegionContent() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
@@ -89,7 +89,7 @@ function RegionContent() {
 
       <div className="mt-4 h-2 border-t border-gray-30 bg-gray-10" />
 
-      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 pb-24">
         {filtered.map((region) => (
           <SelectChip
             key={region}

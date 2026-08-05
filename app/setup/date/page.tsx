@@ -124,7 +124,7 @@ function DateContent() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-white">
+    <div className="relative flex h-screen-safe flex-col bg-white">
       <Header onBack={handleBack} />
 
       <div className="px-4 pt-5">
@@ -223,7 +223,7 @@ function DateContent() {
         </div>
       )}
 
-      <div className="mt-auto">
+      <div className="mt-auto pb-24">
         <BottomCTA
           label={saving ? "등록 중..." : "다음"}
           onClick={handleNext}
