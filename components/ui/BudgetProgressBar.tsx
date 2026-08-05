@@ -10,7 +10,7 @@ const GOOD_FILL_STYLE = {
 
 const DANGER_FILL_STYLE = {
   background:
-    "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(221,46,68,0.3) 100%), linear-gradient(90deg, var(--color-danger-80) 0%, var(--color-danger-80) 100%)",
+    "linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(221,46,68,0.3) 100%), linear-gradient(90deg, var(--color-danger-70) 0%, var(--color-danger-70) 100%)",
 };
 
 export default function BudgetProgressBar({ ratio, className = "" }: BudgetProgressBarProps) {
