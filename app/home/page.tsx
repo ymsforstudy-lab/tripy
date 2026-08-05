@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import BottomNav from "@/components/layout/BottomNav";
+import BottomNav from "@/components/ui/BottomNav";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
-import HomeHeader from "@/components/home/HomeHeader";
-import BudgetCard from "@/components/home/BudgetCard";
-import HomeFilter from "@/components/home/HomeFilter";
-import FilterCategory from "@/components/home/FilterCategory";
+import HomeHeader from "@/components/ui/HomeHeader";
+import BudgetCard from "@/components/ui/BudgetCard";
+import HomeFilter from "@/components/ui/HomeFilter";
+import FilterCategory from "@/components/ui/FilterCategory";
 import { getCurrencyUnit } from "@/lib/constants/currency";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import FAB from "@/components/ui/FAB";
@@ -111,6 +111,15 @@ const DUMMY_EXPENSES: Expense[] = [
 ];
 
 export default function HomePage() {
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <HomePageContent />
+    </Suspense>
+  );
+}
+
+
+function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
@@ -201,7 +210,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative mx-auto flex min-h-screen w-full max-w-[375px] flex-col bg-white pb-[84px]">
+    <div className="relative flex min-h-screen w-full flex-col bg-white pb-[84px]">
       <HomeHeader />
 
       <div className="mt-4">

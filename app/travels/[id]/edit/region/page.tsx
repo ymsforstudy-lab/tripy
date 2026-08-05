@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
 import SelectChip from "@/components/ui/SelectChip";
+import { supabase } from "@/lib/supabase";
 
 const REGIONS = [
   "서울특별시",
@@ -91,7 +92,22 @@ export default function EditRegionPage() {
 
       <BottomCTA
         label="다음"
-        onClick={() => router.push("/travels")}
+        onClick={async () => {
+          if (!selected) return;
+
+          const { error } = await supabase
+            .from("trips")
+            .update({ title: "대한민국 여행", destination: selected })
+            .eq("id", id);
+
+          if (error) {
+            console.error("여행지 수정 실패:", error);
+            alert("여행지 수정에 실패했습니다. 다시 시도해주세요.");
+            return;
+          }
+
+          router.push("/travels");
+        }}
         disabled={!selected}
       />
     </div>

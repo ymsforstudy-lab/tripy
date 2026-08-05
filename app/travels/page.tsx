@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import BottomNav from "@/components/layout/BottomNav";
+import BottomNav from "@/components/ui/BottomNav";
 import FAB from "@/components/ui/FAB";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -107,7 +107,7 @@ export default function TravelsPage() {
   const displayTrips = activeTab === "ongoing" ? ongoingTrips : endedTrips;
 
   return (
-    <div className="relative mx-auto flex min-h-screen max-w-[390px] flex-col bg-white">
+    <div className="relative flex min-h-screen w-full flex-col bg-white">
       {/* Header */}
       <div className="flex items-center justify-center pb-4 pt-6">
         <span className="text-base font-bold leading-[1.5] text-gray-90">

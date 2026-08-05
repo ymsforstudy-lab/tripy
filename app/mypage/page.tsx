@@ -3,14 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import BottomNav from "@/components/layout/BottomNav";
+import BottomNav from "@/components/ui/BottomNav";
 import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
 import StatusBadge from "@/components/ui/StatusBadge";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import IconSetting from "@/components/icons/IconSetting";
+import IconSetting from "@/components/ui/IconSetting";
 
 type CategoryRank = {
   rank: number;

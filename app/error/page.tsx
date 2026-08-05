@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import BottomCTA from "@/components/ui/BottomCTA";
+import TripyCharacter from "@/components/ui/TripyCharacter";
 
 export default function ErrorPage() {
   const router = useRouter();
@@ -20,14 +20,7 @@ export default function ErrorPage() {
             <p>잠시 후 다시 이용해 주세요</p>
           </div>
         </div>
-        <div className="relative h-[198px] w-[120px]">
-          <Image
-            src="/tripy-error.png"
-            alt="오류 마스코트"
-            fill
-            className="object-contain"
-          />
-        </div>
+        <TripyCharacter type={4} />
       </div>
 
       {/* 하단 버튼 */}

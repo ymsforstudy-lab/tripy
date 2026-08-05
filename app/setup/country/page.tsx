@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
 import SelectChip from "@/components/ui/SelectChip";
