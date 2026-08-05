@@ -84,7 +84,7 @@ export default function BottomNav() {
                   }}
                 >
                   <Icon color="white" />
-                  <span className="text-[12px] font-normal leading-[1.5] text-white">
+                  <span className="text-body-s font-normal leading-default text-white">
                     {label}
                   </span>
                 </div>
@@ -99,7 +99,7 @@ export default function BottomNav() {
               <div className="flex h-[42px] w-14 flex-col items-center justify-start gap-0.5 pt-0.5">
                 <Icon color={color} />
                 <span
-                  className={`text-[12px] font-normal leading-[1.5] ${
+                  className={`text-body-s font-normal leading-default ${
                     isActive ? "text-green-50" : "text-gray-70"
                   }`}
                 >

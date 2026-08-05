@@ -22,7 +22,7 @@ export default function FilterCategory({
     <div className="absolute top-[78px] right-4 z-50 flex w-[211px] flex-col rounded-2xl border border-gray-40 bg-white p-4">
       <div className="flex w-full flex-col gap-3">
         <div className="mb-1 flex w-full items-center justify-between">
-          <span className="text-[14px] font-bold leading-[1.5] text-gray-90">
+          <span className="text-body-m font-bold leading-default text-gray-90">
             카테고리
           </span>
           <button
@@ -58,7 +58,7 @@ export default function FilterCategory({
                   )}
                 </div>
                 <div className="flex items-center justify-center rounded bg-green-0 px-2 py-1">
-                  <span className="text-[12px] leading-[1.5] text-gray-90">
+                  <span className="text-body-s leading-default text-gray-90">
                     {cat.label}
                   </span>
                 </div>

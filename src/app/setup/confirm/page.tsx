@@ -13,7 +13,7 @@ export default function SetupConfirmPage() {
       <Header onBack={() => router.back()} />
 
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
-        <h1 className="text-center text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-center text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           이제 예산을<br />등록해 볼까요?
         </h1>
         <TripyCharacter type={6} />

@@ -17,17 +17,17 @@ export default function HomeFilter({
     <div className="flex w-full items-start justify-between">
       <div className="flex min-w-0 flex-1 flex-col items-start justify-center gap-0.5">
         <div className="flex items-center gap-1">
-          <span className="truncate text-[16px] font-semibold leading-[1.5] text-gray-90">
+          <span className="truncate text-body-l font-semibold leading-default text-gray-90">
             {hasTrip ? tripName : "여행 없음"}
           </span>
           <div className={`flex h-5 items-center justify-center rounded-[30px] px-2 py-1 ${hasTrip ? "bg-info-5" : "bg-gray-5"}`}>
-            <span className={`whitespace-nowrap text-[12px] leading-[1.5] ${hasTrip ? "font-bold text-info-50" : "font-normal text-gray-50"}`}>
+            <span className={`whitespace-nowrap text-body-s leading-default ${hasTrip ? "font-bold text-info-50" : "font-normal text-gray-50"}`}>
               {hasTrip ? "진행중" : "대기중"}
             </span>
           </div>
         </div>
         {hasTrip && (dateRange || nightsLabel) && (
-          <div className="flex items-center gap-1 text-[12px] leading-[1.5] text-gray-50">
+          <div className="flex items-center gap-1 text-body-s leading-default text-gray-50">
             {dateRange && <span>{dateRange}</span>}
             {dateRange && nightsLabel && (
               <span aria-hidden className="inline-block size-[2px] rounded-full bg-gray-50" />

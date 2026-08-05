@@ -195,7 +195,7 @@ export default function ExpensePage() {
       <div className="mx-auto mt-0 flex w-[343px] gap-[5px] rounded-xl bg-gray-5 p-2">
         <button
           onClick={() => setTab("expense")}
-          className={`flex flex-1 items-center justify-center rounded-[10px] py-2 text-[14px] font-bold transition-colors ${
+          className={`flex flex-1 items-center justify-center rounded-[10px] py-2 text-body-m font-bold transition-colors ${
             tab === "expense"
               ? "bg-green-10 text-green-70"
               : "bg-gray-5 text-gray-60"
@@ -205,7 +205,7 @@ export default function ExpensePage() {
         </button>
         <button
           onClick={() => setTab("budget")}
-          className={`flex flex-1 items-center justify-center rounded-[10px] py-2 text-[14px] font-bold transition-colors ${
+          className={`flex flex-1 items-center justify-center rounded-[10px] py-2 text-body-m font-bold transition-colors ${
             tab === "budget"
               ? "bg-green-10 text-green-70"
               : "bg-gray-5 text-gray-60"
@@ -227,7 +227,7 @@ export default function ExpensePage() {
           value={amount}
           onChange={(e) => setAmount(formatNumber(e.target.value))}
           placeholder="0"
-          className="bg-transparent text-right text-[24px] font-bold text-black opacity-90 outline-none placeholder:text-gray-30 w-36"
+          className="bg-transparent text-right text-title-xl font-bold text-black opacity-90 outline-none placeholder:text-gray-30 w-36"
         />
       </div>
 
@@ -239,13 +239,13 @@ export default function ExpensePage() {
           {/* 결제 수단 */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
-              <span className="text-[16px] font-bold text-black">결제 수단</span>
-              <span className="text-[10px] text-danger-50">*</span>
+              <span className="text-body-l font-bold text-black">결제 수단</span>
+              <span className="text-caption-s text-danger-50">*</span>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setPaymentMethod("card")}
-                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
+                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
                   paymentMethod === "card"
                     ? "bg-green-50 text-white"
                     : "bg-gray-20 text-gray-70"
@@ -255,7 +255,7 @@ export default function ExpensePage() {
               </button>
               <button
                 onClick={() => setPaymentMethod("cash")}
-                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
+                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
                   paymentMethod === "cash"
                     ? "bg-green-50 text-white"
                     : "bg-gray-20 text-gray-70"
@@ -268,7 +268,7 @@ export default function ExpensePage() {
 
           {/* 카테고리 */}
           <div className="flex flex-col gap-2">
-            <span className="text-[16px] font-bold text-black">카테고리</span>
+            <span className="text-body-l font-bold text-black">카테고리</span>
             <div className="flex items-center justify-between">
               {CATEGORIES.map((cat) => (
                 <div key={cat.id} className="flex flex-col items-center gap-2">
@@ -282,7 +282,7 @@ export default function ExpensePage() {
                   >
                     <CategoryIcon category={cat.id} size={20} />
                   </button>
-                  <span className={`text-[12px] ${category === cat.id ? "font-bold text-black" : "font-normal text-black"}`}>
+                  <span className={`text-body-s ${category === cat.id ? "font-bold text-black" : "font-normal text-black"}`}>
                     {cat.label}
                   </span>
                 </div>
@@ -295,10 +295,10 @@ export default function ExpensePage() {
         {/* 날짜 */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-1">
-            <span className="text-[16px] font-bold text-black">
+            <span className="text-body-l font-bold text-black">
               {tab === "expense" ? "지출 날짜" : "여행 날짜"}
             </span>
-            <span className="text-[10px] text-danger-50">*</span>
+            <span className="text-caption-s text-danger-50">*</span>
           </div>
           <button
             type="button"
@@ -335,7 +335,7 @@ export default function ExpensePage() {
 
         {/* 내용 */}
         <div className="flex flex-col gap-2">
-          <span className="text-[16px] font-bold text-black">
+          <span className="text-body-l font-bold text-black">
             {tab === "expense" ? "지출 내용" : "추가 내용"}
           </span>
           <textarea
@@ -343,7 +343,7 @@ export default function ExpensePage() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="내용을 입력해 주세요"
             rows={4}
-            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-[14px] text-gray-90 outline-none placeholder:text-gray-50"
+            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-body-m text-gray-90 outline-none placeholder:text-gray-50"
           />
         </div>
       </div>
@@ -353,7 +353,7 @@ export default function ExpensePage() {
         <button
           onClick={handleSubmit}
           disabled={tab === "expense" ? !isExpenseValid || submitting : !isBudgetValid || submitting}
-          className="flex h-14 w-full items-center justify-center rounded-xl bg-green-50 text-[16px] font-bold text-white opacity-50 disabled:opacity-50 enabled:opacity-100 transition-opacity"
+          className="flex h-14 w-full items-center justify-center rounded-xl bg-green-50 text-body-l font-bold text-white opacity-50 disabled:opacity-50 enabled:opacity-100 transition-opacity"
         >
           추가하기
         </button>

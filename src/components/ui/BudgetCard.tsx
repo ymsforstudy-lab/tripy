@@ -27,7 +27,7 @@ export default function BudgetCard({
   return (
     <div className="relative z-0 w-full px-4">
       <div className="relative flex h-[82px] items-center justify-between">
-        <h1 className="text-[20px] font-bold leading-[1.5] text-green-70">
+        <h1 className="text-title-m font-bold leading-default text-green-70">
           오늘 나의 예산
         </h1>
         <div className="absolute right-0 bottom-0 flex items-end">
@@ -39,15 +39,15 @@ export default function BudgetCard({
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <span className="text-[14px] leading-[1.5] text-gray-80">오늘 쓴 돈</span>
+              <span className="text-body-m leading-default text-gray-80">오늘 쓴 돈</span>
               <div className="flex items-baseline gap-0.5 font-bold">
-                <span className="text-[20px] text-black">
+                <span className="text-title-m text-black">
                   {formatAmount(totalSpent)}
                 </span>
-                <span className="text-[14px] font-bold leading-[1.5] text-black">{unit}</span>
+                <span className="text-body-m font-bold leading-default text-black">{unit}</span>
               </div>
             </div>
-            <div className="flex items-center justify-between text-[14px] leading-[1.5]">
+            <div className="flex items-center justify-between text-body-m leading-default">
               <span className="text-gray-80">하루 예산</span>
               <div className="flex gap-0.5 text-gray-60">
                 <span>{formatAmount(totalBudget)}</span>
@@ -60,16 +60,16 @@ export default function BudgetCard({
             <div className="flex w-full max-w-[285px] flex-col gap-2">
               {!hasSpending ? (
                 <>
-                  <span className="whitespace-nowrap text-[12px] leading-[1.5] text-gray-80">
+                  <span className="whitespace-nowrap text-body-s leading-default text-gray-80">
                     여행 소비를 계획해보세요.
                   </span>
                   <div className="h-[10px] w-full rounded-[20px] bg-gray-30" />
                 </>
               ) : (
                 <>
-                  <div className="flex items-center gap-1 leading-[1.5]">
+                  <div className="flex items-center gap-1 leading-default">
                     <StatusBadge variant={isOver ? "danger" : "good"} />
-                    <span className="text-[12px] text-gray-80">
+                    <span className="text-body-s text-gray-80">
                       {isOver
                         ? "지출이 여행 예산보다 초과되었어요!"
                         : "여행 소비 아주 훌륭한데요?"}

@@ -8,7 +8,7 @@ export default function HintBubble({
   return (
     <div className="relative inline-flex items-center">
       <div className="flex items-center justify-center rounded-[8px] bg-info-5 px-[10px] py-[5px]">
-        <p className="whitespace-nowrap text-[12px] leading-[1.5] text-info-50">
+        <p className="whitespace-nowrap text-body-s leading-default text-info-50">
           {text}
         </p>
       </div>

@@ -35,10 +35,10 @@ export default function DeleteConfirmModal({
       <div className="relative z-10 w-[339px] overflow-hidden rounded-xl bg-white">
         {/* Text */}
         <div className="flex flex-col gap-1 px-7 pb-0 pt-6">
-          <p className="text-[20px] font-bold leading-[1.5] text-gray-90">
+          <p className="text-title-m font-bold leading-default text-gray-90">
             이 여행을 삭제하시겠습니까?
           </p>
-          <p className="text-sm font-normal leading-[1.5] text-gray-60">
+          <p className="text-sm font-normal leading-default text-gray-60">
             삭제된 여행지는 복구가 어려워요.
           </p>
         </div>

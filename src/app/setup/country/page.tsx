@@ -39,11 +39,11 @@ export default function CountryPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
-        <h1 className="text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           떠날 여행지를<br />등록해주세요
         </h1>
       </div>
@@ -69,7 +69,7 @@ export default function CountryPage() {
 
       <div className="mt-4 h-2 border-t border-gray-30 bg-gray-10" />
 
-      <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+      <div className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4 pb-24">
         {/* 검색 결과 없을 때 직접 입력 옵션 */}
         {noResults && (
           <button
