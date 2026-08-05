@@ -136,7 +136,7 @@ export default function MyPage() {
     <div className="relative flex min-h-screen flex-col bg-white">
       {/* Header */}
       <div className="relative flex items-center justify-center pb-4 px-4 pt-6">
-        <span className="text-base font-semibold leading-[1.5] text-gray-90">
+        <span className="text-base font-semibold leading-default text-gray-90">
           마이페이지
         </span>
         <button
@@ -249,7 +249,7 @@ export default function MyPage() {
                 className="flex w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-xl bg-gray-5 p-4"
               >
                 <div className="flex size-5 items-center justify-center rounded-lg bg-gray-20">
-                  <span className="text-[10px] text-gray-60">{item.rank}</span>
+                  <span className="text-caption-s text-gray-60">{item.rank}</span>
                 </div>
                 <CategoryIcon category={item.categoryId} size={24} className="m-[10px]" />
                 <span className="text-xs text-black">{item.label}</span>
@@ -277,7 +277,7 @@ export default function MyPage() {
         <div className="h-2 w-full border-t border-gray-30 bg-gray-10" />
         <button
           onClick={handleLogout}
-          className="w-full text-center text-sm leading-[1.5] text-gray-70"
+          className="w-full text-center text-sm leading-default text-gray-70"
         >
           로그아웃
         </button>

@@ -12,10 +12,10 @@ export default function ErrorPage() {
       {/* 중앙 콘텐츠 */}
       <div className="flex flex-1 flex-col items-center justify-center gap-5 px-4 pb-24">
         <div className="flex flex-col items-center gap-[10px] text-center">
-          <p className="text-[24px] font-semibold leading-[1.5] text-black">
+          <p className="text-title-xl font-semibold leading-default text-black">
             일시적인 오류가 발생했어요.
           </p>
-          <div className="text-[16px] font-semibold leading-[1.5] text-gray-60">
+          <div className="text-body-l font-semibold leading-default text-gray-60">
             <p>서비스 이용에 불편을 드려 죄송합니다.</p>
             <p>잠시 후 다시 이용해 주세요</p>
           </div>

@@ -111,7 +111,7 @@ export default function TravelsPage() {
     <div className="relative flex min-h-screen w-full flex-col bg-white">
       {/* Header */}
       <div className="flex items-center justify-center pb-4 pt-6">
-        <span className="text-base font-bold leading-[1.5] text-gray-90">
+        <span className="text-base font-bold leading-default text-gray-90">
           여행 관리
         </span>
       </div>

@@ -7,3 +7,8 @@ body {
   background: var(--color-gray-white);
   color: var(--color-gray-90);
 }
+
+.h-screen-safe {
+  height: 100vh;
+  height: 100dvh;
+}

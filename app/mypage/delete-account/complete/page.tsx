@@ -35,12 +35,12 @@ export default function DeleteAccountCompletePage() {
         {/* 타이틀 */}
         <div className="flex flex-col gap-4">
           <div className="py-1">
-            <h1 className="text-[24px] font-semibold leading-[1.5] text-black">
+            <h1 className="text-title-xl font-semibold leading-default text-black">
               탈퇴 처리가<br />
               완료되었습니다.
             </h1>
           </div>
-          <p className="text-[14px] leading-[1.5] text-gray-60">
+          <p className="text-body-m leading-default text-gray-60">
             새로운 여행의 예산 계획이 필요해지면<br />
             언제든 다시 찾아주세요.
           </p>

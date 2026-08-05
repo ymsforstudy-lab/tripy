@@ -38,7 +38,7 @@ export default function ExchangeDropdown({
         className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2"
         aria-label="통화 선택 열기"
       >
-        <span className="text-[12px] font-bold text-gray-90">
+        <span className="text-body-s font-bold text-gray-90">
           {value}({CURRENCY_UNIT[value]})
         </span>
         <svg

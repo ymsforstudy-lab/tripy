@@ -89,7 +89,7 @@ export default function SplashPage() {
         </div>
 
         {/* 타이틀 */}
-        <h1 className="text-center text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-center text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           여행 비용 정리는<br />이제 트리피에서!
         </h1>
       </div>

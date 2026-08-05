@@ -124,11 +124,11 @@ function DateContent() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-white">
+    <div className="relative flex h-screen-safe flex-col bg-white">
       <Header onBack={handleBack} />
 
       <div className="px-4 pt-5">
-        <h1 className="text-2xl font-bold leading-[1.5] tracking-[-0.48px] text-gray-90">
+        <h1 className="text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           {step === "confirm"
             ? <>여행지 정보를<br />확인해주세요!</>
             : <>여행 일정을<br />등록해주세요</>}
@@ -223,7 +223,7 @@ function DateContent() {
         </div>
       )}
 
-      <div className="mt-auto">
+      <div className="mt-auto pb-24">
         <BottomCTA
           label={saving ? "등록 중..." : "다음"}
           onClick={handleNext}

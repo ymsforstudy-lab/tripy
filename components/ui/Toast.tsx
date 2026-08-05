@@ -37,7 +37,7 @@ export default function Toast({ message, visible }: ToastProps) {
             strokeLinejoin="round"
           />
         </svg>
-        <span className="whitespace-nowrap text-[14px] leading-[1.5] text-white">
+        <span className="whitespace-nowrap text-body-m leading-default text-white">
           {message}
         </span>
       </div>
