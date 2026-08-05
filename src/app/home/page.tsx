@@ -16,6 +16,8 @@ import FAB from "@/components/ui/FAB";
 import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Toast from "@/components/ui/Toast";
+import { useExchangeRates } from "@/hooks/useExchangeRates";
+import { convertExpensesToBaseCurrency, FALLBACK_RATES } from "@/lib/exchange-rates";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -124,6 +126,7 @@ function HomePageContent() {
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { trip: cachedTrip, loading: tripLoading } = useTrip();
+  const { rates } = useExchangeRates();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -182,7 +185,12 @@ function HomePageContent() {
       ? expenses.filter((e) => selectedCategories.includes(e.category))
       : expenses;
 
-  const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const baseCurrency = trip?.currency ?? "KRW";
+  const totalSpent = convertExpensesToBaseCurrency(
+    expenses,
+    baseCurrency,
+    rates ?? FALLBACK_RATES
+  );
 
   const totalBudget = trip?.total_budget ?? 0;
   const progressRatio = totalBudget > 0 ? totalSpent / totalBudget : 0;
