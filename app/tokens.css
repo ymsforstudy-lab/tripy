@@ -43,14 +43,16 @@
   --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
 
   /* ── Font Size (Figma Typography 변수) ── */
-  --font-size-title-xl: 24px;   /* 타이틀_볼드_XL */
-  --font-size-title-m: 20px;    /* 타이틀_볼드_M */
-  --font-size-body-l: 16px;     /* 바디_볼드_L */
-  --font-size-body-m: 14px;     /* 바디_볼드/미디움/레귤러_M */
-  --font-size-body-s: 12px;     /* 바디_볼드/레귤러_S */
+  --font-size-title-xl: 24px;    /* 타이틀_볼드_XL  — SemiBold 600 */
+  --font-size-title-m: 20px;     /* 타이틀_볼드_M   — Bold 700 */
+  --font-size-body-l: 16px;      /* 바디_볼드_L     — SemiBold 600 */
+  --font-size-body-m: 14px;      /* 바디_볼드_M     — Bold 700 */
+  --font-size-body-s: 12px;      /* 바디_볼드/레귤러_S */
+  --font-size-caption-s: 10px;   /* 캡션_레귤러_S   — Regular 400 */
 
   /* ── Font Weight ── */
   --font-weight-bold: 700;
+  --font-weight-semibold: 600;
   --font-weight-medium: 500;
   --font-weight-regular: 400;
 
