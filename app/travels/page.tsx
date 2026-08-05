@@ -40,7 +40,7 @@ function formatDate(dateStr: string): string {
   return dateStr.replace(/-/g, ".");
 }
 
-const ManageIcon = ({ color = "#6BC20F" }: { color?: string }) => (
+const ManageIcon = ({ color = "var(--color-green-50)" }: { color?: string }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <g transform="translate(1.676, 3.332)">
       <path
@@ -56,7 +56,7 @@ const DeleteIcon = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
     <path
       d="M5.27 5.27a.75.75 0 0 1 1.06 0L10 8.94l3.67-3.67a.75.75 0 1 1 1.06 1.06L11.06 10l3.67 3.67a.75.75 0 1 1-1.06 1.06L10 11.06l-3.67 3.67a.75.75 0 0 1-1.06-1.06L8.94 10 5.27 6.33a.75.75 0 0 1 0-1.06Z"
-      fill="#8E8E8E"
+      fill="var(--color-gray-50)"
     />
   </svg>
 );
