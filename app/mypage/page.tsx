@@ -249,7 +249,7 @@ export default function MyPage() {
                 className="flex w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-xl bg-gray-5 p-4"
               >
                 <div className="flex size-5 items-center justify-center rounded-lg bg-gray-20">
-                  <span className="text-[10px] text-gray-60">{item.rank}</span>
+                  <span className="text-2xs text-gray-60">{item.rank}</span>
                 </div>
                 <CategoryIcon category={item.categoryId} size={24} className="m-[10px]" />
                 <span className="text-xs text-black">{item.label}</span>
@@ -274,7 +274,9 @@ export default function MyPage() {
 
       {/* 로그아웃 */}
       <div className="mt-auto mb-[116px] flex flex-col items-center gap-3">
-        <div className="h-2 w-full border-t border-gray-30 bg-gray-10" />
+        <div className="h-2 w-full bg-green-10">
+          <div className="h-full border-t border-gray-30 bg-gray-10" />
+        </div>
         <button
           onClick={handleLogout}
           className="w-full text-center text-sm leading-[1.5] text-gray-70"
