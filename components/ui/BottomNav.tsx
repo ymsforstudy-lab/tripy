@@ -68,7 +68,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-1/2 w-full max-w-[375px] -translate-x-1/2 border-t border-gray-10 bg-white px-[47px] pb-4 pt-3 shadow-[0px_-2px_4px_0px_rgba(0,0,0,0.04)]">
+    <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 border-t border-gray-10 bg-white px-[47px] pb-4 pt-3 shadow-[0px_-2px_4px_0px_rgba(0,0,0,0.04)] sm:max-w-[390px]">
       <div className="flex items-center justify-between">
         {TABS.map(({ href, label, Icon, isHome }) => {
           const isActive = pathname === href;

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
 

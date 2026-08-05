@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 
 const PRIVACY_POLICY_URL =
   "https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be";

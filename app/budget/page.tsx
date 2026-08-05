@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
@@ -237,7 +237,7 @@ export default function BudgetPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2">
+      <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 sm:max-w-[390px]">
         <BottomCTA
           label="다음"
           onClick={() => setShowModal(true)}

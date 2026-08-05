@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import CalendarModal from "@/components/ui/CalendarModal";
 import ExchangeDropdown from "@/components/ui/ExchangeDropdown";
 import { supabase } from "@/lib/supabase";
@@ -316,12 +316,12 @@ export default function ExpensePage() {
                 width="13"
                 height="12"
                 rx="2"
-                stroke="#8E8E8E"
+                stroke="var(--color-gray-50)"
                 strokeWidth="1.5"
               />
               <path
                 d="M5 1V4M11 1V4M1.5 6.5H14.5"
-                stroke="#8E8E8E"
+                stroke="var(--color-gray-50)"
                 strokeWidth="1.5"
                 strokeLinecap="round"
               />
@@ -345,7 +345,7 @@ export default function ExpensePage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 bg-white px-4 pb-4 pt-7">
+      <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 bg-white px-4 pb-4 pt-7 sm:max-w-[390px]">
         <button
           onClick={handleSubmit}
           disabled={tab === "expense" ? !isExpenseValid || submitting : !isBudgetValid || submitting}

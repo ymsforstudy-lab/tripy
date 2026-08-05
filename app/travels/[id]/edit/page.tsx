@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
 import Input from "@/components/ui/Input";
 import SelectChip from "@/components/ui/SelectChip";
@@ -11,8 +11,8 @@ import { supabase } from "@/lib/supabase";
 
 const SearchIcon = (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="7" cy="7" r="5.5" stroke="#8E8E8E" strokeWidth="1.5" />
-    <path d="M11 11L14 14" stroke="#8E8E8E" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="7" cy="7" r="5.5" stroke="var(--color-gray-50)" strokeWidth="1.5" />
+    <path d="M11 11L14 14" stroke="var(--color-gray-50)" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
@@ -89,7 +89,7 @@ export default function EditCountryPage() {
             className="flex items-center gap-2 rounded-xl border border-dashed border-gray-30 px-6 py-4 text-sm text-gray-60"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3V13M3 8H13" stroke="#717171" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M8 3V13M3 8H13" stroke="var(--color-gray-60)" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <span>
               <span className="font-medium text-gray-90">'{search}'</span> 직접 입력하기
