@@ -43,12 +43,12 @@
   --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
 
   /* ── Font Size (Figma Typography 변수) ── */
-  --font-size-2xs: 10px;        /* 캡션_레귤러_S */
-  --font-size-title-xl: 24px;   /* 타이틀_볼드_XL */
-  --font-size-title-m: 20px;    /* 타이틀_볼드_M */
-  --font-size-body-l: 16px;     /* 바디_볼드_L */
-  --font-size-body-m: 14px;     /* 바디_볼드/미디움/레귤러_M */
-  --font-size-body-s: 12px;     /* 바디_볼드/레귤러_S */
+  --text-2xs: 10px;        /* 캡션_레귤러_S */
+  --text-title-xl: 24px;   /* 타이틀_볼드_XL */
+  --text-title-m: 20px;    /* 타이틀_볼드_M */
+  --text-body-l: 16px;     /* 바디_볼드_L */
+  --text-body-m: 14px;     /* 바디_볼드/미디움/레귤러_M */
+  --text-body-s: 12px;     /* 바디_볼드/레귤러_S */
 
   /* ── Font Weight ── */
   --font-weight-bold: 700;
@@ -72,4 +72,12 @@
   --spacing-gap-5: 16px;   /* gap/5 */
   --spacing-pad-6: 16px;   /* padding/6 */
   --spacing-pad-8: 24px;   /* padding/8 */
+
+  /* ── Shadow (반복 사용되던 shadow-[...] 하드코딩 프리셋화) ── */
+  --shadow-page: 0px 0px 40px rgba(0, 0, 0, 0.08);     /* 랜딩 페이지 컨테이너 */
+  --shadow-float: 0px 6px 24px rgba(0, 0, 0, 0.1);     /* 랜딩 플로팅 프리뷰 카드 */
+  --shadow-card: 0px 4px 24px rgba(0, 0, 0, 0.06);     /* 랜딩 섹션 카드 */
+  --shadow-nav: 0px -2px 4px rgba(0, 0, 0, 0.04);      /* 하단 네비게이션 */
+  --shadow-budget: 0 4px 4px rgba(107, 194, 15, 0.2);  /* 예산 카드(그린 틴트) */
+  --drop-shadow-subtle: 0px 2px 2px rgba(0, 0, 0, 0.04); /* 마이페이지 프로필 카드 */
 }
