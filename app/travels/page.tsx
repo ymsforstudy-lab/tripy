@@ -161,7 +161,7 @@ export default function TravelsPage() {
                 }`}
               >
                 {/* Flag */}
-                <div className="flex shrink-0 size-[52px] items-center justify-center rounded-xl bg-white">
+                <div className="flex shrink-0 size-[52px] items-center justify-center">
                   <span className="text-[32px] leading-none">
                     {extractEmojiFromTitle(trip.title)}
                   </span>
@@ -174,7 +174,7 @@ export default function TravelsPage() {
                       {trip.title}
                     </span>
                     {isOngoing ? (
-                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs text-info-50">
+                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs font-bold text-info-50">
                         {dday}
                       </span>
                     ) : (
