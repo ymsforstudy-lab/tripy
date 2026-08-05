@@ -28,7 +28,7 @@ export default function Toast({ message, visible }: ToastProps) {
     >
       <div className="flex h-12 w-[327px] items-center gap-[7px] rounded-2xl bg-gray-80 px-4">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="12" fill="#2D6A1E" />
+          <circle cx="12" cy="12" r="12" fill="var(--color-green-70)" />
           <path
             d="M7 12.5L10.5 16L17 9"
             stroke="white"
