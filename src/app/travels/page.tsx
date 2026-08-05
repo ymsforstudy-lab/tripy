@@ -95,7 +95,12 @@ export default function TravelsPage() {
 
   async function handleDeleteConfirm() {
     if (!deleteTargetId) return;
-    await supabase.from("trips").delete().eq("id", deleteTargetId);
+    const { error } = await supabase.from("trips").delete().eq("id", deleteTargetId);
+    if (error) {
+      alert("여행 삭제에 실패했습니다. 다시 시도해주세요.");
+      setDeleteTargetId(null);
+      return;
+    }
     setTrips((prev) => prev.filter((t) => t.id !== deleteTargetId));
     setDeleteTargetId(null);
   }

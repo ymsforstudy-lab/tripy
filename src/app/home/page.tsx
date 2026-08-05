@@ -16,6 +16,8 @@ import FAB from "@/components/ui/FAB";
 import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Toast from "@/components/ui/Toast";
+import { useExchangeRates } from "@/hooks/useExchangeRates";
+import { convertExpensesToBaseCurrency, FALLBACK_RATES } from "@/lib/exchange-rates";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -123,7 +125,8 @@ function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
-  const { trip: cachedTrip, loading: tripLoading } = useTrip();
+  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const { rates } = useExchangeRates();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,10 +141,11 @@ function HomePageContent() {
   useEffect(() => {
     if (searchParams.get("toast") === "expense") {
       setToastVisible(true);
+      refreshTrip();
       const timer = setTimeout(() => setToastVisible(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [searchParams]);
+  }, [searchParams, refreshTrip]);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -164,12 +168,15 @@ function HomePageContent() {
     setTrip(cachedTrip as Trip);
 
     async function fetchExpenses() {
-      const { data: expenseData } = await supabase
+      const { data: expenseData, error } = await supabase
         .from("expenses")
         .select("*")
         .eq("trip_id", cachedTrip!.id)
         .order("created_at", { ascending: false });
 
+      if (error) {
+        console.error("지출 내역 조회 실패:", error.message);
+      }
       setExpenses(expenseData ?? []);
       setLoading(false);
     }
@@ -182,7 +189,12 @@ function HomePageContent() {
       ? expenses.filter((e) => selectedCategories.includes(e.category))
       : expenses;
 
-  const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const baseCurrency = trip?.currency ?? "KRW";
+  const totalSpent = convertExpensesToBaseCurrency(
+    expenses,
+    baseCurrency,
+    rates ?? FALLBACK_RATES
+  );
 
   const totalBudget = trip?.total_budget ?? 0;
   const progressRatio = totalBudget > 0 ? totalSpent / totalBudget : 0;

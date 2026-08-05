@@ -67,7 +67,7 @@ export default function ExpensePage() {
   const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const [tab, setTab] = useState<Tab>("expense");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
-  const [currency, setCurrency] = useState<Currency>("KRW");
+  const [currency, setCurrency] = useState<Currency | null>(null);
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [hoveredCurrency, setHoveredCurrency] = useState<Currency | null>(null);
   const [amount, setAmount] = useState("");
@@ -105,12 +105,16 @@ export default function ExpensePage() {
 
     if (!user) {
       setTripId(FALLBACK_TRIP_ID);
+      if (!currency) setCurrency("KRW");
       return;
     }
 
     if (cachedTrip) {
       setTripId(cachedTrip.id);
       setCurrentBudget(cachedTrip.total_budget ?? 0);
+      if (!currency) {
+        setCurrency((cachedTrip.currency as Currency) ?? "KRW");
+      }
     } else {
       setTripId(FALLBACK_TRIP_ID);
     }
@@ -134,7 +138,7 @@ export default function ExpensePage() {
             id: `dummy-${Date.now()}`,
             trip_id: tripId,
             amount: Number(rawAmount),
-            currency,
+            currency: currency ?? "KRW",
             category: category || "etc",
             expense_date: normalizeDate(date),
             description: description || null,
@@ -156,12 +160,13 @@ export default function ExpensePage() {
         const { error } = await supabase.from("expenses").insert({
           trip_id: tripId,
           amount: Number(rawAmount),
-          currency,
+          currency: currency ?? "KRW",
           category: category || "etc",
           expense_date: date,
           description: description || null,
         });
         if (error) throw error;
+        await refreshTrip();
       } else {
         const addedAmount = Number(rawAmount);
         const { error } = await supabase
@@ -214,7 +219,7 @@ export default function ExpensePage() {
       {/* 금액 입력 */}
       <div className="mx-auto mt-3 flex w-[343px] items-center justify-between rounded-[15px] bg-gray-5 px-4 py-5">
         {/* 통화 선택 */}
-        <ExchangeDropdown value={currency} onChange={setCurrency} />
+        <ExchangeDropdown value={currency ?? "KRW"} onChange={setCurrency} />
 
         {/* 금액 */}
         <input
