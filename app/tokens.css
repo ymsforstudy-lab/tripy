@@ -19,8 +19,7 @@
   --color-danger-5: #FEECF0;
   --color-danger-50: #EB003B;
   --color-danger-60: #D50136;
-  --color-danger-70: #A0041E;
-  --color-danger-80: #8D0023;
+  --color-danger-70: #8D0023;
   --color-info-5: #E9F0FF;
   --color-info-50: #2768FF;
   --color-warning-50: #FFB724;
@@ -28,6 +27,7 @@
   /* ── Grayscale ── */
   --color-gray-white: #FFFFFF;
   --color-gray-5: #F8F8F8;
+  --color-light-gray-5: #F4F5F6;  /* Figma: color/light/gray/5, Grayscale/5(#F8F8F8)와 별개 */
   --color-gray-10: #F0F0F0;
   --color-gray-20: #E4E4E4;
   --color-gray-30: #D8D8D8;
@@ -43,6 +43,7 @@
   --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
 
   /* ── Font Size (Figma Typography 변수) ── */
+  --font-size-2xs: 10px;        /* 캡션_레귤러_S */
   --font-size-title-xl: 24px;   /* 타이틀_볼드_XL */
   --font-size-title-m: 20px;    /* 타이틀_볼드_M */
   --font-size-body-l: 16px;     /* 바디_볼드_L */
@@ -58,11 +59,13 @@
   --leading-default: 1.5;
 
   /* ── Border Radius (Figma R* 변수) ── */
+  --radius-4: 4px;
   --radius-8: 8px;
   --radius-12: 12px;   /* radius/xlarge2 */
   --radius-16: 16px;
   --radius-20: 20px;
   --radius-30: 30px;
+  --radius-60: 60px;   /* 아바타 원형 */
 
   /* ── Spacing (Figma padding/gap 변수) ── */
   --spacing-gap-3: 8px;    /* gap/3 */

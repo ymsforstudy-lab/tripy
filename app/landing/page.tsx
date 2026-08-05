@@ -89,19 +89,19 @@ export default function LandingPage() {
             </div>
             <div className="absolute left-0 top-6 z-20 w-[148px] rounded-2xl bg-white p-3 shadow-[0px_6px_24px_rgba(0,0,0,0.10)]">
               <p className="text-[11px] text-gray-50">여행 예산</p>
-              <p className="mt-0.5 text-[16px] font-bold text-gray-90">1,000,000<span className="text-[10px] font-normal text-gray-50">원</span></p>
+              <p className="mt-0.5 text-[16px] font-bold text-gray-90">1,000,000<span className="text-2xs font-normal text-gray-50">원</span></p>
               <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-10">
                 <div className="h-full w-[65%] rounded-full bg-green-50" />
               </div>
-              <p className="mt-0.5 text-[10px] text-gray-50">65% 사용 중</p>
+              <p className="mt-0.5 text-2xs text-gray-50">65% 사용 중</p>
             </div>
             <div className="absolute bottom-6 right-0 z-20 w-[136px] rounded-2xl bg-white p-3 shadow-[0px_6px_24px_rgba(0,0,0,0.10)]">
               <p className="text-[11px] text-gray-50">오늘 지출</p>
-              <p className="mt-0.5 text-[16px] font-bold text-gray-90">52,000<span className="text-[10px] font-normal text-gray-50">원</span></p>
+              <p className="mt-0.5 text-[16px] font-bold text-gray-90">52,000<span className="text-2xs font-normal text-gray-50">원</span></p>
               <div className="mt-1.5 flex items-center gap-1">
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-10 text-[10px]">🍜</span>
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-info-5 text-[10px]">🚌</span>
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-0 text-[10px]">🛍️</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-10 text-2xs">🍜</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-info-5 text-2xs">🚌</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-0 text-2xs">🛍️</span>
               </div>
             </div>
           </div>
