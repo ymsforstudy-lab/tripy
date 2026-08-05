@@ -229,40 +229,38 @@ export default function ExpensePage() {
 
       {/* 폼 내용 */}
       <div className="mx-auto mt-6 flex w-[343px] flex-col gap-6 pb-32">
+        {/* 결제 수단 */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1">
+            <span className="text-[16px] font-bold text-black">결제 수단</span>
+            <span className="text-2xs text-danger-50">*</span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPaymentMethod("card")}
+              className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
+                paymentMethod === "card"
+                  ? "bg-green-50 text-white"
+                  : "bg-gray-20 text-gray-70"
+              }`}
+            >
+              카드
+            </button>
+            <button
+              onClick={() => setPaymentMethod("cash")}
+              className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
+                paymentMethod === "cash"
+                  ? "bg-green-50 text-white"
+                  : "bg-gray-20 text-gray-70"
+              }`}
+            >
+              현금
+            </button>
+          </div>
+        </div>
+
         {/* 지출 추가 전용 필드 */}
         {tab === "expense" && (
-          <>
-          {/* 결제 수단 */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1">
-              <span className="text-[16px] font-bold text-black">결제 수단</span>
-              <span className="text-[10px] text-danger-50">*</span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPaymentMethod("card")}
-                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
-                  paymentMethod === "card"
-                    ? "bg-green-50 text-white"
-                    : "bg-gray-20 text-gray-70"
-                }`}
-              >
-                카드
-              </button>
-              <button
-                onClick={() => setPaymentMethod("cash")}
-                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-[14px] font-bold transition-colors ${
-                  paymentMethod === "cash"
-                    ? "bg-green-50 text-white"
-                    : "bg-gray-20 text-gray-70"
-                }`}
-              >
-                현금
-              </button>
-            </div>
-          </div>
-
-          {/* 카테고리 */}
           <div className="flex flex-col gap-2">
             <span className="text-[16px] font-bold text-black">카테고리</span>
             <div className="flex items-center justify-between">
@@ -285,7 +283,6 @@ export default function ExpensePage() {
               ))}
             </div>
           </div>
-          </>
         )}
 
         {/* 날짜 */}
@@ -294,7 +291,7 @@ export default function ExpensePage() {
             <span className="text-[16px] font-bold text-black">
               {tab === "expense" ? "지출 날짜" : "여행 날짜"}
             </span>
-            <span className="text-[10px] text-danger-50">*</span>
+            <span className="text-2xs text-danger-50">*</span>
           </div>
           <button
             type="button"
