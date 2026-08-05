@@ -125,7 +125,7 @@ function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
-  const { trip: cachedTrip, loading: tripLoading } = useTrip();
+  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const { rates } = useExchangeRates();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -141,10 +141,11 @@ function HomePageContent() {
   useEffect(() => {
     if (searchParams.get("toast") === "expense") {
       setToastVisible(true);
+      refreshTrip();
       const timer = setTimeout(() => setToastVisible(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [searchParams]);
+  }, [searchParams, refreshTrip]);
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -167,12 +168,15 @@ function HomePageContent() {
     setTrip(cachedTrip as Trip);
 
     async function fetchExpenses() {
-      const { data: expenseData } = await supabase
+      const { data: expenseData, error } = await supabase
         .from("expenses")
         .select("*")
         .eq("trip_id", cachedTrip!.id)
         .order("created_at", { ascending: false });
 
+      if (error) {
+        console.error("지출 내역 조회 실패:", error.message);
+      }
       setExpenses(expenseData ?? []);
       setLoading(false);
     }

@@ -19,6 +19,7 @@ type Trip = {
 type TripState = {
   trip: Trip | null;
   loading: boolean;
+  error: string | null;
   /** 캐시를 무효화하고 다시 fetch */
   refresh: () => Promise<void>;
 };
@@ -26,6 +27,7 @@ type TripState = {
 const TripContext = createContext<TripState>({
   trip: null,
   loading: true,
+  error: null,
   refresh: async () => {},
 });
 
@@ -33,9 +35,11 @@ export function TripProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchTrip = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    setError(null);
+    const { data, error: fetchError } = await supabase
       .from("trips")
       .select("*")
       .eq("user_id", userId)
@@ -44,6 +48,9 @@ export function TripProvider({ children }: { children: ReactNode }) {
       .limit(1)
       .single();
 
+    if (fetchError && fetchError.code !== "PGRST116") {
+      setError("여행 정보를 불러오지 못했습니다.");
+    }
     setTrip(data);
     setLoading(false);
   }, []);
@@ -68,7 +75,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
   }, [user, fetchTrip]);
 
   return (
-    <TripContext.Provider value={{ trip, loading, refresh }}>
+    <TripContext.Provider value={{ trip, loading, error, refresh }}>
       {children}
     </TripContext.Provider>
   );

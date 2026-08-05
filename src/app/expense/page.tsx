@@ -166,6 +166,7 @@ export default function ExpensePage() {
           description: description || null,
         });
         if (error) throw error;
+        await refreshTrip();
       } else {
         const addedAmount = Number(rawAmount);
         const { error } = await supabase

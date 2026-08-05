@@ -46,11 +46,15 @@ export default function MyPage() {
       }
 
       // 프로필 닉네임 + 아바타
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("users")
         .select("display_name, avatar_url")
         .eq("id", user.id)
         .single();
+
+      if (profileError) {
+        console.error("프로필 조회 실패:", profileError.message);
+      }
 
       if (profile?.display_name) {
         setNickname(profile.display_name);
@@ -60,10 +64,14 @@ export default function MyPage() {
       }
 
       // 전체 여행 조회
-      const { data: trips } = await supabase
+      const { data: trips, error: tripsError } = await supabase
         .from("trips")
         .select("id, start_date, end_date")
         .eq("user_id", user.id);
+
+      if (tripsError) {
+        console.error("여행 조회 실패:", tripsError.message);
+      }
 
       if (!trips || trips.length === 0) {
         setLoading(false);
@@ -85,10 +93,14 @@ export default function MyPage() {
 
       // 전체 지출 조회
       const tripIds = trips.map((t) => t.id);
-      const { data: expenses } = await supabase
+      const { data: expenses, error: expensesError } = await supabase
         .from("expenses")
         .select("amount, category, created_at")
         .in("trip_id", tripIds);
+
+      if (expensesError) {
+        console.error("지출 조회 실패:", expensesError.message);
+      }
 
       if (expenses && expenses.length > 0) {
         // 총 지출
