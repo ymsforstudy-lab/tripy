@@ -8,7 +8,7 @@ export default function SetupPage() {
   const router = useRouter();
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <div className="flex flex-1 flex-col items-center justify-center gap-5">
         <h1 className="text-center text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
           여행지를<br />등록해 볼까요?

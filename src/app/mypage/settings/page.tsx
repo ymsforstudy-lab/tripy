@@ -12,7 +12,6 @@ const SECTION_1 = [
 ];
 
 const SECTION_2 = [
-  { label: "이용 약관", href: null },
   { label: "개인정보 처리방침", href: PRIVACY_POLICY_URL },
   { label: "피드백 남기기", href: null },
   { label: "트리피 메일 문의", href: null },

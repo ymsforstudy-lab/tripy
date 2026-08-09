@@ -9,7 +9,7 @@ export default function SetupConfirmPage() {
   const router = useRouter();
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="flex flex-1 flex-col items-center justify-center gap-5">

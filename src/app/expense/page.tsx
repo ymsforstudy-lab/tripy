@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 import CategoryIcon from "@/components/ui/CategoryIcon";
+import { useKeyboardInset } from "@/hooks/useKeyboardInset";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
@@ -79,6 +80,7 @@ export default function ExpensePage() {
   const [tripId, setTripId] = useState<string | null>(null);
   const [currentBudget, setCurrentBudget] = useState<number>(0);
   const currencyRef = useRef<HTMLDivElement>(null);
+  const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
     if (!currencyOpen) return;
@@ -185,7 +187,7 @@ export default function ExpensePage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white">
+    <div className="relative flex min-h-screen-safe flex-col bg-white">
       <Header
         onBack={() => router.back()}
         title="경비 등록"
@@ -234,39 +236,39 @@ export default function ExpensePage() {
 
       {/* 폼 내용 */}
       <div className="mx-auto mt-6 flex w-[343px] flex-col gap-6 pb-32">
+        {/* 결제 수단 */}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1">
+            <span className="text-body-l font-bold text-black">결제 수단</span>
+            <span className="text-caption-s text-danger-50">*</span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPaymentMethod("card")}
+              className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
+                paymentMethod === "card"
+                  ? "bg-green-50 text-white"
+                  : "bg-gray-20 text-gray-70"
+              }`}
+            >
+              카드
+            </button>
+            <button
+              onClick={() => setPaymentMethod("cash")}
+              className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
+                paymentMethod === "cash"
+                  ? "bg-green-50 text-white"
+                  : "bg-gray-20 text-gray-70"
+              }`}
+            >
+              현금
+            </button>
+          </div>
+        </div>
+
         {/* 지출 추가 전용 필드 */}
         {tab === "expense" && (
           <>
-          {/* 결제 수단 */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1">
-              <span className="text-body-l font-bold text-black">결제 수단</span>
-              <span className="text-caption-s text-danger-50">*</span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPaymentMethod("card")}
-                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
-                  paymentMethod === "card"
-                    ? "bg-green-50 text-white"
-                    : "bg-gray-20 text-gray-70"
-                }`}
-              >
-                카드
-              </button>
-              <button
-                onClick={() => setPaymentMethod("cash")}
-                className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
-                  paymentMethod === "cash"
-                    ? "bg-green-50 text-white"
-                    : "bg-gray-20 text-gray-70"
-                }`}
-              >
-                현금
-              </button>
-            </div>
-          </div>
-
           {/* 카테고리 */}
           <div className="flex flex-col gap-2">
             <span className="text-body-l font-bold text-black">카테고리</span>
@@ -344,13 +346,16 @@ export default function ExpensePage() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="내용을 입력해 주세요"
             rows={4}
-            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-body-m text-gray-90 outline-none placeholder:text-gray-50"
+            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-base text-gray-90 outline-none placeholder:text-gray-50"
           />
         </div>
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 bg-white px-4 pb-4 pt-7 max-w-[390px]">
+      <div
+        className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 bg-white px-4 pb-4 pt-7 max-w-[390px]"
+        style={{ bottom: keyboardInset }}
+      >
         <button
           onClick={handleSubmit}
           disabled={tab === "expense" ? !isExpenseValid || submitting : !isBudgetValid || submitting}

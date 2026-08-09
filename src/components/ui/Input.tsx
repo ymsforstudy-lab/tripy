@@ -79,7 +79,7 @@ export default function Input({
           onChange={(e) => onChange?.(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="min-w-0 flex-1 bg-transparent text-sm font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50 disabled:cursor-not-allowed"
+          className="min-w-0 flex-1 bg-transparent text-base font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50 disabled:cursor-not-allowed"
         />
         {icon && <span className="shrink-0 text-gray-50">{icon}</span>}
       </div>

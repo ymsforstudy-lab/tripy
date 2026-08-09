@@ -69,7 +69,7 @@ export default function NicknamePage() {
           : undefined;
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       {/* 타이틀 */}

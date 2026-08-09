@@ -89,7 +89,7 @@ export default function BudgetPage() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-white">
+    <div className="relative flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
@@ -188,7 +188,7 @@ export default function BudgetPage() {
                 value={amount}
                 onChange={handleAmountChange}
                 placeholder="금액 입력"
-                className="flex-1 bg-transparent text-sm text-gray-90 outline-none placeholder:text-gray-50"
+                className="flex-1 bg-transparent text-base text-gray-90 outline-none placeholder:text-gray-50"
               />
               {amount && (
                 <span className="shrink-0 text-sm font-bold text-gray-90">{unit}</span>
@@ -248,7 +248,7 @@ export default function BudgetPage() {
       </div>
 
       {/* 확인 모달 */}
-      <Modal open={showModal} onClose={() => setShowModal(false)}>
+      <Modal open={showModal} onClose={() => setShowModal(false)} maxWidth={375}>
         <div className="w-full rounded-t-2xl bg-white px-4 pb-10 pt-6">
             <div className="mb-5 flex items-center justify-between">
               <span className="text-xl font-bold tracking-[-0.4px] text-gray-90">

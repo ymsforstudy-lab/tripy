@@ -113,7 +113,7 @@ export default function TravelsPage() {
   const displayTrips = activeTab === "ongoing" ? ongoingTrips : endedTrips;
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white">
+    <div className="relative flex min-h-screen-safe w-full flex-col bg-white">
       {/* Header */}
       <div className="flex items-center justify-center pb-4 pt-6">
         <span className="text-base font-bold leading-default text-gray-90">
@@ -183,7 +183,7 @@ export default function TravelsPage() {
                 }`}
               >
                 {/* Flag */}
-                <div className="flex shrink-0 size-[52px] items-center justify-center rounded-xl bg-white">
+                <div className="flex shrink-0 size-[52px] items-center justify-center">
                   <span className="text-[32px] leading-none">
                     {extractEmojiFromTitle(trip.title)}
                   </span>
@@ -192,11 +192,11 @@ export default function TravelsPage() {
                 {/* Trip info */}
                 <div className="flex flex-col gap-[5px]">
                   <div className="flex items-center gap-2">
-                    <span className="text-base font-bold text-black">
+                    <span className="text-base font-semibold text-gray-90">
                       {trip.title}
                     </span>
                     {isOngoing ? (
-                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs text-info-50">
+                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs font-bold text-info-50">
                         {dday}
                       </span>
                     ) : (
