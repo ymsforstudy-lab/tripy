@@ -181,7 +181,7 @@ export default function BudgetPage() {
             </div>
 
             {/* 금액 입력 */}
-            <div className="flex flex-1 items-center gap-2 rounded-xl border border-gray-30 px-4 py-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-gray-30 px-4 py-3">
               <input
                 type="text"
                 inputMode="numeric"
@@ -237,7 +237,7 @@ export default function BudgetPage() {
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 sm:max-w-[390px]">
+      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2">
         <BottomCTA
           label="다음"
           onClick={() => setShowModal(true)}
