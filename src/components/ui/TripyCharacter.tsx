@@ -1,14 +1,14 @@
 "use client";
 
-export type TripyCharacterType = 1 | 2 | 3 | 4 | 5 | 6;
+export type TripyCharacterVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 interface TripyCharacterProps {
-  type: TripyCharacterType;
+  variant: TripyCharacterVariant;
   className?: string;
 }
 
-const TYPE_CONFIG: Record<
-  TripyCharacterType,
+const VARIANT_CONFIG: Record<
+  TripyCharacterVariant,
   {
     containerW: number;
     containerH: number;
@@ -60,13 +60,18 @@ const TYPE_CONFIG: Record<
     containerH: 220,
     objectFit: "object-contain",
   },
+  7: {
+    containerW: 190,
+    containerH: 240,
+    objectFit: "object-contain",
+  },
 };
 
 export default function TripyCharacter({
-  type,
+  variant,
   className = "",
 }: TripyCharacterProps) {
-  const config = TYPE_CONFIG[type];
+  const config = VARIANT_CONFIG[variant];
 
   if (config.overflow && config.imgStyle) {
     return (
@@ -76,7 +81,7 @@ export default function TripyCharacter({
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`/character-${type}.png`}
+          src={`/images/tripy/tripy-${variant}.png`}
           alt="트리피 캐릭터"
           className="absolute pointer-events-none"
           style={config.imgStyle}
@@ -92,7 +97,7 @@ export default function TripyCharacter({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/character-${type}.png`}
+        src={`/images/tripy/tripy-${variant}.png`}
         alt="트리피 캐릭터"
         className={`absolute inset-0 h-full w-full pointer-events-none ${config.objectFit ?? "object-contain"}`}
       />

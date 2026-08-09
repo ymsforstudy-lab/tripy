@@ -1,15 +1,17 @@
-import Image from "next/image";
-
 export default function TripyImage() {
   return (
     <div className="relative h-[82px] w-20 overflow-hidden">
-      <Image
-        src="/tripy-character.png"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/tripy/tripy-7.png"
         alt="트리피 마스코트"
-        width={136}
-        height={154}
-        className="absolute max-w-none -left-[33.52%] -top-[25.71%]"
-        style={{ width: "170.05%", height: "187.17%" }}
+        className="absolute max-w-none pointer-events-none"
+        style={{
+          width: "176.93%",
+          height: "186.76%",
+          left: "-38.47%",
+          top: "-31.86%",
+        }}
       />
     </div>
   );

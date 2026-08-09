@@ -20,7 +20,7 @@ export default function ErrorPage() {
             <p>잠시 후 다시 이용해 주세요</p>
           </div>
         </div>
-        <TripyCharacter type={4} />
+        <TripyCharacter variant={4} />
       </div>
 
       {/* 하단 버튼 */}

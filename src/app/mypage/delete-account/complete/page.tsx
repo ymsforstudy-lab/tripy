@@ -48,7 +48,7 @@ export default function DeleteAccountCompletePage() {
 
         {/* 캐릭터 이미지 */}
         <div className="flex items-center justify-center">
-          <TripyCharacter type={1} />
+          <TripyCharacter variant={1} />
         </div>
       </div>
     </div>
