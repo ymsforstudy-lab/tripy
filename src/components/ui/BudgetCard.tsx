@@ -30,7 +30,7 @@ export default function BudgetCard({
         <h1 className="text-title-m font-bold leading-default text-green-70">
           오늘 나의 예산
         </h1>
-        <div className="absolute right-0 bottom-0 flex items-end">
+        <div className="absolute right-0 bottom-0 z-10 flex items-end">
           <TripyImage />
         </div>
       </div>
