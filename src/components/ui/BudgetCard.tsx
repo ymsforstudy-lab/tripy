@@ -35,7 +35,7 @@ export default function BudgetCard({
         </div>
       </div>
 
-      <div className="relative w-full rounded-[20px] border border-green-20 bg-green-10 p-4 shadow-[0_4px_4px_rgba(107,194,15,0.2)]">
+      <div className="relative w-full rounded-[20px] border border-green-20 bg-green-10 p-4 shadow-budget">
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">

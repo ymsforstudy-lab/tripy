@@ -10,7 +10,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-5">
       {/* 모바일 고정 너비 중앙 컨테이너 */}
-      <div className="mx-auto w-full max-w-[390px] bg-white shadow-[0px_0px_40px_rgba(0,0,0,0.08)]">
+      <div className="mx-auto w-full max-w-[390px] bg-white shadow-page">
 
         {/* ① Nav */}
         <nav className="sticky top-0 z-50 border-b border-gray-20 bg-white/90 backdrop-blur-sm">
@@ -87,7 +87,7 @@ export default function LandingPage() {
             <div className="relative z-10 h-[240px] w-[190px]">
               <Image src="/tripy-character.png" alt="트리피 캐릭터" fill className="object-contain" />
             </div>
-            <div className="absolute left-0 top-6 z-20 w-[148px] rounded-2xl bg-white p-3 shadow-[0px_6px_24px_rgba(0,0,0,0.10)]">
+            <div className="absolute left-0 top-6 z-20 w-[148px] rounded-2xl bg-white p-3 shadow-float">
               <p className="text-[11px] text-gray-50">여행 예산</p>
               <p className="mt-0.5 text-[16px] font-bold text-gray-90">1,000,000<span className="text-[10px] font-normal text-gray-50">원</span></p>
               <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-10">
@@ -95,7 +95,7 @@ export default function LandingPage() {
               </div>
               <p className="mt-0.5 text-[10px] text-gray-50">65% 사용 중</p>
             </div>
-            <div className="absolute bottom-6 right-0 z-20 w-[136px] rounded-2xl bg-white p-3 shadow-[0px_6px_24px_rgba(0,0,0,0.10)]">
+            <div className="absolute bottom-6 right-0 z-20 w-[136px] rounded-2xl bg-white p-3 shadow-float">
               <p className="text-[11px] text-gray-50">오늘 지출</p>
               <p className="mt-0.5 text-[16px] font-bold text-gray-90">52,000<span className="text-[10px] font-normal text-gray-50">원</span></p>
               <div className="mt-1.5 flex items-center gap-1">
@@ -183,7 +183,7 @@ export default function LandingPage() {
               6가지 카테고리로 지출을 분류하고<br />나의 소비 패턴을 파악해보세요.
             </p>
           </div>
-          <div className="rounded-2xl bg-white p-5 shadow-[0px_4px_24px_rgba(0,0,0,0.06)]">
+          <div className="rounded-2xl bg-white p-5 shadow-card">
             <p className="mb-4 text-[13px] font-bold text-gray-90">카테고리 내역 순위</p>
             <div className="flex flex-col gap-3">
               {[
@@ -222,7 +222,7 @@ export default function LandingPage() {
               실시간으로 남은 예산을 확인하고<br />과소비 없는 스마트한 여행을 즐기세요.
             </p>
           </div>
-          <div className="rounded-2xl bg-white p-5 shadow-[0px_4px_24px_rgba(0,0,0,0.06)]">
+          <div className="rounded-2xl bg-white p-5 shadow-card">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-[13px] font-bold text-gray-90">일본 여행 🇯🇵</p>
               <span className="rounded-full bg-info-5 px-2.5 py-0.5 text-[11px] font-bold text-info-50">진행중</span>

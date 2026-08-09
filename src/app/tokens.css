@@ -78,4 +78,12 @@
   --spacing-gap-5: 16px;   /* gap/5 */
   --spacing-pad-6: 16px;   /* padding/6 */
   --spacing-pad-8: 24px;   /* padding/8 */
+
+  /* ── Shadow (반복 사용되던 shadow-[...] 하드코딩 프리셋화) ── */
+  --shadow-page: 0px 0px 40px rgba(0, 0, 0, 0.08);     /* 랜딩 페이지 컨테이너 */
+  --shadow-float: 0px 6px 24px rgba(0, 0, 0, 0.1);     /* 랜딩 플로팅 프리뷰 카드 */
+  --shadow-card: 0px 4px 24px rgba(0, 0, 0, 0.06);     /* 랜딩 섹션 카드 */
+  --shadow-nav: 0px -2px 4px rgba(0, 0, 0, 0.04);      /* 하단 네비게이션 */
+  --shadow-budget: 0 4px 4px rgba(107, 194, 15, 0.2);  /* 예산 카드(그린 틴트) */
+  --drop-shadow-subtle: 0px 2px 2px rgba(0, 0, 0, 0.04); /* 마이페이지 프로필 카드 */
 }

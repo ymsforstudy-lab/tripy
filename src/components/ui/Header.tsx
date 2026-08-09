@@ -21,7 +21,7 @@ export default function Header({ onBack, title, onClose }: HeaderProps) {
         </svg>
       </button>
       {title && (
-        <span className="flex-1 text-center text-base font-bold tracking-[-0.32px] text-gray-90">
+        <span className="flex-1 text-center text-base font-semibold tracking-[-0.32px] text-gray-90">
           {title}
         </span>
       )}
