@@ -61,8 +61,8 @@ const VARIANT_CONFIG: Record<
     objectFit: "object-contain",
   },
   7: {
-    containerW: 190,
-    containerH: 240,
+    containerW: 142,
+    containerH: 154,
     objectFit: "object-contain",
   },
 };

@@ -7,10 +7,10 @@ export default function TripyImage() {
         alt="트리피 마스코트"
         className="absolute max-w-none pointer-events-none"
         style={{
-          width: "176.93%",
-          height: "186.76%",
-          left: "-38.47%",
-          top: "-31.86%",
+          width: "177.5%",
+          height: "187.8%",
+          left: "-38.75%",
+          top: "-43.9%",
         }}
       />
     </div>
