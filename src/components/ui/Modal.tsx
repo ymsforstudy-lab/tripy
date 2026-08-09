@@ -6,9 +6,10 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  maxWidth?: number;
 }
 
-export default function Modal({ open, onClose, children }: ModalProps) {
+export default function Modal({ open, onClose, children, maxWidth = 390 }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     document.body.style.overflow = "hidden";
@@ -22,7 +23,7 @@ export default function Modal({ open, onClose, children }: ModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative z-10 mx-auto w-full max-w-[390px]">{children}</div>
+      <div className="relative z-10 mx-auto w-full" style={{ maxWidth: `${maxWidth}px` }}>{children}</div>
     </div>
   );
 }
