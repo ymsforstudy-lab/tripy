@@ -13,8 +13,8 @@ const SECTION_1 = [
 
 const SECTION_2 = [
   { label: "개인정보 처리방침", href: PRIVACY_POLICY_URL },
-  { label: "피드백 남기기", href: null },
-  { label: "트리피 메일 문의", href: null },
+  { label: "피드백 남기기", href: "https://forms.gle/x7gJpfYKPWLxfT7A8" },
+  { label: "트리피 메일 문의", href: "mailto:ymsforstudy@gmail.com" },
   { label: "탈퇴하기", href: "/mypage/delete-account" },
 ];
 
@@ -41,7 +41,7 @@ export default function SettingsPage() {
 
       <div className="mt-7 flex flex-col">
         {SECTION_2.map((item) =>
-          item.href?.startsWith("http") ? (
+          item.href?.startsWith("http") || item.href?.startsWith("mailto:") ? (
             <a
               key={item.label}
               href={item.href}
