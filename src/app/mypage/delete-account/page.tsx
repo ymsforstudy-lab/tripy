@@ -43,7 +43,7 @@ export default function DeleteAccountPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white">
+    <div className="relative flex min-h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       {/* 본문 */}

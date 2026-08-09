@@ -113,7 +113,7 @@ export default function TravelsPage() {
   const displayTrips = activeTab === "ongoing" ? ongoingTrips : endedTrips;
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white">
+    <div className="relative flex min-h-screen-safe w-full flex-col bg-white">
       {/* Header */}
       <div className="flex items-center justify-center pb-4 pt-6">
         <span className="text-base font-bold leading-default text-gray-90">

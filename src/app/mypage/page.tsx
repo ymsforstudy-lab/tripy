@@ -145,7 +145,7 @@ export default function MyPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white">
+    <div className="relative flex min-h-screen-safe flex-col bg-white">
       {/* Header */}
       <div className="relative flex items-center justify-center pb-4 px-4 pt-6">
         <span className="text-base font-semibold leading-default text-gray-90">

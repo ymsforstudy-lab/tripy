@@ -222,7 +222,7 @@ function HomePageContent() {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white pb-[84px]">
+    <div className="relative flex min-h-screen-safe w-full flex-col bg-white pb-[84px]">
       <HomeHeader />
 
       <div className="mt-4">

@@ -89,7 +89,7 @@ export default function BudgetPage() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col bg-white">
+    <div className="relative flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">
