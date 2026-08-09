@@ -7,20 +7,33 @@ import TripyCharacter from "@/components/ui/TripyCharacter";
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showStickyCta, setShowStickyCta] = useState(false);
+  const [heroCtaHidden, setHeroCtaHidden] = useState(false);
+  const [footerInView, setFooterInView] = useState(false);
   const heroCtaRef = useRef<HTMLAnchorElement>(null);
+  const footerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const target = heroCtaRef.current;
-    if (!target) return;
+    const heroTarget = heroCtaRef.current;
+    const footerTarget = footerRef.current;
+    if (!heroTarget || !footerTarget) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setShowStickyCta(!entry.isIntersecting),
+    const heroObserver = new IntersectionObserver(
+      ([entry]) => setHeroCtaHidden(!entry.isIntersecting),
       { threshold: 0 }
     );
-    observer.observe(target);
-    return () => observer.disconnect();
+    const footerObserver = new IntersectionObserver(
+      ([entry]) => setFooterInView(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    heroObserver.observe(heroTarget);
+    footerObserver.observe(footerTarget);
+    return () => {
+      heroObserver.disconnect();
+      footerObserver.disconnect();
+    };
   }, []);
+
+  const showStickyCta = heroCtaHidden && !footerInView;
 
   return (
     <div className="min-h-screen bg-gray-5">
@@ -285,7 +298,7 @@ export default function LandingPage() {
         </section>
 
         {/* ⑦ Footer */}
-        <footer className="border-t border-gray-20 bg-white px-5 pt-8 pb-24">
+        <footer ref={footerRef} className="border-t border-gray-20 bg-white px-5 pt-8 pb-24">
           <div className="flex flex-col items-center gap-4 text-center">
             <Image src="/tripy-logo.svg" alt="트리피" width={72} height={24} />
             <p className="text-[12px] text-gray-50">© 2024 Tripy. 여행의 모든 지출을 스마트하게.</p>
