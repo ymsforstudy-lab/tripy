@@ -118,6 +118,7 @@ export default function SplashPage() {
 }
 
 function GoogleIcon() {
+  // Google 브랜드 컬러 — 디자인 토큰 대상 아님, 하드코딩 유지
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <path
