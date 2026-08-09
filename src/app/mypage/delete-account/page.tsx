@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/ui/Header";
 import TripyCharacter from "@/components/ui/TripyCharacter";
 import { supabase } from "@/lib/supabase";
+import { useKeyboardInset } from "@/hooks/useKeyboardInset";
 
 const REASONS = [
   "앱 사용이 불편해요",
@@ -22,6 +23,7 @@ export default function DeleteAccountPage() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const keyboardInset = useKeyboardInset();
 
   async function handleDelete() {
     setSubmitting(true);
@@ -110,7 +112,7 @@ export default function DeleteAccountPage() {
                 value={content}
                 onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
                 placeholder="내용을 입력해 주세요"
-                className="flex-1 resize-none bg-transparent text-body-m leading-default text-gray-90 outline-none placeholder:text-gray-50"
+                className="flex-1 resize-none bg-transparent text-base leading-default text-gray-90 outline-none placeholder:text-gray-50"
               />
               <span className="self-end text-body-s leading-default text-gray-50">
                 {content.length}/{MAX_LENGTH}
@@ -126,7 +128,10 @@ export default function DeleteAccountPage() {
       </div>
 
       {/* 하단 탈퇴 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 border-t border-gray-20 bg-white px-4 pb-8 pt-4">
+      <div
+        className="fixed bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 border-t border-gray-20 bg-white px-4 pb-8 pt-4"
+        style={{ bottom: keyboardInset }}
+      >
         <button
           type="button"
           onClick={handleDelete}

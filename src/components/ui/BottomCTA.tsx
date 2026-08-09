@@ -1,5 +1,7 @@
 "use client";
 
+import { useKeyboardInset } from "@/hooks/useKeyboardInset";
+
 interface BottomCTAProps {
   label: string;
   onClick: () => void;
@@ -15,8 +17,13 @@ export default function BottomCTA({
   secondaryLabel,
   onSecondaryClick,
 }: BottomCTAProps) {
+  const keyboardInset = useKeyboardInset();
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 mx-auto w-full border-t border-gray-20 bg-white px-4 pb-8 pt-4 max-w-[390px]">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-40 mx-auto w-full border-t border-gray-20 bg-white px-4 pb-8 pt-4 max-w-[390px]"
+      style={{ bottom: keyboardInset }}
+    >
       <button
         onClick={onClick}
         disabled={disabled}
