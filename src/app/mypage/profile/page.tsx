@@ -201,7 +201,7 @@ export default function ProfileEditPage() {
 
       {/* 닉네임 입력 */}
       <div className="mt-10 flex items-start gap-2 px-4">
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <Input
             value={nickname}
             onChange={(value) => {

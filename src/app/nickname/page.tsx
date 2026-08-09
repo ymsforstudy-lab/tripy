@@ -81,7 +81,7 @@ export default function NicknamePage() {
 
       {/* 입력 영역 */}
       <div className="mt-16 flex items-start gap-2 px-4">
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <Input
             value={nickname}
             onChange={(value) => {
