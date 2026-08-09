@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import TripyCharacter from "@/components/ui/TripyCharacter";
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -84,9 +85,7 @@ export default function LandingPage() {
           {/* 캐릭터 + 플로팅 카드 */}
           <div className="relative flex h-[280px] w-full items-center justify-center">
             <div className="absolute h-[240px] w-[240px] rounded-full bg-green-10 opacity-60" />
-            <div className="relative z-10 h-[240px] w-[190px]">
-              <Image src="/tripy-character.png" alt="트리피 캐릭터" fill className="object-contain" />
-            </div>
+            <TripyCharacter variant={7} className="relative z-10" />
             <div className="absolute left-0 top-6 z-20 w-[148px] rounded-2xl bg-white p-3 shadow-[0px_6px_24px_rgba(0,0,0,0.10)]">
               <p className="text-[11px] text-gray-50">여행 예산</p>
               <p className="mt-0.5 text-[16px] font-bold text-gray-90">1,000,000<span className="text-[10px] font-normal text-gray-50">원</span></p>

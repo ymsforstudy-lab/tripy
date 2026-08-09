@@ -4,7 +4,7 @@ export default function TripyImage() {
   return (
     <div className="relative h-[82px] w-20 overflow-hidden">
       <Image
-        src="/tripy-character.png"
+        src="/images/tripy/tripy-7.png"
         alt="트리피 마스코트"
         width={136}
         height={154}

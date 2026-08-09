@@ -122,7 +122,7 @@ export default function DeleteAccountPage() {
 
       {/* 마스코트 이미지 - Figma 위치 고정 */}
       <div className="absolute top-[58%] pointer-events-none" style={{ left: "calc(50% + 9.06px)" }}>
-        <TripyCharacter type={2} />
+        <TripyCharacter variant={2} />
       </div>
 
       {/* 하단 탈퇴 버튼 */}
