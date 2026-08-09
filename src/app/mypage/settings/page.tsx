@@ -41,7 +41,15 @@ export default function SettingsPage() {
 
       <div className="mt-7 flex flex-col">
         {SECTION_2.map((item) =>
-          item.href?.startsWith("http") || item.href?.startsWith("mailto:") ? (
+          item.href?.startsWith("mailto:") ? (
+            <a
+              key={item.label}
+              href={item.href}
+              className="flex w-full items-center px-4 py-3 text-left text-body-m font-medium leading-default text-gray-70"
+            >
+              {item.label}
+            </a>
+          ) : item.href?.startsWith("http") ? (
             <a
               key={item.label}
               href={item.href}
