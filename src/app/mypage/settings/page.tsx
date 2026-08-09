@@ -45,7 +45,13 @@ export default function SettingsPage() {
             <button
               key={item.label}
               type="button"
-              onClick={() => { window.location.href = item.href!; }}
+              onClick={() => {
+                const iframe = document.createElement("iframe");
+                iframe.style.display = "none";
+                iframe.src = item.href!;
+                document.body.appendChild(iframe);
+                setTimeout(() => document.body.removeChild(iframe), 1000);
+              }}
               className="flex w-full items-center px-4 py-3 text-left text-body-m font-medium leading-default text-gray-70"
             >
               {item.label}
