@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className="antialiased">
         <AuthProvider>
           <TripProvider>
-            <div className="mx-auto min-h-screen w-full bg-white sm:max-w-[390px]">
+            <div className="mx-auto min-h-screen w-full bg-white max-w-[390px]">
               {children}
             </div>
           </TripProvider>
