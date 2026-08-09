@@ -185,7 +185,7 @@ export default function ExpensePage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-white">
+    <div className="relative flex min-h-screen-safe flex-col bg-white">
       <Header
         onBack={() => router.back()}
         title="경비 등록"

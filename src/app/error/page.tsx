@@ -8,7 +8,7 @@ export default function ErrorPage() {
   const router = useRouter();
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white">
+    <div className="relative flex min-h-screen-safe w-full flex-col bg-white">
       {/* 중앙 콘텐츠 */}
       <div className="flex flex-1 flex-col items-center justify-center gap-5 px-4 pb-24">
         <div className="flex flex-col items-center gap-[10px] text-center">

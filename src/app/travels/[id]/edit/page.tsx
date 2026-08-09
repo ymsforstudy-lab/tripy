@@ -52,7 +52,7 @@ export default function EditCountryPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header onBack={() => router.back()} />
 
       <div className="px-4 pt-5">

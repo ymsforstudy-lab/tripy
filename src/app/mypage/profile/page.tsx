@@ -152,7 +152,7 @@ export default function ProfileEditPage() {
             : undefined;
 
   return (
-    <div className="flex h-screen flex-col bg-white">
+    <div className="flex h-screen-safe flex-col bg-white">
       <Header title="프로필 수정" onBack={() => router.back()} />
 
       {/* 프로필 이미지 */}
