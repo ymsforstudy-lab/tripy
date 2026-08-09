@@ -1,12 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import TripyCharacter from "@/components/ui/TripyCharacter";
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showStickyCta, setShowStickyCta] = useState(false);
+  const heroCtaRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const target = heroCtaRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyCta(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-5">
@@ -106,7 +120,11 @@ export default function LandingPage() {
           </div>
 
           <div className="flex w-full flex-col gap-3">
-            <Link href="/" className="flex h-[52px] w-full items-center justify-center rounded-xl bg-green-50 text-[15px] font-semibold text-white">
+            <Link
+              ref={heroCtaRef}
+              href="/"
+              className="flex h-[52px] w-full items-center justify-center rounded-xl bg-green-50 text-[15px] font-semibold text-white"
+            >
               무료로 시작하기
             </Link>
             <Link href="/home" className="flex h-[52px] w-full items-center justify-center rounded-xl border border-gray-30 text-[15px] font-semibold text-gray-70">
@@ -267,7 +285,7 @@ export default function LandingPage() {
         </section>
 
         {/* ⑦ Footer */}
-        <footer className="border-t border-gray-20 bg-white px-5 py-8">
+        <footer className="border-t border-gray-20 bg-white px-5 pt-8 pb-24">
           <div className="flex flex-col items-center gap-4 text-center">
             <Image src="/tripy-logo.svg" alt="트리피" width={72} height={24} />
             <p className="text-[12px] text-gray-50">© 2024 Tripy. 여행의 모든 지출을 스마트하게.</p>
@@ -278,6 +296,17 @@ export default function LandingPage() {
           </div>
         </footer>
 
+      </div>
+
+      {/* 하단 고정 CTA — 히어로의 시작하기 버튼이 스크롤로 안 보일 때만 노출 */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[390px] border-t border-gray-20 bg-white px-5 pb-6 pt-3 shadow-nav transition-transform duration-300 ${
+          showStickyCta ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <Link href="/" className="flex h-[52px] w-full items-center justify-center rounded-xl bg-green-50 text-[15px] font-semibold text-white">
+          무료로 시작하기
+        </Link>
       </div>
     </div>
   );
