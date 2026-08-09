@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
 import { CURRENCIES, CURRENCY_UNIT, type Currency } from "@/lib/constants/currency";
 import CategoryIcon from "@/components/ui/CategoryIcon";
+import { useKeyboardInset } from "@/hooks/useKeyboardInset";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
@@ -79,6 +80,7 @@ export default function ExpensePage() {
   const [tripId, setTripId] = useState<string | null>(null);
   const [currentBudget, setCurrentBudget] = useState<number>(0);
   const currencyRef = useRef<HTMLDivElement>(null);
+  const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
     if (!currencyOpen) return;
@@ -344,13 +346,16 @@ export default function ExpensePage() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="내용을 입력해 주세요"
             rows={4}
-            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-body-m text-gray-90 outline-none placeholder:text-gray-50"
+            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-base text-gray-90 outline-none placeholder:text-gray-50"
           />
         </div>
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 bg-white px-4 pb-4 pt-7 max-w-[390px]">
+      <div
+        className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 bg-white px-4 pb-4 pt-7 max-w-[390px]"
+        style={{ bottom: keyboardInset }}
+      >
         <button
           onClick={handleSubmit}
           disabled={tab === "expense" ? !isExpenseValid || submitting : !isBudgetValid || submitting}

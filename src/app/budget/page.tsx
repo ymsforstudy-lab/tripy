@@ -188,7 +188,7 @@ export default function BudgetPage() {
                 value={amount}
                 onChange={handleAmountChange}
                 placeholder="금액 입력"
-                className="flex-1 bg-transparent text-sm text-gray-90 outline-none placeholder:text-gray-50"
+                className="flex-1 bg-transparent text-base text-gray-90 outline-none placeholder:text-gray-50"
               />
               {amount && (
                 <span className="shrink-0 text-sm font-bold text-gray-90">{unit}</span>
