@@ -142,6 +142,7 @@ export default function ExpensePage() {
             amount: Number(rawAmount),
             currency: currency ?? "KRW",
             category: category || "etc",
+            payment_method: paymentMethod,
             expense_date: normalizeDate(date),
             description: description || null,
             created_at: new Date().toISOString(),
@@ -164,6 +165,7 @@ export default function ExpensePage() {
           amount: Number(rawAmount),
           currency: currency ?? "KRW",
           category: category || "etc",
+          payment_method: paymentMethod,
           expense_date: date,
           description: description || null,
         });
