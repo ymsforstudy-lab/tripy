@@ -1,0 +1,31 @@
+/* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
+
+@theme {
+  /* ── Primary Green ── */
+  --color-green-0: #F0F9E7;
+  --color-green-10: #DFF2CC;
+  --color-green-20: #C6E8A6;
+  --color-green-30: #A6DB75;
+  --color-green-40: #82CC41;
+  --color-green-50: #6BC20F;
+  --color-green-60: #4B8A09;
+  --color-green-70: #396907;
+  --color-green-80: #305706;
+  --color-green-90: #254405;
+  --color-green-120: #050A01;
+  --color-gradient: #1EB400;
+
+  /* ── Grayscale ── */
+  --color-gray-white: #FFFFFF;
+  --color-gray-5: #F8F8F8;
+  --color-gray-10: #F0F0F0;
+  --color-gray-20: #E4E4E4;
+  --color-gray-30: #D8D8D8;
+  --color-gray-40: #C6C6C6;
+  --color-gray-50: #8E8E8E;
+  --color-gray-60: #717171;
+  --color-gray-70: #555555;
+  --color-gray-80: #2D2D2D;
+  --color-gray-90: #1D1D1D;
+  --color-gray-black: #000000;
+}

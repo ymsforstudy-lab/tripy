@@ -1,0 +1,11 @@
+/* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
+
+@theme {
+  /* ── Shadow (반복 사용되던 shadow-[...] 하드코딩 프리셋화) ── */
+  --shadow-page: 0px 0px 40px rgba(0, 0, 0, 0.08);     /* 랜딩 페이지 컨테이너 */
+  --shadow-float: 0px 6px 24px rgba(0, 0, 0, 0.1);     /* 랜딩 플로팅 프리뷰 카드 */
+  --shadow-card: 0px 4px 24px rgba(0, 0, 0, 0.06);     /* 랜딩 섹션 카드 */
+  --shadow-nav: 0px -2px 4px rgba(0, 0, 0, 0.04);      /* 하단 네비게이션 */
+  --shadow-budget: 0 4px 4px rgba(107, 194, 15, 0.2);  /* 예산 카드(그린 틴트) */
+  --drop-shadow-subtle: 0px 2px 2px rgba(0, 0, 0, 0.04); /* 마이페이지 프로필 카드 */
+}
