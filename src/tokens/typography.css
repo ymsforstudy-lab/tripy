@@ -1,0 +1,30 @@
+/* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
+
+@theme {
+  /* ── Font Family ── */
+  --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
+
+  /* ── Font Size (Figma Typography 변수) ── */
+  /* Tailwind v4는 --text-* 접두사로 font-size 유틸리티를 생성합니다 */
+  --text-title-xl: 24px;   /* 타이틀_볼드_XL (font/size/2xl) */
+  --text-title-xl--line-height: 1.5;
+  --text-title-m: 20px;    /* 타이틀_볼드_M (font/size/xl) */
+  --text-title-m--line-height: 1.5;
+  --text-body-l: 16px;     /* 바디_볼드_L (font/size/lg) */
+  --text-body-l--line-height: 1.5;
+  --text-body-m: 14px;     /* 바디_볼드/미디움/레귤러_M (font/size/md) */
+  --text-body-m--line-height: 1.5;
+  --text-body-s: 12px;     /* 바디_볼드/레귤러_S (font/size/sm) */
+  --text-body-s--line-height: 1.5;
+  --text-caption-s: 10px;  /* 캡션_레귤러_S (font/size/xs) */
+  --text-caption-s--line-height: 1.5;
+
+  /* ── Font Weight ── */
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+
+  /* ── Line Height ── */
+  --leading-default: 1.5;
+}

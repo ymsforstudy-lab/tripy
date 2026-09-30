@@ -1,8 +1,5 @@
-/// <reference types="vite/client" />
-import tokensCss from "../../app/tokens.css?raw";
-
-// tokens.css(Figma 자동 생성)를 그대로 파싱한다.
-// 토큰 목록을 스토리에 복사해 두지 않으므로, tokens.css가 바뀌면 문서도 자동으로 따라간다.
+// 토큰 CSS 파일을 그대로 파싱해 Storybook 문서에 쓴다.
+// 토큰 목록을 스토리에 복사해 두지 않으므로, CSS가 바뀌면 문서도 자동으로 따라간다.
 
 export type Token = {
   name: string; // --color-green-50
@@ -13,7 +10,8 @@ export type Token = {
 
 export type Section = { title: string; tokens: Token[] };
 
-function parseTokens(css: string): Section[] {
+/** `/* ── 제목 ── *\/` 주석 단위로 묶어 돌려준다. */
+export function parseTokens(css: string): Section[] {
   const sections: Section[] = [];
   let current: Section | undefined;
 
@@ -45,24 +43,21 @@ function parseTokens(css: string): Section[] {
   return sections.filter((s) => s.tokens.length > 0);
 }
 
-const SECTIONS = parseTokens(tokensCss);
-
 /** 이름이 prefix로 시작하는 토큰만 모아 한 섹션으로 돌려준다. */
-export function tokensOf(prefix: string, title: string): Section {
+export function tokensOf(css: string, prefix: string, title: string): Section {
   return {
     title,
-    tokens: SECTIONS.flatMap((s) => s.tokens).filter((t) =>
-      t.name.startsWith(prefix),
-    ),
+    tokens: parseTokens(css)
+      .flatMap((s) => s.tokens)
+      .filter((t) => t.name.startsWith(prefix)),
   };
 }
 
-/** tokens.css의 `── 제목 ──` 주석으로 묶인 색상 섹션들. */
-export function colorSections(): Section[] {
-  return SECTIONS.map((s) => ({
-    ...s,
-    tokens: s.tokens.filter((t) => t.name.startsWith("--color-")),
-  })).filter((s) => s.tokens.length > 0);
+/** 제목이 title인 섹션 하나를 돌려준다. */
+export function sectionOf(css: string, title: string): Section {
+  const found = parseTokens(css).find((s) => s.title === title);
+  if (!found) throw new Error(`토큰 섹션 "${title}"을 찾을 수 없습니다.`);
+  return found;
 }
 
 // 토큰 이름 → 컴포넌트에서 쓰는 Tailwind 클래스

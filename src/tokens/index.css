@@ -1,0 +1,7 @@
+/* 디자인 토큰 진입점. 토큰 종류별 파일은 같은 폴더의 *.stories.tsx로 Storybook에 문서화된다. */
+@import "./primitive-color.css";
+@import "./semantic-color.css";
+@import "./typography.css";
+@import "./spacing.css";
+@import "./radius.css";
+@import "./shadow.css";

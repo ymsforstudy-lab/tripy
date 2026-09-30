@@ -1,0 +1,9 @@
+/* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
+
+@theme {
+  /* ── Spacing (Figma padding/gap 변수) ── */
+  --spacing-gap-3: 8px;    /* gap/3 */
+  --spacing-gap-5: 16px;   /* gap/5 */
+  --spacing-pad-6: 16px;   /* padding/6 */
+  --spacing-pad-8: 24px;   /* padding/8 */
+}

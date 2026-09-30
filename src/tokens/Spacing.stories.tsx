@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import css from "./spacing.css?raw";
 import { SectionBlock, TokenMeta, tokenDocParameters } from "./TokenDoc";
-import { tokensOf } from "./tokens";
+import { tokensOf } from "./parseTokens";
 
 function SpacingList() {
-  const section = tokensOf("--spacing-", "Spacing");
+  const section = tokensOf(css, "--spacing-", "Spacing");
   return (
     <SectionBlock section={section}>
       <div className="flex flex-col gap-gap-5">
@@ -26,6 +27,7 @@ function SpacingList() {
 const meta = {
   title: "Foundations/Spacing",
   parameters: tokenDocParameters(
+    "spacing.css",
     "Figma padding/gap 변수. 요소 사이 간격은 `gap-*`, 안쪽 여백은 `p-*`로 쓴다.",
   ),
   tags: ["autodocs"],

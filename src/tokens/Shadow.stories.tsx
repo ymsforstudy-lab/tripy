@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import css from "./shadow.css?raw";
 import { SectionBlock, TokenMeta, tokenDocParameters } from "./TokenDoc";
-import { tokensOf, type Section } from "./tokens";
+import { tokensOf, type Section } from "./parseTokens";
 
 function ShadowGrid({ section, drop }: { section: Section; drop?: boolean }) {
   return (
@@ -27,6 +28,7 @@ function ShadowGrid({ section, drop }: { section: Section; drop?: boolean }) {
 const meta = {
   title: "Foundations/Shadow",
   parameters: tokenDocParameters(
+    "shadow.css",
     "반복 사용되던 그림자를 프리셋으로 만든 것. 요소 박스에는 `shadow-*`, 투명 이미지 윤곽에는 `drop-shadow-*`를 쓴다.",
   ),
   tags: ["autodocs"],
@@ -36,11 +38,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const BoxShadow: Story = {
-  render: () => <ShadowGrid section={tokensOf("--shadow-", "Box Shadow")} />,
+  render: () => <ShadowGrid section={tokensOf(css, "--shadow-", "Box Shadow")} />,
 };
 
 export const DropShadow: Story = {
   render: () => (
-    <ShadowGrid section={tokensOf("--drop-shadow-", "Drop Shadow")} drop />
+    <ShadowGrid section={tokensOf(css, "--drop-shadow-", "Drop Shadow")} drop />
   ),
 };

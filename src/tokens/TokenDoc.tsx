@@ -1,14 +1,17 @@
 import type { Parameters } from "@storybook/nextjs-vite";
-import { utilityOf, type Section, type Token } from "./tokens";
+import { utilityOf, type Section, type Token } from "./parseTokens";
 
 /** 토큰 문서 스토리 공통 parameters */
-export function tokenDocParameters(description: string): Parameters {
+export function tokenDocParameters(
+  file: string,
+  description: string,
+): Parameters {
   return {
     layout: "padded",
     mobileFrame: false,
     docs: {
       description: {
-        component: `${description}\n\n\`src/app/tokens.css\`(Figma Variables 자동 생성)를 그대로 읽어 보여준다. 토큰을 추가·변경하면 이 문서도 자동으로 갱신된다. 굵은 글씨가 컴포넌트에서 쓰는 Tailwind 클래스다.`,
+        component: `${description}\n\n토큰 원본 \`src/tokens/${file}\`을 그대로 읽어 보여준다. 토큰을 추가·변경하면 이 문서도 자동으로 갱신된다. 굵은 글씨가 컴포넌트에서 쓰는 Tailwind 클래스다.`,
       },
     },
   };

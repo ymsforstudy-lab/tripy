@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import css from "./radius.css?raw";
 import { SectionBlock, TokenMeta, tokenDocParameters } from "./TokenDoc";
-import { tokensOf } from "./tokens";
+import { tokensOf } from "./parseTokens";
 
 function RadiusGrid() {
-  const section = tokensOf("--radius-", "Border Radius");
+  const section = tokensOf(css, "--radius-", "Border Radius");
   return (
     <SectionBlock section={section}>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-gap-5">
@@ -23,7 +24,7 @@ function RadiusGrid() {
 
 const meta = {
   title: "Foundations/Radius",
-  parameters: tokenDocParameters("Figma R* 변수 기반 모서리 둥글기."),
+  parameters: tokenDocParameters("radius.css", "Figma R* 변수 기반 모서리 둥글기."),
   tags: ["autodocs"],
 } satisfies Meta;
 

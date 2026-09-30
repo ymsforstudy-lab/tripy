@@ -1,0 +1,10 @@
+/* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
+
+@theme {
+  /* ── Border Radius (Figma R* 변수) ── */
+  --radius-8: 8px;
+  --radius-12: 12px;   /* radius/xlarge2 */
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-30: 30px;
+}

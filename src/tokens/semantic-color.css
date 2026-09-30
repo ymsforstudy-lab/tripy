@@ -1,0 +1,13 @@
+/* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
+
+@theme {
+  /* ── Semantic ── */
+  --color-danger-5: #FEECF0;
+  --color-danger-50: #EB003B;
+  --color-danger-60: #D50136;
+  --color-danger-70: #A0041E;
+  --color-danger-80: #8D0023;
+  --color-info-5: #E9F0FF;
+  --color-info-50: #2768FF;
+  --color-warning-50: #FFB724;
+}
