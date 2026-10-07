@@ -1,10 +1,10 @@
-interface HintBubbleProps {
+interface TooltipProps {
   text?: string;
 }
 
-export default function HintBubble({
+export default function Tooltip({
   text = "경비를 등록해 볼까요?",
-}: HintBubbleProps) {
+}: TooltipProps) {
   return (
     <div className="relative inline-flex items-center">
       <div className="flex items-center justify-center rounded-[8px] bg-info-5 px-[10px] py-[5px]">
