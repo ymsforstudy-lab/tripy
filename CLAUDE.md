@@ -12,6 +12,7 @@ Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · Supabase �
 ## 명령어
 
 ```
+cp .env.example .env.local  # 최초 1회. 값은 팀원에게 받는다 (.env*는 읽기 금지)
 npm run dev            # 로컬 실행 (localhost:3000)
 npm run verify         # lint + typecheck + 토큰 하드코딩 검사 — 작업 완료 전 반드시 통과
 npm run build          # 프로덕션 빌드 (PR 전)
