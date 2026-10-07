@@ -80,7 +80,7 @@ export default function CountryPage() {
               <path d="M8 3V13M3 8H13" stroke="var(--color-gray-60)" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <span>
-              <span className="font-medium text-gray-90">'{search}'</span> 직접 입력하기
+              <span className="font-medium text-gray-90">&apos;{search}&apos;</span> 직접 입력하기
             </span>
           </button>
         )}
