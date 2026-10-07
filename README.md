@@ -10,7 +10,7 @@ npm run dev        # http://localhost:3000
 npm run storybook  # http://localhost:6006
 ```
 
-`.env.local`에 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`가 필요하다.
+처음 한 번 `cp .env.example .env.local` 후 Supabase 값을 채운다. 각 변수 설명은 `.env.example`에 있다.
 
 ## 팀 작업 방식 (Claude Code)
 
