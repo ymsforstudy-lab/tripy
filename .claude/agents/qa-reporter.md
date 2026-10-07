@@ -29,9 +29,9 @@ memory: project
 
 검사에 필요한 기준 정보를 수집합니다.
 
-1. `docs/design-tokens.md` 읽기 (토큰 준수 기준)
-2. `src/tokens/*.css` 파일 목록 파악 (토큰 완전성 기준)
-3. `figma-code-connect.json` 읽기 (Figma 비교 시 필요)
+1. `CLAUDE.md`의 「절대 규칙」 읽기 (토큰 준수 기준)
+2. `src/tokens/*.css` 파일 목록 파악 (토큰 완전성·대체 토큰 기준)
+3. Figma 비교 시: 사용자에게 받은 Figma URL과 `get_code_connect_map`으로 매핑 확인 (매핑이 없으면 7️⃣은 건너뛰고 보고)
 4. `src/components/ui/` 전체 구조 파악
 
 ### 3단계: Plan (검사 계획)
@@ -45,7 +45,7 @@ memory: project
 
 실행할 검사:
   1️⃣ 타입 검사 (npm run typecheck)
-  2️⃣ 테스트 실행 (npm test)
+  2️⃣ 테스트 실행 (npm run test)
   3️⃣ 토큰 준수 검사 (하드코딩 탐지)
   4️⃣ Story 파일 누락 확인
   5️⃣ Test 파일 누락 확인
@@ -61,20 +61,20 @@ memory: project
 `npm run typecheck` 실행. 에러가 있으면 파일명, 줄 번호, 에러 메시지 기록.
 
 #### 2️⃣ 테스트 실행
-`npm test` 실행. 실패한 테스트명과 사유 기록.
+`npm run test` 실행 (Storybook 스토리 테스트, playwright 필요). 실패한 테스트명과 사유 기록. 실행 환경 문제로 못 돌리면 ❌가 아니라 「미실행」으로 보고.
 
 #### 3️⃣ 디자인 토큰 준수 검사
-`src/components/` 하위 모든 `.tsx`에서:
+`node .claude/hooks/check-hardcode.mjs --scan`으로 파일별 집계, `--check`로 baseline 대비 증감 확인. 그다음 상위 파일에서:
 - 하드코딩된 색상 (#xxx, rgb(), rgba(), hsl())
-- 하드코딩된 스페이싱 (margin/padding/gap에 직접 px, 1px border 허용)
-- 하드코딩된 font-size
-위반 시 파일명, 줄 번호, 값, 대체 토큰(docs/design-tokens.md 참조) 기록.
+- 임의 px 값 (`w-[327px]`, `gap-[7px]` 등)
+- `style={{}}` 리터럴 (동적 값은 허용)
+위반 시 파일명, 줄 번호, 값, 대체 토큰(`src/tokens/*.css` 참조) 기록.
 
 #### 4️⃣ Story 파일 누락 확인
 컴포넌트 `.tsx`마다 같은 디렉토리에 `.stories.tsx`가 있는지 확인.
 
 #### 5️⃣ Test 파일 누락 확인
-컴포넌트 `.tsx`마다 같은 디렉토리에 `.test.tsx`가 있는지 확인.
+현재 이 저장소는 `.test.tsx` 단위 테스트를 쓰지 않고 스토리 테스트(2️⃣)로 대신한다. 로직이 있는 파일(`src/hooks/`, `src/lib/`) 중 테스트가 없는 것만 참고로 나열한다.
 
 #### 6️⃣ Figma 토큰 동기화 (Figma 비교 시만)
 Figma MCP `get_variable_defs`로 변수 가져와서 `src/tokens/*.css`와 비교.
