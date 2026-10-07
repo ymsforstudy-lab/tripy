@@ -1,6 +1,13 @@
 "use client";
 
-export type TripyCharacterVariant = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type TripyCharacterVariant =
+  | "farewell"
+  | "sad"
+  | "empty"
+  | "error"
+  | "analysis"
+  | "welcome"
+  | "home";
 
 interface TripyCharacterProps {
   variant: TripyCharacterVariant;
@@ -10,6 +17,7 @@ interface TripyCharacterProps {
 const VARIANT_CONFIG: Record<
   TripyCharacterVariant,
   {
+    file: number;
     containerW: number;
     containerH: number;
     imgStyle?: React.CSSProperties;
@@ -17,23 +25,27 @@ const VARIANT_CONFIG: Record<
     objectFit?: string;
   }
 > = {
-  1: {
+  farewell: {
+    file: 1,
     containerW: 180,
     containerH: 220,
     overflow: true,
     imgStyle: { width: "100%", height: "125.69%", top: "-8.28%", left: "0" },
   },
-  2: {
+  sad: {
+    file: 2,
     containerW: 163,
     containerH: 203,
     objectFit: "object-cover",
   },
-  3: {
+  empty: {
+    file: 3,
     containerW: 120,
     containerH: 198,
     objectFit: "object-contain",
   },
-  4: {
+  error: {
+    file: 4,
     containerW: 142,
     containerH: 198,
     overflow: true,
@@ -44,7 +56,8 @@ const VARIANT_CONFIG: Record<
       left: "-0.67%",
     },
   },
-  5: {
+  analysis: {
+    file: 5,
     containerW: 138,
     containerH: 143,
     overflow: true,
@@ -55,12 +68,14 @@ const VARIANT_CONFIG: Record<
       left: "-6%",
     },
   },
-  6: {
+  welcome: {
+    file: 6,
     containerW: 180,
     containerH: 220,
     objectFit: "object-contain",
   },
-  7: {
+  home: {
+    file: 7,
     containerW: 142,
     containerH: 154,
     objectFit: "object-contain",
@@ -81,7 +96,7 @@ export default function TripyCharacter({
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`/images/tripy/tripy-${variant}.png`}
+          src={`/images/tripy/tripy-${config.file}.png`}
           alt="트리피 캐릭터"
           className="absolute pointer-events-none"
           style={config.imgStyle}
@@ -97,7 +112,7 @@ export default function TripyCharacter({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/images/tripy/tripy-${variant}.png`}
+        src={`/images/tripy/tripy-${config.file}.png`}
         alt="트리피 캐릭터"
         className={`absolute inset-0 h-full w-full pointer-events-none ${config.objectFit ?? "object-contain"}`}
       />
