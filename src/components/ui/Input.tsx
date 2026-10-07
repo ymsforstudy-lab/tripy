@@ -2,13 +2,13 @@
 
 import { ReactNode, useState } from "react";
 
-type InputVariant = "default" | "focused" | "success" | "error";
+type InputState = "default" | "focused" | "success" | "error";
 
 interface InputProps {
   label?: string;
   icon?: ReactNode;
   disabled?: boolean;
-  variant?: InputVariant;
+  state?: InputState;
   value?: string;
   placeholder?: string;
   helperText?: string;
@@ -16,21 +16,21 @@ interface InputProps {
   onChange?: (value: string) => void;
 }
 
-const borderStyles: Record<InputVariant, string> = {
+const borderStyles: Record<InputState, string> = {
   default: "border-gray-30",
   focused: "border-gray-60",
   success: "border-green-50",
   error: "border-danger-50",
 };
 
-const bgStyles: Record<InputVariant, string> = {
+const bgStyles: Record<InputState, string> = {
   default: "bg-gray-5",
   focused: "bg-white",
   success: "bg-white",
   error: "bg-white",
 };
 
-const helperTextStyles: Record<Exclude<InputVariant, "default" | "focused">, string> = {
+const helperTextStyles: Record<Exclude<InputState, "default" | "focused">, string> = {
   success: "text-green-50",
   error: "text-danger-50",
 };
@@ -39,7 +39,7 @@ export default function Input({
   label,
   icon,
   disabled = false,
-  variant = "default",
+  state = "default",
   value = "",
   placeholder,
   helperText,
@@ -48,12 +48,12 @@ export default function Input({
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
-  const effectiveVariant =
-    variant === "success" || variant === "error"
-      ? variant
+  const effectiveState =
+    state === "success" || state === "error"
+      ? state
       : isFocused
         ? "focused"
-        : variant;
+        : state;
 
   return (
     <div className="flex w-full flex-col gap-1">
@@ -64,8 +64,8 @@ export default function Input({
       <div
         className={[
           "flex items-center gap-2 rounded-xl border px-3 py-3",
-          borderStyles[effectiveVariant],
-          bgStyles[effectiveVariant],
+          borderStyles[effectiveState],
+          bgStyles[effectiveState],
           disabled ? "opacity-50" : "",
         ]
           .filter(Boolean)
@@ -84,8 +84,8 @@ export default function Input({
         {icon && <span className="shrink-0 text-gray-50">{icon}</span>}
       </div>
 
-      {helperText && (variant === "success" || variant === "error") && (
-        <p className={`text-xs tracking-[-0.24px] ${helperTextStyles[variant]}`}>
+      {helperText && (state === "success" || state === "error") && (
+        <p className={`text-xs tracking-[-0.24px] ${helperTextStyles[state]}`}>
           {helperText}
         </p>
       )}
