@@ -1,12 +1,79 @@
 /* Figma Variables 기반 디자인 토큰. 이름을 바꾸면 참조하는 컴포넌트가 깨지므로 값만 수정한다. */
 
 @theme {
-  /* ── Semantic ── */
+  /* ── Background ── */
+  --color-background-base: #FFFFFF;           /* → Grayscale/White */
+
+  /* ── Surface ── */
+  --color-surface-default: #FFFFFF;           /* → Grayscale/White */
+  --color-surface-subtle: #F8F8F8;            /* → Grayscale/5 */
+  --color-surface-muted: #F0F0F0;             /* → Grayscale/10 */
+  --color-surface-disabled: #E4E4E4;          /* → Grayscale/20 */
+  --color-surface-brand-subtle: #F0F9E7;      /* → Primary/Green/0 */
+  --color-surface-brand-muted: #DFF2CC;       /* → Primary/Green/10 */
+  --color-surface-brand-selected: #C6E8A6;    /* → Primary/Green/20 */
+  --color-surface-category: #F4F5F6;          /* → Grayscale/Cool/5 */
+
+  /* ── Text ── */
+  --color-text-strong: #000000;               /* → Grayscale/Black */
+  --color-text-primary: #1D1D1D;              /* → Grayscale/90 */
+  --color-text-secondary: #555555;            /* → Grayscale/70 */
+  --color-text-supporting: #717171;           /* → Grayscale/60 */
+  --color-text-muted: #8E8E8E;                /* → Grayscale/50 */
+  --color-text-action-secondary: #2D2D2D;     /* → Grayscale/80 */
+  --color-text-inverse: #FFFFFF;              /* → Grayscale/White */
+  --color-text-info: #2768FF;                 /* → Information/50 */
+  --color-text-danger: #D50136;               /* → Danger/60 */
+  --color-text-brand-strong: #396907;         /* → Primary/Green/70 */
+  --color-text-success: #4B8A09;              /* → Primary/Green/60 */
+
+  /* ── Icon ── */
+  --color-icon-primary: #2D2D2D;              /* → Grayscale/80 */
+  --color-icon-secondary: #555555;            /* → Grayscale/70 */
+  --color-icon-muted: #8E8E8E;                /* → Grayscale/50 */
+  --color-icon-subtle: #D8D8D8;               /* → Grayscale/30 */
+  --color-icon-inverse: #FFFFFF;              /* → Grayscale/White */
+  --color-icon-brand: #6BC20F;                /* → Primary/Green/50 */
+
+  /* ── Border ── */
+  --color-border-hairline: #F0F0F0;           /* → Grayscale/10 */
+  --color-border-subtle: #E4E4E4;             /* → Grayscale/20 */
+  --color-border-default: #D8D8D8;            /* → Grayscale/30 */
+  --color-border-emphasis: #C6C6C6;           /* → Grayscale/40 */
+  --color-border-strong: #8E8E8E;             /* → Grayscale/50 */
+  --color-border-focus: #717171;              /* → Grayscale/60 */
+  --color-border-brand-subtle: #C6E8A6;       /* → Primary/Green/20 */
+  --color-border-brand-muted: color-mix(in srgb, #305706 40%, transparent); /* → Primary/Green/80 α40% */
+  --color-border-danger: #D50136;             /* → Danger/60 */
+
+  /* ── Action ── */
+  --color-action-primary: #6BC20F;            /* → Primary/Green/50 */
+  --color-action-primary-border: #82CC41;     /* → Primary/Green/40 */
+  --color-action-primary-disabled: #C6E8A6;   /* → Primary/Green/20 */
+  --color-action-primary-disabled-text: #FFFFFF; /* → Grayscale/White */
+  --color-action-danger: #D50136;             /* → Danger/60 */
+
+  /* ── Status ── */
+  --color-status-success: #6BC20F;            /* → Primary/Green/50 */
+  --color-status-info-subtle: #E9F0FF;        /* → Information/5 */
+  --color-status-info: #2768FF;               /* → Information/50 */
+  --color-status-danger: #D50136;             /* → Danger/60 */
+  --color-status-danger-strong: #8D0023;      /* → Danger/70 */
+  --color-status-danger-subtle: #FEECF0;      /* → Danger/5 */
+
+  /* ── Overlay ── */
+  --color-overlay-scrim: color-mix(in srgb, #000000 40%, transparent); /* → Grayscale/Black α40% */
+
+  /* ── Brand ── */
+  --color-brand-primary: #6BC20F;             /* → Primary/Green/50 */
+  --color-brand-strong: #396907;              /* → Primary/Green/70 */
+
+  /* ── 기존 호환 유지 (컴포넌트에서 참조 중) ── */
   --color-danger-5: #FEECF0;
   --color-danger-50: #EB003B;
   --color-danger-60: #D50136;
-  --color-danger-70: #A0041E;
-  --color-danger-80: #8D0023;
+  --color-danger-70: #8D0023;
+  --color-danger-80: #5E0018;
   --color-info-5: #E9F0FF;
   --color-info-50: #2768FF;
   --color-warning-50: #FFB724;
