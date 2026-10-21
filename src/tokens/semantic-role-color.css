@@ -1,0 +1,72 @@
+/* Figma Semantic 변수 기반 역할 색상. 값을 복사하지 않고 원색 토큰(primitive-color.css, semantic-color.css)을 참조한다.
+   이름을 바꾸면 참조하는 컴포넌트가 깨지므로 참조 대상만 수정한다.
+   static: style/props의 "var(--color-icon-...)" 문자열은 Tailwind 스캐너가 감지하지 못하므로, 사용 여부와 관계없이 항상 CSS 변수로 내보낸다. */
+
+@theme static {
+  /* ── Background ── */
+  --color-background-base: var(--color-gray-white); /* background/base · Grayscale/White */
+
+  /* ── Surface ── */
+  --color-surface-default: var(--color-gray-white); /* surface/default · Grayscale/White */
+  --color-surface-subtle: var(--color-gray-5); /* surface/subtle · Grayscale/5 */
+  --color-surface-muted: var(--color-gray-10); /* surface/muted · Grayscale/10 */
+  --color-surface-disabled: var(--color-gray-20); /* surface/disabled · Grayscale/20 */
+  --color-surface-brand-subtle: var(--color-green-0); /* surface/brand-subtle · Primary/Green/0 */
+  --color-surface-brand-muted: var(--color-green-10); /* surface/brand-muted · Primary/Green/10 */
+  --color-surface-brand-selected: var(--color-green-20); /* surface/brand-selected · Primary/Green/20 */
+  --color-surface-category: var(--color-gray-cool-5); /* surface/category · Grayscale/Cool/5 */
+
+  /* ── Text ── */
+  --color-text-strong: var(--color-gray-black); /* text/strong · Grayscale/Black */
+  --color-text-primary: var(--color-gray-90); /* text/primary · Grayscale/90 */
+  --color-text-secondary: var(--color-gray-70); /* text/secondary · Grayscale/70 */
+  --color-text-supporting: var(--color-gray-60); /* text/supporting · Grayscale/60 */
+  --color-text-muted: var(--color-gray-50); /* text/muted · Grayscale/50 */
+  --color-text-action-secondary: var(--color-gray-80); /* text/action-secondary · Grayscale/80 */
+  --color-text-inverse: var(--color-gray-white); /* text/inverse · Grayscale/White */
+  --color-text-info: var(--color-info-50); /* text/info · Information/50 */
+  --color-text-danger: var(--color-danger-60); /* text/danger · Danger/60 */
+  --color-text-brand-strong: var(--color-green-70); /* text/brand-strong · Primary/Green/70 */
+  --color-text-success: var(--color-green-60); /* text/success · Primary/Green/60 */
+
+  /* ── Icon ── */
+  --color-icon-primary: var(--color-gray-80); /* icon/primary · Grayscale/80 */
+  --color-icon-secondary: var(--color-gray-70); /* icon/secondary · Grayscale/70 */
+  --color-icon-muted: var(--color-gray-50); /* icon/muted · Grayscale/50 */
+  --color-icon-subtle: var(--color-gray-30); /* icon/subtle · Grayscale/30 */
+  --color-icon-inverse: var(--color-gray-white); /* icon/inverse · Grayscale/White */
+  --color-icon-brand: var(--color-green-50); /* icon/brand · Primary/Green/50 */
+
+  /* ── Border ── */
+  --color-border-hairline: var(--color-gray-10); /* border/hairline · Grayscale/10 */
+  --color-border-subtle: var(--color-gray-20); /* border/subtle · Grayscale/20 */
+  --color-border-default: var(--color-gray-30); /* border/default · Grayscale/30 */
+  --color-border-emphasis: var(--color-gray-40); /* border/emphasis · Grayscale/40 */
+  --color-border-strong: var(--color-gray-50); /* border/strong · Grayscale/50 */
+  --color-border-focus: var(--color-gray-60); /* border/focus · Grayscale/60 */
+  --color-border-brand-subtle: var(--color-green-20); /* border/brand-subtle · Primary/Green/20 */
+  --color-border-brand-muted: color-mix(in srgb, var(--color-green-80) 40%, transparent); /* border/brand-muted · Primary/Green/80 40% */
+  --color-border-danger: var(--color-danger-60); /* border/danger · Danger/60 */
+
+  /* ── Action ── */
+  --color-action-primary: var(--color-green-50); /* action/primary · Primary/Green/50 */
+  --color-action-primary-border: var(--color-green-40); /* action/primary-border · Primary/Green/40 */
+  --color-action-primary-disabled: var(--color-green-20); /* action/primary-disabled · Primary/Green/20 */
+  --color-action-primary-disabled-text: var(--color-gray-white); /* action/primary-disabled-text · Grayscale/White */
+  --color-action-danger: var(--color-danger-60); /* action/danger · Danger/60 */
+
+  /* ── Status ── */
+  --color-status-success: var(--color-green-50); /* status/success · Primary/Green/50 */
+  --color-status-info-subtle: var(--color-info-5); /* status/info-subtle · Information/5 */
+  --color-status-info: var(--color-info-50); /* status/info · Information/50 */
+  --color-status-danger: var(--color-danger-60); /* status/danger · Danger/60 */
+  --color-status-danger-strong: var(--color-danger-70); /* status/danger-strong · Danger/70 */
+  --color-status-danger-subtle: var(--color-danger-5); /* status/danger-subtle · Danger/5 */
+
+  /* ── Overlay ── */
+  --color-overlay-scrim: color-mix(in srgb, var(--color-gray-black) 40%, transparent); /* overlay/scrim · Grayscale/Black 40% */
+
+  /* ── Brand ── */
+  --color-brand-primary: var(--color-green-50); /* brand/primary · Primary/Green/50 */
+  --color-brand-strong: var(--color-green-70); /* brand/strong · Primary/Green/70 */
+}

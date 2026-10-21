@@ -60,9 +60,32 @@ export function sectionOf(css: string, title: string): Section {
   return found;
 }
 
+/**
+ * 값 속 var(--x)를 여러 토큰 CSS에서 찾은 실제 값으로 바꾼다.
+ * 역할 토큰은 원색을 참조하므로, 문서 스와치가 산출 CSS 유무와 무관하게 칠해지도록 쓴다.
+ */
+export function varResolver(...cssList: string[]): (value: string) => string {
+  const table = new Map<string, string>();
+  for (const css of cssList) {
+    for (const t of parseTokens(css).flatMap((s) => s.tokens)) table.set(t.name, t.value);
+  }
+  const resolve = (value: string, depth = 0): string =>
+    depth > 8
+      ? value
+      : value.replace(/var\((--[\w-]+)\)/g, (whole, name: string) => {
+          const found = table.get(name);
+          return found === undefined ? whole : resolve(found, depth + 1);
+        });
+  return (value) => resolve(value);
+}
+
 // 토큰 이름 → 컴포넌트에서 쓰는 Tailwind 클래스
 export function utilityOf(name: string): string {
   const rules: [RegExp, (m: string) => string][] = [
+    [/^--color-(text-.+)$/, (m) => `text-${m}`],
+    [/^--color-(icon-.+)$/, (m) => `text-${m}`],
+    [/^--color-(border-.+)$/, (m) => `border-${m}`],
+    [/^--gradient-(.+)$/, (m) => `bg-(image:--gradient-${m})`],
     [/^--color-(.+)$/, (m) => `bg-${m}`],
     [/^--text-(.+)$/, (m) => `text-${m}`],
     [/^--font-weight-(.+)$/, (m) => `font-${m}`],

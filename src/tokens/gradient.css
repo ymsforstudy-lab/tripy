@@ -1,0 +1,10 @@
+/* Figma 색상 스타일(그라디언트) 기반 토큰. 컴포넌트는 `background: var(--gradient-*)` 또는 `bg-(image:--gradient-*)`로 쓴다.
+   바탕 단색도 gradient 레이어로 표현해 background-image 단독으로도 같은 결과가 나온다.
+   static: 소스 문자열 "var(--gradient-*)"는 Tailwind 스캐너가 감지하지 못하므로 항상 CSS 변수로 내보낸다. */
+
+@theme static {
+  /* ── Gradient ── */
+  --gradient-progress-good: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0%, rgba(33, 99, 28, 0.3) 100%), linear-gradient(90deg, var(--color-green-50) 0%, var(--color-green-50) 100%); /* primary/Gradient · Green/50 + #FFFFFF→#21631C 30% */
+  --gradient-progress-danger: linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0%, rgba(221, 46, 68, 0.3) 100%), linear-gradient(90deg, var(--color-danger-70) 0%, var(--color-danger-70) 100%); /* danger/gradient · Danger/70 + #FFFFFF→#DD2E44 30% */
+  --gradient-nav-home: linear-gradient(180deg, var(--color-green-50) 0%, transparent 100%), linear-gradient(90deg, var(--color-gradient) 0%, var(--color-gradient) 100%); /* primary/linear · Gradient + Green/50 100%→0% */
+}
