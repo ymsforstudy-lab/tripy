@@ -68,7 +68,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 border-t border-gray-10 bg-white px-[47px] pb-4 pt-3 shadow-nav max-w-[390px]">
+    <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 border-t border-gray-10 bg-gray-white px-[47px] pb-4 pt-3 shadow-nav max-w-[390px]">
       <div className="flex items-center justify-between">
         {TABS.map(({ href, label, Icon, isHome }) => {
           const isActive = pathname === href;
@@ -77,10 +77,10 @@ export default function BottomNav() {
             return (
               <Link key={href} href={href}>
                 <div
-                  className="flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-2xl border border-green-50 bg-(image:--gradient-nav-home)"
+                  className="flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-16 border border-green-50 bg-(image:--gradient-nav-home)"
                 >
-                  <Icon color="white" />
-                  <span className="text-body-s font-normal leading-default text-white">
+                  <Icon color="var(--color-gray-white)" />
+                  <span className="text-body-s font-normal leading-default text-gray-white">
                     {label}
                   </span>
                 </div>

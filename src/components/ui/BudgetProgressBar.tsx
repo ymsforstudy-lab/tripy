@@ -25,10 +25,10 @@ export default function BudgetProgressBar({ ratio, className = "" }: BudgetProgr
       aria-valuenow={Math.round(safeRatio * 100)}
       aria-valuemin={0}
       aria-valuemax={100}
-      className={`relative h-[10px] w-full overflow-hidden rounded-[20px] bg-gray-30 ${className}`}
+      className={`relative h-2.5 w-full overflow-hidden rounded-20 bg-gray-30 ${className}`}
     >
       <div
-        className="h-full rounded-[20px] transition-[width] duration-500 ease-out"
+        className="h-full rounded-20 transition-[width] duration-500 ease-out"
         style={{
           width: `${widthPercent}%`,
           background: fillStyle.background,
