@@ -356,6 +356,25 @@ Storybook과 짝이 없어 남아 있던 Figma 컴포넌트 6개를 용어 사�
 - 코드 `BottomNav`는 기존 디자인(여행 관리·초록 홈 버튼)과 같아서 기존 컴포넌트가 `BottomNav` 이름을 유지했습니다. 새 하단 탭(`BottomNavV2`)을 표준으로 삼을지는 디자이너 확인이 필요합니다.
 - 쓰지 않는 `iconHome`이 새 `IconHome`과 대소문자만 다르게 남아 있습니다.
 
+### 5차 적용 (2026-10-21)
+
+화면에서 쓰지 않는 Figma 컴포넌트와 코드의 남은 위반을 정리했습니다.
+
+**Figma (30개)**
+
+- 이름 표기만 바꾼 28개: `currencyCard` → `CurrencyCard`처럼 첫 글자를 대문자로, `iconPlus` → `IconPlus`. `optionLabel`은 값도 `Checked`·`Unchecked`로, `rankContent`는 Property를 `slot`·`instance`로 바꿨습니다.
+- 이름이 겹치던 `countryItem` 2개: 상태 2개짜리 세트는 `CountryItem`(`state=Default\|Unselected`, 오타 `unseleted` 수정), 한 줄짜리는 `CountryRow`
+
+**코드 (3건)**
+
+| 변경 전 | 변경 후 | 이유 |
+| --- | --- | --- |
+| SelectChip `variant: default\|selected\|tag` | `variant: item\|tag`, `state: default\|selected` | 모양(종류)과 선택 상태가 한 Property에 섞여 있었습니다 |
+| Tooltip `text` | `label` | `text`는 쓰지 않는 용어입니다. PR #101 브랜치에서 고쳤습니다 |
+| BottomCTA 스토리 `WithSecondary` | `HasSecondary` | Figma `hasSecondary`와 같은 단어 |
+
+화면에서 쓰는 컴포넌트와 이름이 겹치는 미사용 복사본 5개는 인스턴스 0개를 다시 확인한 뒤 삭제했습니다: `Component` 2개(왼쪽 화살표, `IconLeftArrow`와 같음), `searchBar`(848:2250), `iconHome`(274:2185), `Fab`(848:2277). 이제 Figma 로컬 컴포넌트 83개 전부가 규칙을 통과합니다. 코드 수정은 PR #110(SelectChip, BottomCTA 스토리)과 PR #101에 추가한 커밋(Tooltip)으로 올렸습니다.
+
 ### 앞으로 네이밍을 결정하는 의사결정 기준
 
 이름을 정할 때 아래 순서로 확인하고, 먼저 걸리는 기준을 따릅니다.
