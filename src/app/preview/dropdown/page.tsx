@@ -31,7 +31,7 @@ export default function DropdownPreviewPage() {
             <SelectChip
               key={country}
               label={country}
-              variant={selected === country ? "selected" : "default"}
+              state={selected === country ? "selected" : "default"}
               onClick={() => setSelected(selected === country ? null : country)}
             />
           ))}

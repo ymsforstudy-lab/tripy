@@ -94,7 +94,7 @@ function RegionContent() {
           <SelectChip
             key={region}
             label={region}
-            variant={selected === region ? "selected" : "default"}
+            state={selected === region ? "selected" : "default"}
             onClick={() => setSelected(region)}
           />
         ))}

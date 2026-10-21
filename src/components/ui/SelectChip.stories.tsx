@@ -5,13 +5,15 @@ const meta = {
   title: "UI/SelectChip",
   component: SelectChip,
   argTypes: {
-    variant: { control: "inline-radio", options: ["default", "selected", "tag"] },
+    variant: { control: "inline-radio", options: ["item", "tag"] },
+    state: { control: "inline-radio", options: ["default", "selected"] },
     onClick: { action: "clicked" },
     onRemove: { action: "removed" },
   },
   args: {
     label: "일본",
-    variant: "default",
+    variant: "item",
+    state: "default",
     disabled: false,
   },
   decorators: [
@@ -31,7 +33,7 @@ export const Default: Story = {};
 
 /** 목록에서 선택된 항목 */
 export const Selected: Story = {
-  args: { variant: "selected" },
+  args: { state: "selected" },
 };
 
 /** 상단에 선택 결과를 보여주는 태그 (X 버튼으로 제거) */
@@ -47,10 +49,10 @@ export const Disabled: Story = {
 export const ListExample: Story = {
   render: (args) => (
     <div className="flex flex-col gap-2">
-      <SelectChip {...args} label="일본" variant="selected" />
-      <SelectChip {...args} label="베트남" variant="default" />
-      <SelectChip {...args} label="태국" variant="default" />
-      <SelectChip {...args} label="프랑스" variant="default" />
+      <SelectChip {...args} label="일본" state="selected" />
+      <SelectChip {...args} label="베트남" state="default" />
+      <SelectChip {...args} label="태국" state="default" />
+      <SelectChip {...args} label="프랑스" state="default" />
     </div>
   ),
 };
