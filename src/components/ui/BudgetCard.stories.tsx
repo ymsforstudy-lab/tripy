@@ -9,8 +9,8 @@ const meta = {
     currency: { control: "select", options: CURRENCIES },
   },
   args: {
-    totalSpent: 45000,
-    totalBudget: 100000,
+    todaySpent: 45000,
+    dailyBudget: 100000,
     progressRatio: 0.45,
     currency: "KRW",
   },
@@ -30,24 +30,24 @@ export const Default: Story = {};
 
 /** 아직 지출이 없는 상태 */
 export const NoSpending: Story = {
-  args: { totalSpent: 0, progressRatio: 0 },
+  args: { todaySpent: 0, progressRatio: 0 },
 };
 
-/** 예산을 다 쓴 상태 */
+/** 하루 예산을 다 쓴 상태 */
 export const Full: Story = {
-  args: { totalSpent: 100000, progressRatio: 1 },
+  args: { todaySpent: 100000, progressRatio: 1 },
 };
 
-/** 예산 초과 — danger 배지와 게이지 색상 확인 */
+/** 하루 예산 초과 — danger 배지와 게이지 색상 확인 */
 export const OverBudget: Story = {
-  args: { totalSpent: 138000, progressRatio: 1.38 },
+  args: { todaySpent: 138000, progressRatio: 1.38 },
 };
 
 /** 해외 통화 표기 */
 export const ForeignCurrency: Story = {
   args: {
-    totalSpent: 8400,
-    totalBudget: 15000,
+    todaySpent: 8400,
+    dailyBudget: 15000,
     progressRatio: 0.56,
     currency: "JPY",
   },
