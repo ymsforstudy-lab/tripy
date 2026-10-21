@@ -89,7 +89,7 @@ export default function CountryPage() {
           <SelectChip
             key={country.name}
             label={`${country.emoji} ${country.name}`}
-            variant={selected === country.name ? "selected" : "default"}
+            state={selected === country.name ? "selected" : "default"}
             onClick={() => handleSelect(country.name)}
           />
         ))}

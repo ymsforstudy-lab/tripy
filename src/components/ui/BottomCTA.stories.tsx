@@ -27,6 +27,6 @@ export const Disabled: Story = {
 };
 
 /** 보조 텍스트 버튼이 함께 있는 경우 */
-export const WithSecondary: Story = {
+export const HasSecondary: Story = {
   args: { label: "예산 설정하기", secondaryLabel: "나중에 할게요" },
 };

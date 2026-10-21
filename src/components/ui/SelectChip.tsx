@@ -2,13 +2,16 @@
 
 import { ReactNode } from "react";
 
-type SelectChipVariant = "default" | "selected" | "tag";
+// variant는 모양(목록 항목·태그), state는 목록 항목의 선택 상태다.
+type SelectChipVariant = "item" | "tag";
+type SelectChipState = "default" | "selected";
 
 interface SelectChipProps {
   label: string;
   icon?: ReactNode;
   disabled?: boolean;
   variant?: SelectChipVariant;
+  state?: SelectChipState;
   onClick?: () => void;
   onRemove?: () => void;
 }
@@ -17,7 +20,8 @@ export default function SelectChip({
   label,
   icon,
   disabled = false,
-  variant = "default",
+  variant = "item",
+  state = "default",
   onClick,
   onRemove,
 }: SelectChipProps) {
@@ -49,7 +53,7 @@ export default function SelectChip({
 
   // 리스트 아이템 형태: 목록에서 선택/미선택 상태
   const itemStyles =
-    variant === "selected"
+    state === "selected"
       ? "border-green-20 bg-green-0 font-medium hover:bg-green-10"
       : "border-gray-20 bg-white font-normal hover:bg-gray-5";
 
