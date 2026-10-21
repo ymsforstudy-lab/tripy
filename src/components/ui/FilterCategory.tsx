@@ -19,7 +19,7 @@ export default function FilterCategory({
   onClose,
 }: FilterCategoryProps) {
   return (
-    <div className="absolute top-[78px] right-4 z-50 flex w-[211px] flex-col rounded-2xl border border-gray-40 bg-white p-4">
+    <div className="absolute top-[78px] right-4 z-50 flex w-[211px] flex-col rounded-16 border border-gray-40 bg-gray-white p-4">
       <div className="flex w-full flex-col gap-3">
         <div className="mb-1 flex w-full items-center justify-between">
           <span className="text-body-m font-bold leading-default text-gray-90">
@@ -47,13 +47,13 @@ export default function FilterCategory({
                 className="flex w-full items-center gap-[9px] cursor-pointer"
               >
                 <div
-                  className={`flex h-3.5 w-3.5 items-center justify-center rounded-[2px] border ${
-                    active ? "border-green-50 bg-green-50" : "border-gray-30 bg-white"
+                  className={`flex h-3.5 w-3.5 items-center justify-center rounded-xs border ${
+                    active ? "border-green-50 bg-green-50" : "border-gray-30 bg-gray-white"
                   }`}
                 >
                   {active && (
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                      <path d="M1 4L4 7L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M1 4L4 7L9 1" stroke="var(--color-gray-white)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   )}
                 </div>

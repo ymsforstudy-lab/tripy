@@ -28,9 +28,9 @@ export default function SelectChip({
   // 태그 형태: 상단에 선택된 항목 표시 (X 제거 버튼 포함)
   if (variant === "tag") {
     return (
-      <div className="flex items-center gap-1 rounded-xl bg-green-10 px-3 py-2">
+      <div className="flex items-center gap-1 rounded-12 bg-green-10 px-3 py-2">
         {icon && <span className="shrink-0">{icon}</span>}
-        <span className="text-sm font-medium text-green-60">{label}</span>
+        <span className="text-body-m font-medium text-green-60">{label}</span>
         {onRemove && (
           <button
             onClick={onRemove}
@@ -55,14 +55,14 @@ export default function SelectChip({
   const itemStyles =
     state === "selected"
       ? "border-green-20 bg-green-0 font-medium hover:bg-green-10"
-      : "border-gray-20 bg-white font-normal hover:bg-gray-5";
+      : "border-gray-20 bg-gray-white font-normal hover:bg-gray-5";
 
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={[
-        "flex w-full items-center justify-center gap-1 rounded-xl border px-6 py-4 text-sm text-gray-90 disabled:opacity-40",
+        "flex w-full items-center justify-center gap-1 rounded-12 border px-6 py-4 text-body-m text-gray-90 disabled:opacity-40",
         itemStyles,
       ].join(" ")}
     >

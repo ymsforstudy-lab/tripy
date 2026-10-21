@@ -23,7 +23,7 @@ export default function StatusBadge({ variant, label, className = "" }: StatusBa
   const { bg, text, defaultLabel } = VARIANT_STYLES[variant];
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-[8px] px-1 py-[2px] text-caption-s font-bold capitalize leading-default tracking-[-0.2px] ${bg} ${text} ${className}`}
+      className={`inline-flex items-center justify-center rounded-8 px-1 py-0.5 text-caption-s font-bold capitalize leading-default tracking-[-0.2px] ${bg} ${text} ${className}`}
     >
       {label ?? defaultLabel}
     </span>
