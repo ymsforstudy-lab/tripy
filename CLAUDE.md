@@ -1,6 +1,6 @@
 # Tripy
 
-여행 예산과 지출을 기록하는 모바일 우선 웹 가계부. 기능 범위는 `docs/prd.md`, 알려진 기술 부채는 `docs/architecture-review.md`.
+여행 예산과 지출을 기록하는 모바일 우선 웹 가계부. 기능 범위는 `docs/prd.md`, **화면 순서·전환은 `docs/flow-v2.md`(2.0 리뉴얼 기준)**, 알려진 기술 부채는 `docs/architecture-review.md`.
 
 ## 스택 (package.json 기준)
 
@@ -36,6 +36,27 @@ supabase/migrations/ RLS 정책, payment_method 추가 (테이블 생성 스키�
 .claude/agents/     component-builder, token-guardian, qa-reporter
 ```
 
+위 라우트는 1.x 현재 코드다. 2.0 목표 라우트는 아래 「화면 플로우 (2.0)」를 따른다.
+
+## 화면 플로우 (2.0)
+
+기준은 Figma `Tripy 2.0.0_flow`(node 1376:3287)이고 정리본은 `docs/flow-v2.md`다. 화면을 만들거나 전환을 바꾸기 전에 반드시 읽는다.
+
+```
+01 앱 시작(/) → 03 온보딩 → 04·05 여행 정보 입력(/setup) → 06 확인 바텀시트 → 07 홈(/home)
+→ 08 지출 등록(/expense) → 09 홈 → 10 지난 여행(/travels) → 11 여행 상세(/travels/[id]) → 12 마이페이지(/mypage)
+```
+
+- Figma 플로우에 없는 화면·전환을 새로 만들지 않는다. 필요해 보이면 멈추고 보고한다. 미정 사항은 `docs/flow-v2.md` 「확인 필요」에 있다.
+- 여행 설정은 `/setup` **한 화면**이다(여행지·기간·예산). 확인은 바텀시트이고, 시트의 `확인`에서만 여행을 저장한다. 1.x의 `setup/*` 다단계와 `/budget`에 새 기능을 붙이지 않는다.
+- 하단 탭은 **홈 · 지난 여행 · 마이페이지** 순서다. 07·09·10·11·12에만 보이고, `/travels/*`에서는 `지난 여행`이 활성이다.
+- 저장 후 돌아가는 이동(지출 등록 → 홈, 확인 → 홈)은 `router.replace`를 쓴다. 뒤로가기로 입력 화면에 돌아오지 않게 한다.
+- 리다이렉트로 분기할 때는 Auth·Trip 컨텍스트의 `loading`이 모두 끝난 뒤에만 판단한다. 로딩 중에 "여행 없음"으로 보고 `/setup`으로 보내지 않는다.
+- 결정된 로직(게스트 저장, 여러 여행, 닉네임, 지출 수정)은 `docs/flow-v2.md` 「결정 사항」을 따른다. 요점:
+  - 게스트 데이터는 localStorage에만 저장한다(익명 로그인 안 씀). 게스트 화면에는 "이 기기에만 저장된다"는 캡션을 반드시 둔다.
+  - 홈 여행은 진행 중 > 출발일이 가장 가까운 예정 여행 순으로 고른다. 도착일이 지난 여행은 지난 여행 목록에만 보인다.
+  - 지출 등록 화면(`/expense`)은 등록과 수정·삭제를 겸한다.
+
 ## 절대 규칙
 
 1. **하드코딩 금지.** hex 컬러, `w-[327px]` 같은 임의 px, `style={{}}` 리터럴을 새로 쓰지 않는다.
@@ -58,7 +79,7 @@ supabase/migrations/ RLS 정책, payment_method 추가 (테이블 생성 스키�
 
 - Supabase 테이블: `users`(display_name) · `trips`(국가, 날짜, 예산) · `expenses`(금액, 카테고리, 결제수단 `payment_method`: card|cash)
 - 활성 여행은 `TripContext`에서 가져온다. 페이지마다 다시 조회하지 않는다.
-- 비로그인 사용자는 홈에서 더미 데이터와 localStorage 지출을 본다.
+- 비로그인 사용자는 홈에서 더미 데이터와 localStorage 지출을 본다. (1.x 동작. 2.0에서는 게스트가 만든 여행·지출을 localStorage에 저장한다 — `docs/flow-v2.md` §5)
 - 스키마를 바꾸면 `supabase/migrations/YYYYMMDD_설명.sql`을 추가한다.
 
 ## 알려진 함정
