@@ -38,8 +38,7 @@ export const Ghost: Story = {
   args: { variant: "ghost", label: "건너뛰기" },
 };
 
-export const SizeM: Story = {
-  name: "Size M",
+export const M: Story = {
   args: { size: "M" },
 };
 

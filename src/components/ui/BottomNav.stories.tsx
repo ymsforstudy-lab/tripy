@@ -19,10 +19,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Home: Story = {};
 
-export const Travels: Story = {
+export const Manage: Story = {
   parameters: { nextjs: { navigation: { pathname: "/travels" } } },
 };
 
-export const Mypage: Story = {
+export const MyPage: Story = {
   parameters: { nextjs: { navigation: { pathname: "/mypage" } } },
 };
