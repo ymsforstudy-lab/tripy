@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import HintBubble from "./HintBubble";
+import Tooltip from "./Tooltip";
 
 const meta = {
-  title: "UI/HintBubble",
-  component: HintBubble,
-  args: { text: "경비를 등록해 볼까요?" },
+  title: "UI/Tooltip",
+  component: Tooltip,
+  args: { label: "경비를 등록해 볼까요?" },
   decorators: [
     (Story) => (
       <div className="flex justify-end p-4">
@@ -12,7 +12,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof HintBubble>;
+} satisfies Meta<typeof Tooltip>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -20,5 +20,5 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const CustomText: Story = {
-  args: { text: "여기를 눌러 여행을 추가하세요" },
+  args: { label: "여기를 눌러 여행을 추가하세요" },
 };

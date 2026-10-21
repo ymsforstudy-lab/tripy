@@ -50,7 +50,7 @@ export default function NicknamePage() {
     }
   };
 
-  const inputVariant =
+  const inputState =
     checkStatus === "available"
       ? "success"
       : checkStatus === "taken" || checkStatus === "invalid"
@@ -90,7 +90,7 @@ export default function NicknamePage() {
             }}
             placeholder="최대 10자 입력해 주세요."
             maxLength={10}
-            variant={inputVariant}
+            state={inputState}
             helperText={helperText}
             icon={
               nickname.length > 0 ? (

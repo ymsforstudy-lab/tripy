@@ -131,7 +131,7 @@ export default function ProfileEditPage() {
 
   const displayAvatar = avatarPreview ?? avatarUrl;
 
-  const inputVariant =
+  const inputState =
     checkStatus === "available" || checkStatus === "unchanged"
       ? "success"
       : checkStatus === "taken" || checkStatus === "invalid"
@@ -210,7 +210,7 @@ export default function ProfileEditPage() {
             }}
             placeholder="최대 10자 입력해 주세요."
             maxLength={10}
-            variant={inputVariant}
+            state={inputState}
             helperText={helperText}
           />
         </div>
