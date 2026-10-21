@@ -315,3 +315,65 @@ Oct 7, 2026 · @Lily
 4. **널리 쓰는 UI 용어인가?** `Tooltip`, `Modal`, `Avatar`처럼 통용되는 단어를 고릅니다.
 5. **양쪽 후보가 모두 규칙에 맞는가?** 맞으면 코드 이름을 따릅니다.
 6. **새 용어가 필요한가?** 디자이너와 개발자가 함께 정해 용어 사전에 추가한 뒤, 양쪽에 같은 날 반영합니다.
+
+## 8. 디자인 토큰 네이밍
+
+Figma 변수와 코드 토큰은 이름 표기가 다르지만, 아래 변환 규칙으로 항상 하나씩 대응합니다. 두 이름은 Figma 변수의 code syntax(WEB)에 코드 이름을 넣어 연결합니다. 값의 기준은 Figma이고, 코드는 token-guardian이 Figma 값에 맞춥니다.
+
+### 토큰 규칙
+
+1. **코드 토큰**: `--<종류>-<이름>` 형식의 kebab-case입니다. 종류는 Tailwind v4 네임스페이스(`--color-`, `--radius-`, `--text-`, `--font-weight-`, `--spacing-`, `--shadow-`)를 씁니다.
+2. **Figma 변수**: 그룹을 `/`로 나눕니다. 컴포넌트 이름 규칙(슬래시 금지)은 변수에는 적용하지 않습니다.
+3. **크기 표기**: `XL`, `L`, `M`, `S`를 씁니다. 코드와 Figma 변수에서는 소문자(`title-xl`, `body-m`)로 적고, `sm`, `md`, `lg`, `2xl`은 쓰지 않습니다.
+4. **값을 이름에 넣지 않습니다.** 예외는 색상 단계 숫자(`green-50`)와 Radius 숫자(`R8`, `radius-8`) 두 가지이며, 이미 전체에서 쓰고 있어 유지합니다.
+5. **Tailwind 기본 클래스와 겹치지 않게** 역할 이름을 씁니다. 예: `--radius-md` 대신 `--radius-12`.
+6. **모든 Figma 변수에 code syntax(WEB)를 넣습니다.** 형식은 `var(--color-green-50)`입니다. 코드에 대응 토큰이 없는 변수는 비워 둡니다.
+7. **새 토큰은 Figma에 먼저 만들고**, token-guardian이 코드에 반영한 뒤 code syntax를 채웁니다.
+
+### Figma 변수 ↔ 코드 토큰 변환
+
+| 종류 | Figma 변수 | 코드 토큰 | Tailwind 클래스 예 |
+| --- | --- | --- | --- |
+| Green | `Primary/Green/<n>` | `--color-green-<n>` | `bg-green-50` |
+| Gradient | `Gradient` | `--color-gradient` | `bg-gradient` |
+| Grayscale | `Grayscale/<n>`, `Grayscale/White`, `Grayscale/Black` | `--color-gray-<n>`, `--color-gray-white`, `--color-gray-black` | `text-gray-90` |
+| Grayscale Cool | `Grayscale/Cool/<n>` | `--color-gray-cool-<n>` | `bg-gray-cool-5` |
+| Danger | `Danger/<n>` | `--color-danger-<n>` | `text-danger-60` |
+| Information | `Information/<n>` | `--color-info-<n>` | `bg-info-5` |
+| Warning | `Warning/<n>` | `--color-warning-<n>` | `text-warning-50` |
+| Radius | `R<n>` | `--radius-<n>` | `rounded-12` |
+| 글자 크기 | `font/size/<역할>-<크기>` | `--text-<역할>-<크기>` | `text-body-m` |
+| 글자 굵기 | `font/weight/<굵기>` | `--font-weight-<굵기>` | `font-semibold` |
+| 글꼴 | `font/family/base` | `--font-pretendard` | `font-pretendard` |
+
+`info`는 허용 약어 목록에 없지만, 코드 토큰 이름으로 이미 쓰고 있어 토큰에서만 예외로 둡니다.
+
+### 글자 크기 이름
+
+| 크기 | Figma 변수 (이전) | Figma 변수 | 코드 토큰 | Figma 텍스트 스타일 |
+| --- | --- | --- | --- | --- |
+| 24px | `font/size/2xl` | `font/size/title-xl` | `--text-title-xl` | 타이틀\_볼드\_XL |
+| 20px | `font/size/xl` | `font/size/title-m` | `--text-title-m` | 타이틀\_볼드\_M |
+| 16px | `font/size/lg` | `font/size/body-l` | `--text-body-l` | 바디\_볼드\_L |
+| 14px | `font/size/md` | `font/size/body-m` | `--text-body-m` | 바디\_미디움\_M, 바디\_레굴러\_M, 바디\_볼드\_M |
+| 12px | `font/size/sm` | `font/size/body-s` | `--text-body-s` | 바디\_볼드\_S, 바디\_레굴러\_S |
+| 10px | `font/size/xs` | `font/size/caption-s` | `--text-caption-s` | 캡션\_레굴러\_S |
+
+### 알려진 예외와 미결 항목
+
+- **글자 굵기 400**: Figma는 `font/weight/regular`, 코드는 Tailwind 기본 이름인 `--font-weight-normal`입니다. code syntax로 연결하고 이름은 두 쪽 그대로 둡니다.
+- **Semantic 색상 49개**: Figma에만 있습니다. 코드에 들일지 정하기 전까지 code syntax를 비워 둡니다.
+- **코드에만 있는 토큰**: `--color-green-120`, Spacing 4개, Shadow 6개는 Figma에 대응 변수가 없습니다.
+- **텍스트 스타일 이름**: `타이틀_볼드_XL`, `바디_볼드_L`은 실제 굵기가 SemiBold(600)입니다. 한글 스타일 이름은 디자이너가 쓰는 이름이라 이번 규칙에서는 바꾸지 않습니다.
+
+### 적용 현황
+
+2026-10-21 기준입니다.
+
+| 항목 | 상태 | 내용 |
+| --- | --- | --- |
+| 코드 토큰 값 | PR #107 머지 대기 | `danger-70`·`danger-80`을 Figma 값으로 고치고, Figma에만 있던 원색 14개와 Radius 2개를 추가했습니다. 머지되면 원색 45개, Radius 7개, 글자 크기 6개의 값이 Figma와 모두 같아집니다 |
+| Figma 글자 크기 변수 이름 | 적용 완료 | `2xl`·`xl`·`lg`·`md`·`sm`·`xs`를 `title-xl`·`title-m`·`body-l`·`body-m`·`body-s`·`caption-s`로 바꾸었습니다. 텍스트 스타일 9개는 그대로 연결돼 있습니다 |
+| Figma code syntax(WEB) | 적용 완료 | 원색 45개, Radius 7개, 글자 크기 6개, 굵기 4개, 글꼴 1개 등 63개에 `var(--...)`를 넣었습니다. Semantic 49개는 코드 토큰이 없어 비워 두었습니다 |
+
+PR #107이 머지되기 전에는 Dev Mode에 보이는 `var(--color-danger-10)` 등 새 토큰 16개가 `main` 코드에 아직 없습니다.
