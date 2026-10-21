@@ -7,7 +7,7 @@ export default function Tooltip({
 }: TooltipProps) {
   return (
     <div className="relative inline-flex items-center">
-      <div className="flex items-center justify-center rounded-[8px] bg-info-5 px-[10px] py-[5px]">
+      <div className="flex items-center justify-center rounded-8 bg-info-5 px-2.5 py-[5px]">
         <p className="whitespace-nowrap text-body-s leading-default text-info-50">
           {label}
         </p>

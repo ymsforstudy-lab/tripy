@@ -8,7 +8,7 @@ interface FABProps {
 
 export default function FAB({ href, tooltipText }: FABProps) {
   return (
-    <div className="pointer-events-none fixed bottom-[116px] left-1/2 z-40 w-full -translate-x-1/2 px-4 max-w-[390px]">
+    <div className="pointer-events-none fixed bottom-29 left-1/2 z-40 w-full -translate-x-1/2 px-4 max-w-[390px]">
       <div className="flex w-full justify-end">
         <div className="pointer-events-auto flex items-center gap-2">
           {tooltipText && <Tooltip label={tooltipText} />}
@@ -19,7 +19,7 @@ export default function FAB({ href, tooltipText }: FABProps) {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
                 d="M12 5V19M5 12H19"
-                stroke="white"
+                stroke="var(--color-gray-white)"
                 strokeWidth="2"
                 strokeLinecap="round"
               />

@@ -25,9 +25,9 @@ const borderStyles: Record<InputState, string> = {
 
 const bgStyles: Record<InputState, string> = {
   default: "bg-gray-5",
-  focused: "bg-white",
-  success: "bg-white",
-  error: "bg-white",
+  focused: "bg-gray-white",
+  success: "bg-gray-white",
+  error: "bg-gray-white",
 };
 
 const helperTextStyles: Record<Exclude<InputState, "default" | "focused">, string> = {
@@ -58,12 +58,12 @@ export default function Input({
   return (
     <div className="flex w-full flex-col gap-1">
       {label && (
-        <span className="text-sm font-medium text-gray-90">{label}</span>
+        <span className="text-body-m font-medium text-gray-90">{label}</span>
       )}
 
       <div
         className={[
-          "flex items-center gap-2 rounded-xl border px-3 py-3",
+          "flex items-center gap-2 rounded-12 border px-3 py-3",
           borderStyles[effectiveState],
           bgStyles[effectiveState],
           disabled ? "opacity-50" : "",
@@ -79,13 +79,13 @@ export default function Input({
           onChange={(e) => onChange?.(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="min-w-0 flex-1 bg-transparent text-base font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50 disabled:cursor-not-allowed"
+          className="min-w-0 flex-1 bg-transparent text-body-l font-medium text-gray-90 outline-none placeholder:font-normal placeholder:text-gray-50 disabled:cursor-not-allowed"
         />
         {icon && <span className="shrink-0 text-gray-50">{icon}</span>}
       </div>
 
       {helperText && (state === "success" || state === "error") && (
-        <p className={`text-xs tracking-[-0.24px] ${helperTextStyles[state]}`}>
+        <p className={`text-body-s tracking-[-0.24px] ${helperTextStyles[state]}`}>
           {helperText}
         </p>
       )}
