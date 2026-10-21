@@ -54,7 +54,14 @@ export function SectionBlock({
   );
 }
 
-export function ColorGrid({ section }: { section: Section }) {
+export function ColorGrid({
+  section,
+  resolve = (value) => value,
+}: {
+  section: Section;
+  /** var(--x) 참조를 실제 값으로 풀어 스와치를 칠한다 (역할 토큰·그라디언트용) */
+  resolve?: (value: string) => string;
+}) {
   return (
     <SectionBlock section={section}>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-gap-5">
@@ -62,7 +69,7 @@ export function ColorGrid({ section }: { section: Section }) {
           <div key={token.name} className="flex flex-col gap-gap-3">
             <div
               className="h-16 rounded-12 border border-gray-20"
-              style={{ background: token.value }}
+              style={{ background: resolve(token.value) }}
             />
             <TokenMeta token={token} />
           </div>

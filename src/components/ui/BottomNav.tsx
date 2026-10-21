@@ -77,11 +77,7 @@ export default function BottomNav() {
             return (
               <Link key={href} href={href}>
                 <div
-                  className="flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-2xl border border-green-50"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, var(--color-green-50) 0%, transparent 100%), linear-gradient(90deg, var(--color-gradient) 0%, var(--color-gradient) 100%)",
-                  }}
+                  className="flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-2xl border border-green-50 bg-(image:--gradient-nav-home)"
                 >
                   <Icon color="white" />
                   <span className="text-body-s font-normal leading-default text-white">
