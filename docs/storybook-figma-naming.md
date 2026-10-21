@@ -70,6 +70,15 @@ Oct 7, 2026 · @Lily
 
 컴포넌트 종류에 `FormField`를 추가합니다. 라벨, Input, 중복확인 버튼, 도움말을 묶은 조합 컴포넌트이며 코드에는 아직 대응 컴포넌트가 없습니다.
 
+### 값 추가 (2026-10-21)
+
+| 통일 용어 | 쓰지 않는 용어 | 뜻 |
+| --- | --- | --- |
+| `Selected` | `Embled`, `Enabled`, `Active` | 드롭다운에서 값이 고르어진 상태 |
+| `Checked` | `Active`, `On` | 체크박스가 선택된 상태 |
+| `isSelected` | `Property 1=on\|off` | 탭이 선택됐는지 (`True`, `False`) |
+| `status`: `Ongoing` / `Ended` | `active` / `Default`, `Variant` | 여행의 데이터 상태. 진행 중·예정(D-day 표시)과 종료 |
+
 ### 컴포넌트 종류
 
 | 통일 용어 | 쓰지 않는 용어 | 뜻 |
@@ -305,6 +314,48 @@ Oct 7, 2026 · @Lily
 - `BottomNav` 중복 2개는 둘 다 화면에서 쓰여 합치는 일은 디자이너 확인이 필요합니다.
 - Storybook과 관계없는 Figma 컴포넌트 약 70개는 여전히 camelCase입니다. 10월 중에 새로 만든 4개(`tripBudgetCard`, `budgetUsageCard`, `dailyExpenseHeader`, `Trip Setup_bottomSheet`)도 규칙을 따르지 않아, 규칙을 디자인 쪽과 먼저 합의해야 합니다.
 
+### 3차 적용 (2026-10-21)
+
+Storybook과 짝이 없어 남아 있던 Figma 컴포넌트 6개를 용어 사전에 맞췄습니다. 화면 인스턴스의 설정값은 그대로입니다.
+
+| 변경 전 | 변경 후 |
+| --- | --- |
+| `dropdownMenu`, `Property 1=Default\|Embled` | `DropdownMenu`, `state=Default\|Selected` |
+| `chip`, `Property 1=Default\|Variant` | `TripStatusChip`, `status=Ongoing\|Ended` |
+| `menuTab`, `Property 1=on\|off`, `Menu` | `BottomNavTab`, `isSelected=True\|False`, `label` |
+| `travelList`, `Property 1=active\|Default`, `Trip Title` | `TripListItem`, `status=Ongoing\|Ended`, `title` |
+| `menu`, `size=md\|lg` | `MenuItem`, `size=M\|L` |
+| `checkbox`(구버전), `State=Default\|Active` | `Checkbox`, `state=Default\|Checked` |
+
+코드로 가져온 것입니다.
+
+- Figma Semantic 색상 49개 → `src/tokens/semantic-role-color.css`의 `--color-<그룹>-<이름>`. 값은 원색 토큰을 참조하고, 불투명도가 있는 2개는 `color-mix`로 표현했습니다.
+- Figma 그라디언트 스타일 3개 → `src/tokens/gradient.css`의 `--gradient-progress-good`(primary/Gradient), `--gradient-progress-danger`(danger/gradient), `--gradient-nav-home`(primary/linear). BudgetProgressBar와 BottomNav의 하드코딩을 이 토큰으로 바꾸어 하드코딩이 166건에서 165건으로 줄었습니다.
+- Figma `FormField` → 코드 `FormField` 컴포넌트와 `UI/FormField` 스토리. 스토리 이름은 Figma state 값(Default·Disabled·Focused·Error)과 같습니다. 닉네임·프로필 화면은 아직 직접 조합한 코드를 씁니다.
+
+쓰는 화면이 없는 중복 컴포넌트 `formField`(1407:4333)와 `selectContainer`(848:2255)는 인스턴스가 0개인 것을 다시 확인한 뒤 삭제했습니다.
+
+### 4차 적용 (2026-10-21)
+
+화면에서 쓰는 Figma 컴포넌트 중 규칙을 어기던 28개를 맞췄습니다. 이제 화면에서 쓰는 컴포넌트는 모두 규칙을 통과하고, Figma 로컬 컴포넌트 88개(중복 2개 삭제 후) 중 54개가 통과합니다. 남은 34개는 모두 화면에서 쓰지 않는 컴포넌트입니다.
+
+| 변경 전 | 변경 후 |
+| --- | --- |
+| `iconDelete`, `iconLeftArrow`, `iconHamburgerMenu`, `iconFilter`, `iconCalendar`, `iconCheck` | `IconDelete`, `IconLeftArrow`, `IconHamburgerMenu`, `IconFilter`, `IconCalendar`, `IconCheck` |
+| `icon/Home`, `icon/Manage`, `icon/Mypage` | `IconHome`, `IconManage`, `IconMyPage` (코드 BottomNav의 `HomeIcon`·`ManageIcon`·`MypageIcon`과 같은 역할) |
+| `iconManage`(연필), `iconMypage`(주소록) | `IconEdit`, `IconContact` |
+| `tabBar`, `tabMenu` `state=default\|activated` | `TabGroup`, `Tab` `isSelected=False\|True` |
+| `textInput` `state=default\|filled` | `TextArea` `state=Default\|Filled` |
+| `tripBudgetCard` `state=exceeded\|fullyUsed\|inProgress\|default` | `TripBudgetCard` `status=Exceeded\|FullyUsed\|InProgress\|Default` |
+| `checkbox`(회색 원) `state=active\|default` | `OptionCheckbox` `state=Checked\|Default` |
+| `bottomSheetAtomic`, `bottomSheet`, `Trip Setup_bottomSheet` | `BottomSheetActions`, `BudgetConfirmBottomSheet`, `TripConfirmBottomSheet` |
+| `homeTab`, 새 하단 탭 `BottomNav`(홈·지난 여행·마이페이지) | `BottomNavHomeTab`, `BottomNavV2` |
+| `tripy_mypage`, `logout`, `divider`, `dailyExpenseHeader`, `budgetUsageCard`, `searchBar`(구버전) | `TripyMyPage`, `LogoutButton`, `Divider`, `DailyExpenseHeader`, `BudgetUsageCard`, `SearchBar` |
+
+- 값 용어 `Filled`(글자가 입력된 상태)를 새로 썼습니다. 여행 예산 카드의 상태는 데이터 상태라 `status`로 바꾸었습니다.
+- 코드 `BottomNav`는 기존 디자인(여행 관리·초록 홈 버튼)과 같아서 기존 컴포넌트가 `BottomNav` 이름을 유지했습니다. 새 하단 탭(`BottomNavV2`)을 표준으로 삼을지는 디자이너 확인이 필요합니다.
+- 쓰지 않는 `iconHome`이 새 `IconHome`과 대소문자만 다르게 남아 있습니다.
+
 ### 앞으로 네이밍을 결정하는 의사결정 기준
 
 이름을 정할 때 아래 순서로 확인하고, 먼저 걸리는 기준을 따릅니다.
@@ -362,7 +413,7 @@ Figma 변수와 코드 토큰은 이름 표기가 다르지만, 아래 변환 �
 ### 알려진 예외와 미결 항목
 
 - **글자 굵기 400**: Figma는 `font/weight/regular`, 코드는 Tailwind 기본 이름인 `--font-weight-normal`입니다. code syntax로 연결하고 이름은 두 쪽 그대로 둡니다.
-- **Semantic 색상 49개**: Figma에만 있습니다. 코드에 들일지 정하기 전까지 code syntax를 비워 둡니다.
+- **Semantic 색상 49개**: 코드 `--color-<그룹>-<이름>`으로 가져왔고 code syntax도 넣었습니다(2026-10-21). 예: `surface/default` → `var(--color-surface-default)`, Tailwind `bg-surface-default`, `text-text-primary`.
 - **코드에만 있는 토큰**: `--color-green-120`, Spacing 4개, Shadow 6개는 Figma에 대응 변수가 없습니다.
 - **텍스트 스타일 이름**: `타이틀_볼드_XL`, `바디_볼드_L`은 실제 굵기가 SemiBold(600)입니다. 한글 스타일 이름은 디자이너가 쓰는 이름이라 이번 규칙에서는 바꾸지 않습니다.
 
@@ -372,8 +423,8 @@ Figma 변수와 코드 토큰은 이름 표기가 다르지만, 아래 변환 �
 
 | 항목 | 상태 | 내용 |
 | --- | --- | --- |
-| 코드 토큰 값 | PR #107 머지 대기 | `danger-70`·`danger-80`을 Figma 값으로 고치고, Figma에만 있던 원색 14개와 Radius 2개를 추가했습니다. 머지되면 원색 45개, Radius 7개, 글자 크기 6개의 값이 Figma와 모두 같아집니다 |
+| 코드 토큰 값 | PR #107 머지됨 | `danger-70`·`danger-80`을 Figma 값으로 고치고, Figma에만 있던 원색 14개와 Radius 2개를 추가했습니다. 머지되면 원색 45개, Radius 7개, 글자 크기 6개의 값이 Figma와 모두 같아집니다 |
 | Figma 글자 크기 변수 이름 | 적용 완료 | `2xl`·`xl`·`lg`·`md`·`sm`·`xs`를 `title-xl`·`title-m`·`body-l`·`body-m`·`body-s`·`caption-s`로 바꾸었습니다. 텍스트 스타일 9개는 그대로 연결돼 있습니다 |
-| Figma code syntax(WEB) | 적용 완료 | 원색 45개, Radius 7개, 글자 크기 6개, 굵기 4개, 글꼴 1개 등 63개에 `var(--...)`를 넣었습니다. Semantic 49개는 코드 토큰이 없어 비워 두었습니다 |
+| Figma code syntax(WEB) | 적용 완료 | 원색 45개, Radius 7개, 글자 크기 6개, 굵기 4개, 글꼴 1개 등 63개에 `var(--...)`를 넣었습니다. 이후 Semantic 49개에도 넣어 Figma 변수 112개 전부가 코드 토큰과 연결됐습니다 |
 
-PR #107이 머지되기 전에는 Dev Mode에 보이는 `var(--color-danger-10)` 등 새 토큰 16개가 `main` 코드에 아직 없습니다.
+PR #107은 2026-10-21에 머지됐습니다. Semantic 49개와 그라디언트 3개는 PR #108이 머지돼야 `main`에 생깁니다. (기록: 머지 전에는 Dev Mode에 보이는 `var(--color-danger-10)` 등 새 토큰 16개가 `main` 코드에 없었습니다.)
