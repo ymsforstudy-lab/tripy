@@ -2,9 +2,11 @@
 
 @theme {
   /* ── Border Radius (Figma R* 변수) ── */
+  --radius-4: 4px;
   --radius-8: 8px;
-  --radius-12: 12px;   /* radius/xlarge2 */
+  --radius-12: 12px;   /* R12 */
   --radius-16: 16px;
   --radius-20: 20px;
   --radius-30: 30px;
+  --radius-60: 60px;
 }
