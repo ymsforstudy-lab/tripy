@@ -1,15 +1,15 @@
 interface TooltipProps {
-  text?: string;
+  label?: string;
 }
 
 export default function Tooltip({
-  text = "경비를 등록해 볼까요?",
+  label = "경비를 등록해 볼까요?",
 }: TooltipProps) {
   return (
     <div className="relative inline-flex items-center">
       <div className="flex items-center justify-center rounded-[8px] bg-info-5 px-[10px] py-[5px]">
         <p className="whitespace-nowrap text-body-s leading-default text-info-50">
-          {text}
+          {label}
         </p>
       </div>
       <svg

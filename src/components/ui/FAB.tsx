@@ -11,7 +11,7 @@ export default function FAB({ href, tooltipText }: FABProps) {
     <div className="pointer-events-none fixed bottom-[116px] left-1/2 z-40 w-full -translate-x-1/2 px-4 max-w-[390px]">
       <div className="flex w-full justify-end">
         <div className="pointer-events-auto flex items-center gap-2">
-          {tooltipText && <Tooltip text={tooltipText} />}
+          {tooltipText && <Tooltip label={tooltipText} />}
           <Link
             href={href}
             className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50 shadow-md"
