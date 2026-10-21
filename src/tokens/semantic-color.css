@@ -3,11 +3,24 @@
 @theme {
   /* ── Semantic ── */
   --color-danger-5: #FEECF0;
+  --color-danger-10: #FCD4DE;
+  --color-danger-20: #F799B1;
+  --color-danger-30: #F36689;
+  --color-danger-40: #EF3E5E;
   --color-danger-50: #EB003B;
   --color-danger-60: #D50136;
-  --color-danger-70: #A0041E;
-  --color-danger-80: #8D0023;
+  --color-danger-70: #8D0023;
+  --color-danger-80: #5E0018;
+  --color-danger-90: #2F000C;
   --color-info-5: #E9F0FF;
+  --color-info-10: #D4E1FF;
+  --color-info-20: #A9C3FF;
+  --color-info-30: #7DA4FF;
+  --color-info-40: #5286FF;
   --color-info-50: #2768FF;
+  --color-info-60: #1F53CC;
+  --color-info-70: #173E99;
+  --color-info-80: #0C1F4D;
+  --color-info-90: #040A1A;
   --color-warning-50: #FFB724;
 }
