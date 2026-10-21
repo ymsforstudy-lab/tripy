@@ -4,8 +4,11 @@ import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
 import { getCurrencyUnit } from "@/lib/constants/currency";
 
 interface BudgetCardProps {
-  totalSpent: number;
-  totalBudget: number;
+  /** 오늘 날짜 지출 합계 (여행 기준 통화) */
+  todaySpent: number;
+  /** 총예산 ÷ 여행 일수 */
+  dailyBudget: number;
+  /** todaySpent / dailyBudget */
   progressRatio: number;
   currency?: string;
 }
@@ -15,13 +18,13 @@ function formatAmount(amount: number) {
 }
 
 export default function BudgetCard({
-  totalSpent,
-  totalBudget,
+  todaySpent,
+  dailyBudget,
   progressRatio,
   currency,
 }: BudgetCardProps) {
   const isOver = progressRatio > 1;
-  const hasSpending = totalSpent > 0;
+  const hasSpending = todaySpent > 0;
   const unit = getCurrencyUnit(currency);
 
   return (
@@ -42,7 +45,7 @@ export default function BudgetCard({
               <span className="text-body-m leading-default text-gray-80">오늘 쓴 돈</span>
               <div className="flex items-baseline gap-0.5 font-bold">
                 <span className="text-title-m text-gray-black">
-                  {formatAmount(totalSpent)}
+                  {formatAmount(todaySpent)}
                 </span>
                 <span className="text-body-m font-bold leading-default text-gray-black">{unit}</span>
               </div>
@@ -50,7 +53,7 @@ export default function BudgetCard({
             <div className="flex items-center justify-between text-body-m leading-default">
               <span className="text-gray-80">하루 예산</span>
               <div className="flex gap-0.5 text-gray-60">
-                <span>{formatAmount(totalBudget)}</span>
+                <span>{formatAmount(dailyBudget)}</span>
                 <span>{unit}</span>
               </div>
             </div>
@@ -71,7 +74,7 @@ export default function BudgetCard({
                     <StatusBadge variant={isOver ? "danger" : "good"} />
                     <span className="text-body-s text-gray-80">
                       {isOver
-                        ? "지출이 여행 예산보다 초과되었어요!"
+                        ? "오늘 지출이 하루 예산을 넘었어요!"
                         : "여행 소비 아주 훌륭한데요?"}
                     </span>
                   </div>

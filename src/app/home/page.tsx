@@ -189,31 +189,35 @@ function HomePageContent() {
       ? expenses.filter((e) => selectedCategories.includes(e.category))
       : expenses;
 
+  const nights = trip
+    ? Math.max(
+        0,
+        Math.round(
+          (new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
+      )
+    : 0;
+
+  // 오늘 쓴 돈 — 기기 로컬 날짜 기준 (toISOString은 UTC라 KST 오전 9시 전엔 전날이 된다)
+  const now = new Date();
+  const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const baseCurrency = trip?.currency ?? "KRW";
-  const totalSpent = convertExpensesToBaseCurrency(
-    expenses,
+  const todaySpent = convertExpensesToBaseCurrency(
+    expenses.filter((e) => e.expense_date === localToday),
     baseCurrency,
     rates ?? FALLBACK_RATES
   );
 
-  const totalBudget = trip?.total_budget ?? 0;
-  const progressRatio = totalBudget > 0 ? totalSpent / totalBudget : 0;
+  // 하루 예산 — 총예산을 여행 일수(박 + 1)로 균등 분배
+  const dailyBudget = Math.round((trip?.total_budget ?? 0) / (nights + 1));
+  const progressRatio = dailyBudget > 0 ? todaySpent / dailyBudget : 0;
 
   const tripDateStr = trip
     ? `${trip.start_date.replace(/-/g, ".")} ~ ${trip.end_date.replace(/-/g, ".")}`
     : "";
 
-  const nightsLabel = (() => {
-    if (!trip) return "";
-    const start = new Date(trip.start_date);
-    const end = new Date(trip.end_date);
-    const nights = Math.max(
-      0,
-      Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-    );
-    if (nights === 0) return "당일치기";
-    return `${nights}박 ${nights + 1}일`;
-  })();
+  const nightsLabel = !trip ? "" : nights === 0 ? "당일치기" : `${nights}박 ${nights + 1}일`;
 
   const tripName = trip ? trip.title : "";
 
@@ -227,8 +231,8 @@ function HomePageContent() {
 
       <div className="mt-4">
         <BudgetCard
-          totalSpent={totalSpent}
-          totalBudget={totalBudget}
+          todaySpent={todaySpent}
+          dailyBudget={dailyBudget}
           progressRatio={progressRatio}
           currency={trip?.currency}
         />
