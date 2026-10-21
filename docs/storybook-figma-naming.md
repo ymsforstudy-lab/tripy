@@ -56,6 +56,20 @@ Oct 7, 2026 · @Lily
 | `S` / `M` / `L` / `XL` | `sm`, `md`, `Small`, `Medium` | Size 값. 타이포그래피 토큰과 같은 표기입니다 |
 | `Accommodation` / `Transport` | `Hotel` / `Traffic` | 카테고리 값. 코드의 카테고리 ID와 맞춥니다 |
 
+### Property 이름 추가 (2026-10-21)
+
+| 통일 용어 | 쓰지 않는 용어 | 뜻 |
+| --- | --- | --- |
+| `placement` | `Property 1`, `position`, `direction` | Tooltip이 기준 요소의 어느 쪽에 뜨는지 (`Top`, `Bottom`, `Left`, `Right`) |
+| `activeTab` | `Menu`, `selected` | BottomNav에서 활성화된 탭 (`Home`, `Manage`, `MyPage`) |
+| `hasSecondary` | `Type=2` | BottomCTA에 보조 버튼이 있는지 |
+| `ratio` | `type`, `percent` | BudgetProgressBar 진행률. 코드 prop 이름과 같습니다 |
+| `title` / `showTitle` | `Title`, `Show title` | Header 제목과 표시 여부 |
+| `value` | `Context`, `placeholder` | Input 안의 글자. Default 상태에서는 안내 문구로 보입니다 |
+| `helperText` / `showHelperText` | `Caption2`, `Caption` | 입력창 아래 도움말과 표시 여부. 코드 prop 이름과 같습니다 |
+
+컴포넌트 종류에 `FormField`를 추가합니다. 라벨, Input, 중복확인 버튼, 도움말을 묶은 조합 컴포넌트이며 코드에는 아직 대응 컴포넌트가 없습니다.
+
 ### 컴포넌트 종류
 
 | 통일 용어 | 쓰지 않는 용어 | 뜻 |
@@ -68,7 +82,7 @@ Oct 7, 2026 · @Lily
 | `Tooltip` | `HintBubble`, `Hint` | 요소 옆에 붙는 안내 말풍선 |
 | `ProgressBar` | `slide`, `Slider` | 진행률 표시 막대 |
 | `Avatar` | `profile` | 프로필 이미지 |
-| `Input` | `formField`, `TextField` | 라벨·입력창·도움말을 포함한 입력 필드 |
+| `Input` | `inputField`, `TextField` | 상태(Default·Focused·Success·Error)를 가진 입력창. 라벨과 도움말은 코드에서 prop으로 받습니다. Figma의 이전 inputField입니다 |
 | `Icon<이름>` | `icon/<이름>`, `<이름>Icon` | 아이콘 컴포넌트. 예: `IconSetting` |
 
 ## 3. 현재 프로젝트 네이밍 매핑
@@ -261,6 +275,35 @@ Oct 7, 2026 · @Lily
 - Button의 `ghost` variant와 사이즈 `M`은 코드에만 있습니다. Figma에 `Ghost`, `M`을 추가할지, 코드에서 제거할지가 쟁점이었고, Figma에 Ghost를 추가했습니다(사이즈 M은 원래 있었습니다).
 
 이와 별개로 Critical 항목인 `DeleteConfirmModal`은 Storybook에 스토리를 추가해야 대조할 수 있습니다.
+
+### 2차 적용 (2026-10-21)
+
+점검에서 이름만 맞고 Property가 다르거나 짝이 없던 Storybook 컴포넌트를 Figma에서 규칙에 맞췄습니다. 코드는 바꾸지 않았고, 화면 인스턴스의 글자와 설정값은 그대로인 것을 확인했습니다.
+
+| 컴포넌트 | 변경 전 | 변경 후 |
+| --- | --- | --- |
+| Input | `inputField`, `State=Default\|Focused\|Positive\|Error`, `Context` | `Input`, `state=Default\|Focused\|Success\|Error`, `value` |
+| FormField | `Input`(이전 `formField`), `state=default\|disable\|selected\|error`, `Title`, `Show Title`, `Essential icon`, `Caption`, `Caption2` | `FormField`, `state=Default\|Disabled\|Focused\|Error`, `label`, `showLabel`, `showRequiredIcon`, `showHelperText`, `helperText` |
+| StatusBadge | `Property 1=Good`, 이름 형식이 없던 `Danger` (세트 오류) | `variant=Good\|Danger` |
+| BottomCTA | `Type=button\|2`, `Text` | `hasSecondary=False\|True`, `label` |
+| Header | `Title`, `Show title`, 값 `left icon`, `right icon`, `Only title` | `title`, `showTitle`, 값 `LeftIcon`, `RightIcon`, `TitleOnly` |
+| Tooltip | `Property 1` | `placement` |
+| BottomNav | `Menu=Mange\|Mypage\|Home` | `activeTab=Manage\|MyPage\|Home` |
+| BudgetProgressBar | `type` | `ratio` |
+| DeleteConfirmModal | `Property=deleteconfirmmodal` | `variant=Default` |
+| Toast | `toast`, `type=default\|textButton`, `Instance` | `Toast`, `variant=Default\|TextButton`, `icon` |
+| CircleAlertInfo | `alertIconComponent` | `CircleAlertInfo` |
+
+판단이 들어간 부분입니다.
+
+- 코드 `Input`의 짝을 상태 값이 같은 `inputField`로 바꾸고, 이전에 `Input`이라고 붙였던 세트는 `FormField`로 옮겼습니다.
+- FormField의 `selected` 상태는 회색 진한 테두리에 글자가 들어간 모양이라 `Focused`로 붙였습니다.
+
+아직 맞추지 못한 것입니다.
+
+- `SelectChip`, `Modal`, `BudgetCard`는 Figma에 같은 역할의 컴포넌트가 없습니다. `chip`은 D-25·종료 배지이고, `budgetUsageCard`는 총 지출·남은 금액 카드라 다른 컴포넌트입니다.
+- `BottomNav` 중복 2개는 둘 다 화면에서 쓰여 합치는 일은 디자이너 확인이 필요합니다.
+- Storybook과 관계없는 Figma 컴포넌트 약 70개는 여전히 camelCase입니다. 10월 중에 새로 만든 4개(`tripBudgetCard`, `budgetUsageCard`, `dailyExpenseHeader`, `Trip Setup_bottomSheet`)도 규칙을 따르지 않아, 규칙을 디자인 쪽과 먼저 합의해야 합니다.
 
 ### 앞으로 네이밍을 결정하는 의사결정 기준
 
