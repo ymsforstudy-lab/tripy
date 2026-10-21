@@ -12,7 +12,7 @@ export default function ProfileEdit({ onClick }: ProfileEditProps) {
         <img
           src="/icons/profile-avatar.svg"
           alt="profile character"
-          className="h-[43px] w-[48px] object-contain"
+          className="h-[43px] w-12 object-contain"
         />
       </div>
 
@@ -24,7 +24,7 @@ export default function ProfileEdit({ onClick }: ProfileEditProps) {
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
           <path
             d="M6 2.5V9.5M2.5 6H9.5"
-            stroke="white"
+            stroke="var(--color-gray-white)"
             strokeWidth="1.5"
             strokeLinecap="round"
           />

@@ -10,14 +10,14 @@ export default function CircleAlertInfo() {
       <circle cx="27.9964" cy="28.0007" r="25.6667" fill="var(--color-gray-20)" />
       <path
         d="M28 16.334V28.0007"
-        stroke="white"
+        stroke="var(--color-gray-white)"
         strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M28 37.334V38.5007"
-        stroke="white"
+        stroke="var(--color-gray-white)"
         strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"

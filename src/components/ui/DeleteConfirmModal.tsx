@@ -27,18 +27,18 @@ export default function DeleteConfirmModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Dim overlay */}
       <div
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-gray-black/40"
         onClick={onCancel}
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-[339px] overflow-hidden rounded-xl bg-white">
+      <div className="relative z-10 w-[339px] overflow-hidden rounded-12 bg-gray-white">
         {/* Text */}
         <div className="flex flex-col gap-1 px-7 pb-0 pt-6">
           <p className="text-title-m font-bold leading-default text-gray-90">
             이 여행을 삭제하시겠습니까?
           </p>
-          <p className="text-sm font-normal leading-default text-gray-60">
+          <p className="text-body-m font-normal leading-default text-gray-60">
             삭제된 여행지는 복구가 어려워요.
           </p>
         </div>
@@ -47,13 +47,13 @@ export default function DeleteConfirmModal({
         <div className="flex gap-5 px-7 py-6">
           <button
             onClick={onCancel}
-            className="flex h-14 flex-1 items-center justify-center rounded-xl border border-gray-50 bg-white text-base font-semibold text-gray-80 opacity-50"
+            className="flex h-14 flex-1 items-center justify-center rounded-12 border border-gray-50 bg-gray-white text-body-l font-semibold text-gray-80 opacity-50"
           >
             취소하기
           </button>
           <button
             onClick={onConfirm}
-            className="flex h-14 flex-1 items-center justify-center rounded-xl bg-green-50 text-base font-semibold text-white"
+            className="flex h-14 flex-1 items-center justify-center rounded-12 bg-green-50 text-body-l font-semibold text-gray-white"
           >
             삭제하기
           </button>

@@ -35,16 +35,16 @@ export default function BudgetCard({
         </div>
       </div>
 
-      <div className="relative w-full rounded-[20px] border border-green-20 bg-green-10 p-4 shadow-budget">
+      <div className="relative w-full rounded-20 border border-green-20 bg-green-10 p-4 shadow-budget">
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <span className="text-body-m leading-default text-gray-80">오늘 쓴 돈</span>
               <div className="flex items-baseline gap-0.5 font-bold">
-                <span className="text-title-m text-black">
+                <span className="text-title-m text-gray-black">
                   {formatAmount(totalSpent)}
                 </span>
-                <span className="text-body-m font-bold leading-default text-black">{unit}</span>
+                <span className="text-body-m font-bold leading-default text-gray-black">{unit}</span>
               </div>
             </div>
             <div className="flex items-center justify-between text-body-m leading-default">
@@ -56,14 +56,14 @@ export default function BudgetCard({
             </div>
           </div>
 
-          <div className="flex h-16 w-full flex-col items-center justify-center rounded-xl bg-white px-3.5">
+          <div className="flex h-16 w-full flex-col items-center justify-center rounded-12 bg-gray-white px-3.5">
             <div className="flex w-full max-w-[285px] flex-col gap-2">
               {!hasSpending ? (
                 <>
                   <span className="whitespace-nowrap text-body-s leading-default text-gray-80">
                     여행 소비를 계획해보세요.
                   </span>
-                  <div className="h-[10px] w-full rounded-[20px] bg-gray-30" />
+                  <div className="h-2.5 w-full rounded-20 bg-gray-30" />
                 </>
               ) : (
                 <>

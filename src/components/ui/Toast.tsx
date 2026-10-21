@@ -26,18 +26,18 @@ export default function Toast({ message, visible }: ToastProps) {
         show ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >
-      <div className="flex h-12 w-[327px] items-center gap-[7px] rounded-2xl bg-gray-80 px-4">
+      <div className="flex h-12 w-[327px] items-center gap-[7px] rounded-16 bg-gray-80 px-4">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <circle cx="12" cy="12" r="12" fill="var(--color-green-70)" />
           <path
             d="M7 12.5L10.5 16L17 9"
-            stroke="white"
+            stroke="var(--color-gray-white)"
             strokeWidth="1.8"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
         </svg>
-        <span className="whitespace-nowrap text-body-m leading-default text-white">
+        <span className="whitespace-nowrap text-body-m leading-default text-gray-white">
           {message}
         </span>
       </div>
