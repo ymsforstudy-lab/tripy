@@ -8,9 +8,11 @@ import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/site-url";
 import StatusBadge from "@/components/ui/StatusBadge";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import IconSetting from "@/components/ui/IconSetting";
+import { useAuth } from "@/contexts/AuthContext";
 
 type CategoryRank = {
   rank: number;
@@ -20,6 +22,7 @@ type CategoryRank = {
 
 export default function MyPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -34,12 +37,17 @@ export default function MyPage() {
     router.push("/");
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${getSiteUrl()}/auth/callback` },
+    });
+  };
 
+  useEffect(() => {
+    if (authLoading) return;
+
+    async function fetchData() {
       if (!user) {
         setLoading(false);
         return;
@@ -138,11 +146,13 @@ export default function MyPage() {
     }
 
     fetchData();
-  }, []);
+  }, [authLoading, user]);
 
-  if (loading) {
+  if (loading || authLoading) {
     return <LoadingScreen />;
   }
+
+  const isGuest = !user;
 
   return (
     <div className="relative flex min-h-screen-safe flex-col bg-white">
@@ -284,15 +294,29 @@ export default function MyPage() {
         </div>
       </div>
 
-      {/* 로그아웃 */}
+      {/* 로그아웃 / 구글 로그인 */}
       <div className="mt-auto mb-[116px] flex flex-col items-center gap-3">
         <div className="h-2 w-full border-t border-gray-30 bg-gray-10" />
-        <button
-          onClick={handleLogout}
-          className="w-full text-center text-sm leading-default text-gray-70"
-        >
-          로그아웃
-        </button>
+        {isGuest ? (
+          <div className="flex w-full flex-col items-center gap-2 px-4">
+            <button
+              onClick={handleGoogleLogin}
+              className="flex h-14 w-full items-center justify-center rounded-16 border border-gray-30 bg-gray-white text-body-m font-bold text-gray-50"
+            >
+              구글 로그인
+            </button>
+            <span className="text-body-s text-gray-50 text-center">
+              로그인하지 않으면 이 기기에만 저장되고, 다른 기기나 브라우저에서는 볼 수 없어요.
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={handleLogout}
+            className="w-full text-center text-sm leading-default text-gray-70"
+          >
+            로그아웃
+          </button>
+        )}
       </div>
 
       {/* 하단 네비게이션 */}
