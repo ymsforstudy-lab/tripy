@@ -25,9 +25,9 @@ const borderStyles: Record<InputVariant, string> = {
 
 const bgStyles: Record<InputVariant, string> = {
   default: "bg-gray-5",
-  focused: "bg-white",
-  success: "bg-white",
-  error: "bg-white",
+  focused: "bg-gray-white",
+  success: "bg-gray-white",
+  error: "bg-gray-white",
 };
 
 const helperTextStyles: Record<Exclude<InputVariant, "default" | "focused">, string> = {
