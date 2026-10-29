@@ -14,7 +14,7 @@ export default function FAB({ href, tooltipText }: FABProps) {
           {tooltipText && <HintBubble text={tooltipText} />}
           <Link
             href={href}
-            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50 shadow-md"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full border border-green-40 bg-green-50 shadow-raised"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
