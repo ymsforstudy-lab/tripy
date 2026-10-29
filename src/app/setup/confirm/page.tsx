@@ -1,25 +1,6 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useRouter } from "next/navigation";
-import Header from "@/components/ui/Header";
-import BottomCTA from "@/components/ui/BottomCTA";
-import TripyCharacter from "@/components/ui/TripyCharacter";
-
-export default function SetupConfirmPage() {
-  const router = useRouter();
-
-  return (
-    <div className="flex h-screen-safe flex-col bg-white">
-      <Header onBack={() => router.back()} />
-
-      <div className="flex flex-1 flex-col items-center justify-center gap-5">
-        <h1 className="text-center text-2xl font-bold leading-default tracking-[-0.48px] text-gray-90">
-          이제 예산을<br />등록해 볼까요?
-        </h1>
-        <TripyCharacter variant={6} />
-      </div>
-
-      <BottomCTA label="다음" onClick={() => router.push("/budget")} />
-    </div>
-  );
+// 1.x 여행 설정 단계. 2.0은 /setup 한 화면이라 옛 링크·북마크만 넘겨준다 (docs/flow-v2.md §6)
+export default function LegacySetupConfirmPage() {
+  redirect("/setup");
 }
