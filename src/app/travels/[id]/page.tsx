@@ -1,114 +1,84 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import Header from "@/components/ui/Header";
 import BottomNav from "@/components/ui/BottomNav";
 import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 import { COUNTRIES } from "@/lib/constants/countries";
 import { CATEGORY_MAP } from "@/lib/constants/categories";
 import { getCurrencyUnit } from "@/lib/constants/currency";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRepository } from "@/hooks/useRepository";
+import type { Trip, Expense } from "@/lib/data/types";
 
-// ── 타입 ──────────────────────────────────────────────────────────────────────
+// ── 게스트용 목업 데이터 ──────────────────────────────────────────────────────
 
-type MockTrip = {
-  id: string;
-  title: string;
-  destination: string;
-  start_date: string;
-  end_date: string;
-  total_budget: number;
-  currency: string;
-};
-
-type MockExpense = {
-  id: string;
-  trip_id: string;
-  amount: number;
-  currency: string;
-  category: string;
-  expense_date: string;
-  description: string | null;
-};
-
-// ── 목업 데이터 ────────────────────────────────────────────────────────────────
-
-const MOCK_TRIPS: Record<string, MockTrip> = {
+const MOCK_TRIPS: Record<string, Trip> = {
   "mock-1": {
-    id: "mock-1",
-    title: "일본 여행",
-    destination: "일본",
-    start_date: "2026-09-10",
-    end_date: "2026-09-14",
-    total_budget: 800000,
-    currency: "KRW",
+    id: "mock-1", user_id: null, title: "일본 여행", destination: "일본",
+    start_date: "2026-09-10", end_date: "2026-09-14",
+    total_budget: 800000, currency: "KRW", is_archived: false, created_at: "",
   },
   "mock-2": {
-    id: "mock-2",
-    title: "태국 여행",
-    destination: "태국",
-    start_date: "2026-07-01",
-    end_date: "2026-07-05",
-    total_budget: 500000,
-    currency: "KRW",
+    id: "mock-2", user_id: null, title: "태국 여행", destination: "태국",
+    start_date: "2026-07-01", end_date: "2026-07-05",
+    total_budget: 500000, currency: "KRW", is_archived: false, created_at: "",
   },
   "mock-3": {
-    id: "mock-3",
-    title: "대만 여행",
-    destination: "대만",
-    start_date: "2026-04-15",
-    end_date: "2026-04-22",
-    total_budget: 1200000,
-    currency: "KRW",
+    id: "mock-3", user_id: null, title: "대만 여행", destination: "대만",
+    start_date: "2026-04-15", end_date: "2026-04-22",
+    total_budget: 1200000, currency: "KRW", is_archived: false, created_at: "",
   },
 };
 
-const MOCK_EXPENSES: Record<string, MockExpense[]> = {
+const MOCK_EXPENSES: Record<string, Expense[]> = {
   "mock-1": [
-    { id: "e1-1", trip_id: "mock-1", amount: 150000, currency: "KRW", category: "accommodation", expense_date: "2026-09-10", description: "숙소 1박" },
-    { id: "e1-2", trip_id: "mock-1", amount: 30000,  currency: "KRW", category: "transport",     expense_date: "2026-09-10", description: "공항 리무진" },
-    { id: "e1-3", trip_id: "mock-1", amount: 25000,  currency: "KRW", category: "food",          expense_date: "2026-09-11", description: "라멘" },
-    { id: "e1-4", trip_id: "mock-1", amount: 100000, currency: "KRW", category: "shopping",      expense_date: "2026-09-11", description: "돈키호테" },
-    { id: "e1-5", trip_id: "mock-1", amount: 80000,  currency: "KRW", category: "activity",      expense_date: "2026-09-12", description: "유니버셜 스튜디오" },
-    { id: "e1-6", trip_id: "mock-1", amount: 20000,  currency: "KRW", category: "food",          expense_date: "2026-09-12", description: "타코야키" },
-    { id: "e1-7", trip_id: "mock-1", amount: 35000,  currency: "KRW", category: "food",          expense_date: "2026-09-13", description: "오므라이스" },
-    { id: "e1-8", trip_id: "mock-1", amount: 50000,  currency: "KRW", category: "shopping",      expense_date: "2026-09-13", description: "기념품" },
-    { id: "e1-9", trip_id: "mock-1", amount: 110000, currency: "KRW", category: "transport",     expense_date: "2026-09-14", description: "간사이 공항 라피트" },
+    { id: "e1-1", trip_id: "mock-1", amount: 150000, currency: "KRW", category: "accommodation", payment_method: "card", expense_date: "2026-09-10", description: "숙소 1박",           created_at: "" },
+    { id: "e1-2", trip_id: "mock-1", amount: 30000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-09-10", description: "공항 리무진",         created_at: "" },
+    { id: "e1-3", trip_id: "mock-1", amount: 25000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-09-11", description: "라멘",               created_at: "" },
+    { id: "e1-4", trip_id: "mock-1", amount: 100000, currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-09-11", description: "돈키호테",           created_at: "" },
+    { id: "e1-5", trip_id: "mock-1", amount: 80000,  currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-09-12", description: "유니버셜 스튜디오",   created_at: "" },
+    { id: "e1-6", trip_id: "mock-1", amount: 20000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-09-12", description: "타코야키",           created_at: "" },
+    { id: "e1-7", trip_id: "mock-1", amount: 35000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-09-13", description: "오므라이스",         created_at: "" },
+    { id: "e1-8", trip_id: "mock-1", amount: 50000,  currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-09-13", description: "기념품",             created_at: "" },
+    { id: "e1-9", trip_id: "mock-1", amount: 110000, currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-09-14", description: "간사이 공항 라피트", created_at: "" },
   ],
   "mock-2": [
-    { id: "e2-1", trip_id: "mock-2", amount: 100000, currency: "KRW", category: "accommodation", expense_date: "2026-07-01", description: "방콕 호텔" },
-    { id: "e2-2", trip_id: "mock-2", amount: 20000,  currency: "KRW", category: "transport",     expense_date: "2026-07-01", description: "그랩" },
-    { id: "e2-3", trip_id: "mock-2", amount: 30000,  currency: "KRW", category: "food",          expense_date: "2026-07-02", description: "팟타이" },
-    { id: "e2-4", trip_id: "mock-2", amount: 120000, currency: "KRW", category: "activity",      expense_date: "2026-07-02", description: "왓포 투어" },
-    { id: "e2-5", trip_id: "mock-2", amount: 200000, currency: "KRW", category: "shopping",      expense_date: "2026-07-03", description: "짜뚜짝 시장" },
-    { id: "e2-6", trip_id: "mock-2", amount: 25000,  currency: "KRW", category: "food",          expense_date: "2026-07-03", description: "망고 빙수" },
-    { id: "e2-7", trip_id: "mock-2", amount: 40000,  currency: "KRW", category: "food",          expense_date: "2026-07-04", description: "해산물 BBQ" },
-    { id: "e2-8", trip_id: "mock-2", amount: 50000,  currency: "KRW", category: "activity",      expense_date: "2026-07-04", description: "태국 마사지" },
-    { id: "e2-9", trip_id: "mock-2", amount: 65000,  currency: "KRW", category: "transport",     expense_date: "2026-07-05", description: "수완나품 공항" },
+    { id: "e2-1", trip_id: "mock-2", amount: 100000, currency: "KRW", category: "accommodation", payment_method: "card", expense_date: "2026-07-01", description: "방콕 호텔",         created_at: "" },
+    { id: "e2-2", trip_id: "mock-2", amount: 20000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-07-01", description: "그랩",               created_at: "" },
+    { id: "e2-3", trip_id: "mock-2", amount: 30000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-07-02", description: "팟타이",             created_at: "" },
+    { id: "e2-4", trip_id: "mock-2", amount: 120000, currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-07-02", description: "왓포 투어",         created_at: "" },
+    { id: "e2-5", trip_id: "mock-2", amount: 200000, currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-07-03", description: "짜뚜짝 시장",       created_at: "" },
+    { id: "e2-6", trip_id: "mock-2", amount: 25000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-07-03", description: "망고 빙수",         created_at: "" },
+    { id: "e2-7", trip_id: "mock-2", amount: 40000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-07-04", description: "해산물 BBQ",        created_at: "" },
+    { id: "e2-8", trip_id: "mock-2", amount: 50000,  currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-07-04", description: "태국 마사지",       created_at: "" },
+    { id: "e2-9", trip_id: "mock-2", amount: 65000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-07-05", description: "수완나품 공항",     created_at: "" },
   ],
   "mock-3": [
-    { id: "e3-1", trip_id: "mock-3", amount: 100000, currency: "KRW", category: "accommodation", expense_date: "2026-04-15", description: "타이페이 호텔" },
-    { id: "e3-2", trip_id: "mock-3", amount: 20000,  currency: "KRW", category: "food",          expense_date: "2026-04-16", description: "딘타이펑" },
-    { id: "e3-3", trip_id: "mock-3", amount: 15000,  currency: "KRW", category: "transport",     expense_date: "2026-04-16", description: "MRT" },
-    { id: "e3-4", trip_id: "mock-3", amount: 80000,  currency: "KRW", category: "activity",      expense_date: "2026-04-17", description: "지우펀 투어" },
-    { id: "e3-5", trip_id: "mock-3", amount: 50000,  currency: "KRW", category: "shopping",      expense_date: "2026-04-17", description: "야시장" },
-    { id: "e3-6", trip_id: "mock-3", amount: 25000,  currency: "KRW", category: "food",          expense_date: "2026-04-18", description: "스테이크" },
-    { id: "e3-7", trip_id: "mock-3", amount: 10000,  currency: "KRW", category: "etc",           expense_date: "2026-04-18", description: "기타" },
-    { id: "e3-8", trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "food",          expense_date: "2026-04-19", description: "로컬 식당" },
-    { id: "e3-9", trip_id: "mock-3", amount: 70000,  currency: "KRW", category: "shopping",      expense_date: "2026-04-20", description: "광화문 기념품" },
-    { id: "e3-10", trip_id: "mock-3", amount: 30000, currency: "KRW", category: "food",          expense_date: "2026-04-21", description: "야식" },
-    { id: "e3-11", trip_id: "mock-3", amount: 20000, currency: "KRW", category: "transport",     expense_date: "2026-04-21", description: "버스" },
-    { id: "e3-12", trip_id: "mock-3", amount: 30000, currency: "KRW", category: "transport",     expense_date: "2026-04-22", description: "타오위안 공항" },
+    { id: "e3-1",  trip_id: "mock-3", amount: 100000, currency: "KRW", category: "accommodation", payment_method: "card", expense_date: "2026-04-15", description: "타이페이 호텔",     created_at: "" },
+    { id: "e3-2",  trip_id: "mock-3", amount: 20000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-16", description: "딘타이펑",           created_at: "" },
+    { id: "e3-3",  trip_id: "mock-3", amount: 15000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-04-16", description: "MRT",               created_at: "" },
+    { id: "e3-4",  trip_id: "mock-3", amount: 80000,  currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-04-17", description: "지우펀 투어",       created_at: "" },
+    { id: "e3-5",  trip_id: "mock-3", amount: 50000,  currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-04-17", description: "야시장",             created_at: "" },
+    { id: "e3-6",  trip_id: "mock-3", amount: 25000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-18", description: "스테이크",           created_at: "" },
+    { id: "e3-7",  trip_id: "mock-3", amount: 10000,  currency: "KRW", category: "etc",           payment_method: "cash", expense_date: "2026-04-18", description: "기타",               created_at: "" },
+    { id: "e3-8",  trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-19", description: "로컬 식당",         created_at: "" },
+    { id: "e3-9",  trip_id: "mock-3", amount: 70000,  currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-04-20", description: "광화문 기념품",     created_at: "" },
+    { id: "e3-10", trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-21", description: "야식",               created_at: "" },
+    { id: "e3-11", trip_id: "mock-3", amount: 20000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-04-21", description: "버스",               created_at: "" },
+    { id: "e3-12", trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-04-22", description: "타오위안 공항",     created_at: "" },
   ],
 };
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────────
 
-function getFlagEmoji(destination: string): string {
-  const match = COUNTRIES.find(
-    (c) => destination.includes(c.name) || c.name.includes(destination)
-  );
+function getFlagEmoji(text: string): string {
+  const match = COUNTRIES.find((c) => text.includes(c.name) || c.name.includes(text));
   return match?.emoji ?? "🌍";
 }
 
@@ -117,8 +87,7 @@ function calcDPlus(startDate: string): string {
   start.setHours(0, 0, 0, 0);
   const now = new Date();
   now.setHours(0, 0, 0, 0);
-  const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  return `D+${diff}`;
+  return `D+${Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))}`;
 }
 
 function formatDate(dateStr: string): string {
@@ -127,10 +96,8 @@ function formatDate(dateStr: string): string {
 
 function formatDateLabel(dateStr: string): string {
   const d = new Date(dateStr);
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
-  return `${month}.${day} (${dayNames[d.getDay()]})`;
+  return `${d.getMonth() + 1}.${d.getDate()} (${dayNames[d.getDay()]})`;
 }
 
 function getNightsLabel(start: string, end: string): string {
@@ -155,12 +122,12 @@ function getDayIndex(startDate: string, expenseDate: string): number {
 type DayGroup = {
   date: string;
   dayIndex: number;
-  expenses: MockExpense[];
+  expenses: Expense[];
   total: number;
 };
 
-function groupByDay(expenses: MockExpense[], startDate: string): DayGroup[] {
-  const map = new Map<string, MockExpense[]>();
+function groupByDay(expenses: Expense[], startDate: string): DayGroup[] {
+  const map = new Map<string, Expense[]>();
   for (const e of expenses) {
     const list = map.get(e.expense_date) ?? [];
     list.push(e);
@@ -175,8 +142,6 @@ function groupByDay(expenses: MockExpense[], startDate: string): DayGroup[] {
       total: exps.reduce((s, e) => s + e.amount, 0),
     }));
 }
-
-// ── 필터 아이콘 (장식) ────────────────────────────────────────────────────────
 
 function FilterIcon() {
   return (
@@ -198,8 +163,44 @@ export default function TravelDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const trip = MOCK_TRIPS[id];
-  const expenses = MOCK_EXPENSES[id] ?? [];
+  const { user, loading: authLoading } = useAuth();
+  const repository = useRepository();
+  const [trip, setTrip] = useState<Trip | null>(null);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [pageLoading, setPageLoading] = useState(true);
+
+  useEffect(() => {
+    if (authLoading) return;
+
+    // 게스트 또는 저장소 미준비 → 목업 fallback
+    if (!user || !repository) {
+      setTrip(MOCK_TRIPS[id] ?? null);
+      setExpenses(MOCK_EXPENSES[id] ?? []);
+      setPageLoading(false);
+      return;
+    }
+
+    async function fetchData() {
+      try {
+        const [tripData, expenseData] = await Promise.all([
+          repository!.getTrip(id),
+          repository!.listExpenses(id),
+        ]);
+        setTrip(tripData);
+        setExpenses(expenseData);
+      } catch (err) {
+        console.error("여행 상세 조회 실패:", err);
+      } finally {
+        setPageLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [authLoading, user, repository, id]);
+
+  if (pageLoading || authLoading) {
+    return <LoadingScreen />;
+  }
 
   if (!trip) {
     return (
@@ -230,7 +231,9 @@ export default function TravelDetailPage() {
       {/* 여행 정보 */}
       <div className="flex flex-col gap-1.5 px-4 pb-4">
         <div className="flex items-center gap-2">
-          <span className="text-title-xl leading-none">{getFlagEmoji(trip.destination)}</span>
+          <span className="text-title-xl leading-none">
+            {getFlagEmoji(trip.destination ?? trip.title)}
+          </span>
           <span className="text-title-m font-bold text-gray-90">{trip.title}</span>
           <span className="rounded-full bg-info-5 px-3 py-0.5 text-body-s font-bold text-info-50">
             {calcDPlus(trip.start_date)}
@@ -245,50 +248,32 @@ export default function TravelDetailPage() {
       {/* 예산 요약 카드 */}
       <div className="px-4 pb-6">
         <div className="flex flex-col gap-3 rounded-16 bg-gray-5 px-4 py-4">
-          {/* 총 지출 / 남은 금액 */}
           <div className="flex justify-between">
             <div className="flex flex-col gap-0.5">
               <span className="text-body-s text-gray-50">총 지출</span>
               <div className="flex items-baseline gap-0.5">
-                <span className="text-body-l font-bold text-gray-90">
-                  {formatAmount(totalSpent)}
-                </span>
+                <span className="text-body-l font-bold text-gray-90">{formatAmount(totalSpent)}</span>
                 <span className="text-body-s text-gray-90">{unit}</span>
               </div>
             </div>
             <div className="flex flex-col items-end gap-0.5">
               <span className="text-body-s text-gray-50">남은 금액</span>
               <div className="flex items-baseline gap-0.5">
-                <span
-                  className={`text-body-l font-bold ${
-                    remaining < 0 ? "text-danger-50" : "text-gray-90"
-                  }`}
-                >
-                  {remaining < 0 ? "-" : ""}
-                  {formatAmount(Math.abs(remaining))}
+                <span className={`text-body-l font-bold ${remaining < 0 ? "text-danger-50" : "text-gray-90"}`}>
+                  {remaining < 0 ? "-" : ""}{formatAmount(Math.abs(remaining))}
                 </span>
-                <span
-                  className={`text-body-s ${
-                    remaining < 0 ? "text-danger-50" : "text-gray-90"
-                  }`}
-                >
+                <span className={`text-body-s ${remaining < 0 ? "text-danger-50" : "text-gray-90"}`}>
                   {unit}
                 </span>
               </div>
             </div>
           </div>
-
-          {/* 진행바 */}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
               <span className="text-body-s text-gray-50">
                 총 예산 {formatAmount(trip.total_budget)}{unit}
               </span>
-              <span
-                className={`text-body-s font-medium ${
-                  isOver ? "text-danger-50" : "text-gray-60"
-                }`}
-              >
+              <span className={`text-body-s font-medium ${isOver ? "text-danger-50" : "text-gray-60"}`}>
                 {isOver ? `예산 ${pct - 100}% 초과` : `예산 ${pct}% 사용`}
               </span>
             </div>
@@ -302,12 +287,9 @@ export default function TravelDetailPage() {
 
       {/* 지출 내역 */}
       <div className="flex flex-col gap-4 px-4 pt-6">
-        {/* 섹션 헤더 */}
         <div className="flex items-center justify-between">
           <span className="text-body-m font-bold text-gray-90">지출 내역</span>
-          <button aria-label="필터">
-            <FilterIcon />
-          </button>
+          <button aria-label="필터"><FilterIcon /></button>
         </div>
 
         {expenses.length === 0 ? (
@@ -319,25 +301,17 @@ export default function TravelDetailPage() {
           <div className="flex flex-col gap-6">
             {dayGroups.map(({ date, dayIndex, expenses: dayExps, total }) => (
               <div key={date} className="flex flex-col gap-2">
-                {/* N일 차 헤더 */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-body-s font-bold text-gray-70">
-                      {dayIndex}일 차
-                    </span>
-                    <span className="text-body-s text-gray-50">
-                      {formatDateLabel(date)}
-                    </span>
+                    <span className="text-body-s font-bold text-gray-70">{dayIndex}일 차</span>
+                    <span className="text-body-s text-gray-50">{formatDateLabel(date)}</span>
                   </div>
-                  <span className="text-body-s text-gray-60">
-                    합계 {formatAmount(total)}{unit}
-                  </span>
+                  <span className="text-body-s text-gray-60">합계 {formatAmount(total)}{unit}</span>
                 </div>
-
-                {/* 지출 항목 */}
                 {dayExps.map((expense) => (
-                  <div
+                  <Link
                     key={expense.id}
+                    href={`/expense?expenseId=${expense.id}&from=${encodeURIComponent(`/travels/${id}`)}`}
                     className="flex items-center gap-3 rounded-16 bg-gray-white px-3 py-3 shadow-card"
                   >
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-8 bg-info-5">
@@ -348,15 +322,13 @@ export default function TravelDetailPage() {
                         {CATEGORY_MAP[expense.category as keyof typeof CATEGORY_MAP]?.label ?? expense.category}
                       </span>
                       {expense.description && (
-                        <span className="text-body-s text-gray-50">
-                          {expense.description}
-                        </span>
+                        <span className="text-body-s text-gray-50">{expense.description}</span>
                       )}
                     </div>
                     <span className="text-body-m font-medium text-gray-90">
                       -{formatAmount(expense.amount)}{unit}
                     </span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ))}
