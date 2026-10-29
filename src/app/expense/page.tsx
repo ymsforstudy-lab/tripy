@@ -13,6 +13,7 @@ import { useTrip } from "@/contexts/TripContext";
 import { type Currency } from "@/lib/constants/currency";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import { useKeyboardInset } from "@/hooks/useKeyboardInset";
+import { useRepository } from "@/hooks/useRepository";
 
 type Tab = "expense" | "budget";
 type PaymentMethod = "card" | "cash";
@@ -121,6 +122,7 @@ function ExpensePageContent() {
 
   const { user, loading: authLoading } = useAuth();
   const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const repository = useRepository();
 
   const [tab, setTab] = useState<Tab>("expense");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
@@ -263,18 +265,15 @@ function ExpensePageContent() {
         }
 
         // Supabase 지출 수정
-        const { error } = await supabase
-          .from("expenses")
-          .update({
-            amount: Number(rawAmount),
-            currency: currency ?? "KRW",
-            category: category || "etc",
-            payment_method: paymentMethod,
-            expense_date: normalizeDate(date),
-            description: description || null,
-          })
-          .eq("id", expenseId);
-        if (error) throw error;
+        if (!repository) throw new Error("저장소를 초기화하지 못했습니다.");
+        await repository.updateExpense(expenseId, {
+          amount: Number(rawAmount),
+          currency: currency ?? "KRW",
+          category: category || "etc",
+          payment_method: paymentMethod,
+          expense_date: normalizeDate(date),
+          description: description || null,
+        });
         await refreshTrip();
         router.replace(from);
         return;
@@ -301,9 +300,10 @@ function ExpensePageContent() {
         return;
       }
 
+      if (!repository) throw new Error("저장소를 초기화하지 못했습니다.");
       if (tab === "expense") {
-        const { error } = await supabase.from("expenses").insert({
-          trip_id: tripId,
+        await repository.createExpense({
+          trip_id: tripId!,
           amount: Number(rawAmount),
           currency: currency ?? "KRW",
           category: category || "etc",
@@ -311,15 +311,10 @@ function ExpensePageContent() {
           expense_date: normalizeDate(date),
           description: description || null,
         });
-        if (error) throw error;
         await refreshTrip();
       } else {
         const addedAmount = Number(rawAmount);
-        const { error } = await supabase
-          .from("trips")
-          .update({ total_budget: currentBudget + addedAmount })
-          .eq("id", tripId);
-        if (error) throw error;
+        await repository.updateTrip(tripId!, { total_budget: currentBudget + addedAmount });
         refreshTrip();
       }
       router.replace("/home?toast=expense");
@@ -349,8 +344,8 @@ function ExpensePageContent() {
       }
 
       // Supabase 지출 삭제
-      const { error } = await supabase.from("expenses").delete().eq("id", expenseId);
-      if (error) throw error;
+      if (!repository) throw new Error("저장소를 초기화하지 못했습니다.");
+      await repository.deleteExpense(expenseId);
       await refreshTrip();
       router.replace(from);
     } catch (err) {
