@@ -13,7 +13,7 @@ export type Trip = {
   start_date: string;
   /** 'YYYY-MM-DD'. 당일치기는 start_date와 같다 */
   end_date: string;
-  // TODO: 예산 미입력 허용이 결정되면 number | null 로 바꾼다 (docs/flow-v2.md §7)
+  /** 예산은 여행 생성 시 필수다 (docs/flow-v2.md §5) */
   total_budget: number;
   currency: string;
   is_archived: boolean;
