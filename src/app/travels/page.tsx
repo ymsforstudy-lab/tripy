@@ -1,246 +1,134 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import BottomNav from "@/components/ui/BottomNav";
 import FAB from "@/components/ui/FAB";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/contexts/AuthContext";
+import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
 import { COUNTRIES } from "@/lib/constants/countries";
-import LoadingScreen from "@/components/ui/LoadingScreen";
-import DeleteConfirmModal from "@/components/ui/DeleteConfirmModal";
 
-type Trip = {
+type MockTrip = {
   id: string;
   title: string;
+  destination: string;
   start_date: string;
   end_date: string;
+  total_budget: number;
+  spent: number;
 };
 
-function extractEmojiFromTitle(title: string): string {
-  const match = COUNTRIES.find((c) => title.includes(c.name));
+const MOCK_TRIPS: MockTrip[] = [
+  {
+    id: "mock-1",
+    title: "일본 여행",
+    destination: "일본",
+    start_date: "2026-09-10",
+    end_date: "2026-09-14",
+    total_budget: 800000,
+    spent: 600000,
+  },
+  {
+    id: "mock-2",
+    title: "태국 여행",
+    destination: "태국",
+    start_date: "2026-07-01",
+    end_date: "2026-07-05",
+    total_budget: 500000,
+    spent: 650000,
+  },
+  {
+    id: "mock-3",
+    title: "대만 여행",
+    destination: "대만",
+    start_date: "2026-04-15",
+    end_date: "2026-04-22",
+    total_budget: 1200000,
+    spent: 480000,
+  },
+];
+
+function getFlagEmoji(destination: string): string {
+  const match = COUNTRIES.find(
+    (c) => destination.includes(c.name) || c.name.includes(destination)
+  );
   return match?.emoji ?? "🌍";
 }
 
-function calcDDay(startDate: string): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+function calcDPlus(startDate: string): string {
   const start = new Date(startDate);
   start.setHours(0, 0, 0, 0);
-  const diff = Math.floor(
-    (start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  if (diff === 0) return "D-day";
-  if (diff > 0) return `D - ${diff}`;
-  return `D + ${Math.abs(diff)}`;
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  return `D+${diff}`;
 }
 
 function formatDate(dateStr: string): string {
   return dateStr.replace(/-/g, ".");
 }
 
-const ManageIcon = ({ color = "var(--color-green-50)" }: { color?: string }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <g transform="translate(1.676, 3.332)">
-      <path
-        fillRule="nonzero"
-        fill={color}
-        d="M7.4917 11.6687 L16.6583 11.6687 L16.6583 13.3354 L7.4917 13.3354 L7.4917 11.6687 Z M9.4 0.2437 L7.9083 1.7354 L11.5833 5.4104 L13.075 3.9187 C13.2322 3.7616 13.3187 3.5493 13.3187 3.3312 C13.3187 3.1131 13.2322 2.9008 13.075 2.7437 L10.575 0.2437 C10.4179 0.0865 10.2056 0 9.9875 0 C9.7694 0 9.5572 0.0865 9.4 0.2437 Z M6.7333 2.9187 L0.2417 9.4104 C0.0846 9.5675 0 9.7798 0 10.002 L0 12.502 C0 12.9604 0.375 13.3354 0.8333 13.3354 L3.3333 13.3354 C3.5583 13.3354 3.7667 13.2437 3.925 13.0937 L10.4167 6.602 L6.7417 2.927 L6.7333 2.9187 Z"
-      />
-    </g>
-  </svg>
-);
-
-const DeleteIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <path
-      d="M5.27 5.27a.75.75 0 0 1 1.06 0L10 8.94l3.67-3.67a.75.75 0 1 1 1.06 1.06L11.06 10l3.67 3.67a.75.75 0 1 1-1.06 1.06L10 11.06l-3.67 3.67a.75.75 0 0 1-1.06-1.06L8.94 10 5.27 6.33a.75.75 0 0 1 0-1.06Z"
-      fill="var(--color-gray-50)"
-    />
-  </svg>
-);
+function getNightsLabel(start: string, end: string): string {
+  const nights = Math.round(
+    (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  return nights === 0 ? "당일치기" : `${nights}박 ${nights + 1}일`;
+}
 
 export default function TravelsPage() {
-  const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState<"ongoing" | "ended">("ongoing");
-  const [trips, setTrips] = useState<Trip[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (authLoading) return;
-
-    if (!user) {
-      router.push("/");
-      return;
-    }
-
-    async function fetchTrips() {
-      const { data, error } = await supabase
-        .from("trips")
-        .select("id, title, start_date, end_date")
-        .eq("user_id", user!.id)
-        .order("start_date", { ascending: false });
-
-      if (!error && data) {
-        setTrips(data);
-      }
-      setLoading(false);
-    }
-    fetchTrips();
-  }, [authLoading, user, router]);
-
-  async function handleDeleteConfirm() {
-    if (!deleteTargetId) return;
-    const { error } = await supabase.from("trips").delete().eq("id", deleteTargetId);
-    if (error) {
-      alert("여행 삭제에 실패했습니다. 다시 시도해주세요.");
-      setDeleteTargetId(null);
-      return;
-    }
-    setTrips((prev) => prev.filter((t) => t.id !== deleteTargetId));
-    setDeleteTargetId(null);
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const ongoingTrips = trips.filter((t) => new Date(t.end_date) >= today);
-  const endedTrips = trips.filter((t) => new Date(t.end_date) < today);
-  const displayTrips = activeTab === "ongoing" ? ongoingTrips : endedTrips;
-
   return (
-    <div className="relative flex min-h-screen-safe w-full flex-col bg-white">
-      {/* Header */}
+    <div className="relative flex min-h-screen-safe w-full flex-col bg-white pb-21">
+      {/* 헤더 */}
       <div className="flex items-center justify-center pb-4 pt-6">
-        <span className="text-base font-bold leading-default text-gray-90">
-          여행 관리
-        </span>
+        <span className="text-body-l font-bold text-gray-90">지난 여행</span>
       </div>
 
-      {/* Tab Bar */}
-      <div className="flex h-12 items-center">
-        <button
-          className={`flex h-12 flex-1 items-center justify-center text-sm font-bold transition-colors ${
-            activeTab === "ongoing"
-              ? "border-b-2 border-green-50 text-gray-90"
-              : "text-gray-50"
-          }`}
-          onClick={() => setActiveTab("ongoing")}
-        >
-          진행 중인 여행
-        </button>
-        <button
-          className={`flex h-12 flex-1 items-center justify-center text-sm font-bold transition-colors ${
-            activeTab === "ended"
-              ? "border-b-2 border-green-50 text-gray-90"
-              : "text-gray-50"
-          }`}
-          onClick={() => setActiveTab("ended")}
-        >
-          종료된 여행
-        </button>
-      </div>
+      {/* 여행 목록 */}
+      <div className="flex flex-col gap-3 px-4 pt-2">
+        {MOCK_TRIPS.map((trip) => {
+          const ratio = trip.total_budget > 0 ? trip.spent / trip.total_budget : 0;
+          const pct = Math.round(ratio * 100);
+          const isOver = pct > 100;
 
-      {/* Trip List */}
-      <div className="flex flex-1 flex-col gap-4 px-4 pb-36 pt-4">
-        {loading ? (
-          <div className="flex flex-1 items-center justify-center py-20">
-            <LoadingScreen />
-          </div>
-        ) : displayTrips.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-1">
-            <Image
-              src="/icons/character-3.png"
-              alt="트리피 캐릭터"
-              width={120}
-              height={147}
-              className="mb-3"
-            />
-            <span className="text-sm font-bold text-gray-60">
-              {activeTab === "ongoing"
-                ? "등록된 여행이 없어요."
-                : "종료된 여행이 없어요."}
-            </span>
-            <span className="text-xs text-gray-60">
-              {activeTab === "ongoing"
-                ? "새로운 여행지를 등록해 볼까요?"
-                : "완료된 여행 기록은 여기서 볼 수 있어요!"}
-            </span>
-          </div>
-        ) : (
-          displayTrips.map((trip) => {
-            const dday = calcDDay(trip.start_date);
-            const isOngoing = activeTab === "ongoing";
-            return (
-              <div
-                key={trip.id}
-                className={`relative flex h-[100px] items-center gap-4 overflow-hidden rounded-2xl px-3 py-[14px] ${
-                  isOngoing ? "bg-green-0" : "bg-gray-5"
-                }`}
-              >
-                {/* Flag */}
-                <div className="flex shrink-0 size-[52px] items-center justify-center">
-                  <span className="text-[32px] leading-none">
-                    {extractEmojiFromTitle(trip.title)}
+          return (
+            <Link key={trip.id} href={`/travels/${trip.id}`}>
+              <div className="flex flex-col gap-3 rounded-16 bg-gray-5 px-4 py-4">
+                {/* 국기 + 여행명 + D+N 칩 */}
+                <div className="flex items-center gap-2">
+                  <span className="text-title-xl leading-none">
+                    {getFlagEmoji(trip.destination)}
+                  </span>
+                  <span className="flex-1 text-body-m font-bold text-gray-90">
+                    {trip.title}
+                  </span>
+                  <span className="rounded-full bg-info-5 px-3 py-0.5 text-body-s font-bold text-info-50">
+                    {calcDPlus(trip.start_date)}
                   </span>
                 </div>
 
-                {/* Trip info */}
-                <div className="flex flex-col gap-[5px]">
-                  <div className="flex items-center gap-2">
-                    <span className="text-base font-semibold text-gray-90">
-                      {trip.title}
-                    </span>
-                    {isOngoing ? (
-                      <span className="rounded-full bg-info-5 px-3 py-1 text-xs font-bold text-info-50">
-                        {dday}
-                      </span>
-                    ) : (
-                      <span className="rounded-full bg-gray-20 px-3 py-1 text-xs text-gray-60">
-                        종료
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-90">
-                    {formatDate(trip.start_date)} ~{" "}
-                    {formatDate(trip.end_date)}
-                  </span>
-                </div>
+                {/* 기간 */}
+                <span className="text-body-s text-gray-50">
+                  {formatDate(trip.start_date)} ~ {formatDate(trip.end_date)}&nbsp;·&nbsp;
+                  {getNightsLabel(trip.start_date, trip.end_date)}
+                </span>
 
-                {/* Edit / Delete icon */}
-                {isOngoing ? (
-                  <Link
-                    href={`/travels/${trip.id}/edit`}
-                    className="absolute right-3 top-[14px]"
+                {/* 예산 사용률 + 진행바 */}
+                <div className="flex flex-col gap-1.5">
+                  <span
+                    className={`text-body-s font-medium ${
+                      isOver ? "text-danger-50" : "text-gray-60"
+                    }`}
                   >
-                    <ManageIcon />
-                  </Link>
-                ) : (
-                  <button
-                    className="absolute right-3 top-[14px]"
-                    onClick={() => setDeleteTargetId(trip.id)}
-                  >
-                    <DeleteIcon />
-                  </button>
-                )}
+                    {isOver ? `예산 ${pct - 100}% 초과` : `예산 ${pct}% 사용`}
+                  </span>
+                  <BudgetProgressBar ratio={ratio} />
+                </div>
               </div>
-            );
-          })
-        )}
+            </Link>
+          );
+        })}
       </div>
 
-      {/* FAB 버튼 */}
-      <FAB href="/setup/country" tooltipText="새로운 여행지를 등록해 보세요!" />
-
-      <DeleteConfirmModal
-        open={deleteTargetId !== null}
-        onCancel={() => setDeleteTargetId(null)}
-        onConfirm={handleDeleteConfirm}
-      />
+      {/* + 새 여행 버튼 (§7 디자인 미결정 · FAB 임시 적용) */}
+      <FAB href="/setup" tooltipText="새로운 여행을 등록해 볼까요?" />
 
       <BottomNav />
     </div>
