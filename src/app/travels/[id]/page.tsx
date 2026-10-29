@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import Header from "@/components/ui/Header";
 import BottomNav from "@/components/ui/BottomNav";
 import BudgetProgressBar from "@/components/ui/BudgetProgressBar";
@@ -336,8 +337,9 @@ export default function TravelDetailPage() {
 
                 {/* 지출 항목 */}
                 {dayExps.map((expense) => (
-                  <div
+                  <Link
                     key={expense.id}
+                    href={`/expense?expenseId=${expense.id}&from=${encodeURIComponent(`/travels/${id}`)}`}
                     className="flex items-center gap-3 rounded-16 bg-gray-white px-3 py-3 shadow-card"
                   >
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-8 bg-info-5">
@@ -356,7 +358,7 @@ export default function TravelDetailPage() {
                     <span className="text-body-m font-medium text-gray-90">
                       -{formatAmount(expense.amount)}{unit}
                     </span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ))}
