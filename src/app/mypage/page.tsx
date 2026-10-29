@@ -8,7 +8,7 @@ import ProfileAvatar from "@/components/ui/ProfileAvatar";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import { CategoryId, CATEGORY_MAP } from "@/lib/constants/categories";
 import { supabase } from "@/lib/supabase";
-import { getSiteUrl } from "@/lib/site-url";
+import { signInWithGoogle } from "@/lib/auth";
 import StatusBadge from "@/components/ui/StatusBadge";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import IconSetting from "@/components/ui/IconSetting";
@@ -38,10 +38,11 @@ export default function MyPage() {
   };
 
   const handleGoogleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${getSiteUrl()}/auth/callback` },
-    });
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      console.error("구글 로그인 실패:", err);
+    }
   };
 
   useEffect(() => {
