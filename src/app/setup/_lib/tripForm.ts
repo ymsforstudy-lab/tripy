@@ -1,4 +1,6 @@
 import { getCurrencyUnit, type Currency } from "@/lib/constants/currency";
+import { nightsBetween } from "@/lib/data/dates";
+import type { TripInput } from "@/lib/data/types";
 
 export interface DateValue {
   year: number;
@@ -61,19 +63,29 @@ export function isTripFormComplete(form: TripFormValue) {
   return validateTripForm(form).length === 0;
 }
 
-function calcNights(start: DateValue, end: DateValue) {
-  const s = new Date(start.year, start.month - 1, start.day);
-  const e = new Date(end.year, end.month - 1, end.day);
-  return Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-/** "4박5일" / "당일치기". 기간이 정해지지 않았으면 null */
+/** "4박5일" / "당일치기". 기간이 정해지지 않았거나 도착일이 출발일보다 앞이면 null */
 export function formatNights(form: TripFormValue): string | null {
   const end = getEndDate(form);
-  if (!form.departure || !end) return null;
-  const nights = calcNights(form.departure, end);
-  if (nights < 0) return null;
+  if (!form.departure || !end || toNumber(end) < toNumber(form.departure)) return null;
+  const nights = nightsBetween(toISODate(form.departure), toISODate(end));
   return nights === 0 ? "당일치기" : `${nights}박${nights + 1}일`;
+}
+
+/** 검증을 통과한 폼을 createTrip 입력으로 바꾼다. 통과하지 못했으면 null */
+export function toTripInput(form: TripFormValue): TripInput | null {
+  const end = getEndDate(form);
+  if (!isTripFormComplete(form) || !form.departure || !end || !form.currency || form.amount === null) {
+    return null;
+  }
+  return {
+    // 1.x와 같게 국가는 title에만 넣는다. destination은 1.x의 국내 지역 자리라 2.0(지역 선택 없음)에서는 비운다
+    title: `${form.destination.trim()} 여행`,
+    destination: null,
+    start_date: toISODate(form.departure),
+    end_date: toISODate(end),
+    total_budget: form.amount,
+    currency: form.currency,
+  };
 }
 
 /** "2026.03.01" */

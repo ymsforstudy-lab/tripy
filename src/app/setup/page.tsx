@@ -4,17 +4,21 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/ui/Header";
 import BottomCTA from "@/components/ui/BottomCTA";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
+import { useRepository } from "@/hooks/useRepository";
+import { RepositoryError } from "@/lib/data/repository";
 import TripSetupForm from "./_components/TripSetupForm";
 import TripConfirmSheet from "./_components/TripConfirmSheet";
 import InfoBanner from "./_components/InfoBanner";
-import { EMPTY_TRIP_FORM, isTripFormComplete, type TripFormValue } from "./_lib/tripForm";
-import { saveTrip } from "./_lib/saveTrip";
+import { EMPTY_TRIP_FORM, isTripFormComplete, toTripInput, type TripFormValue } from "./_lib/tripForm";
 
 // 2.0 04·05 여행 정보 입력 + 06 확인 바텀시트. 입력값은 이 화면 상태로만 들고 있고 `확인`에서만 저장한다.
 export default function SetupPage() {
   const router = useRouter();
+  const { loading: authLoading } = useAuth();
   const { refresh } = useTrip();
+  const repo = useRepository();
   const [form, setForm] = useState<TripFormValue>(EMPTY_TRIP_FORM);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -25,14 +29,26 @@ export default function SetupPage() {
   const complete = isTripFormComplete(form);
 
   const handleConfirm = async () => {
-    if (submittingRef.current || !complete) return;
+    const input = toTripInput(form);
+    if (submittingRef.current || !input) return;
+    if (!repo) {
+      // 게스트(localStorage) 저장소가 들어오기 전까지는 비로그인도 null이다
+      setErrorMessage(
+        authLoading ? "로그인 상태를 확인하고 있어요. 잠시 후 다시 눌러주세요." : "로그인한 뒤에 여행을 저장할 수 있어요.",
+      );
+      return;
+    }
+
     submittingRef.current = true;
     setSubmitting(true);
     setErrorMessage(null);
-
-    const result = await saveTrip(form);
-    if (!result.ok) {
-      setErrorMessage(result.message);
+    try {
+      await repo.createTrip(input);
+    } catch (e) {
+      console.error("여행 생성 실패:", e);
+      setErrorMessage(
+        e instanceof RepositoryError ? `${e.message} 잠시 후 다시 시도해주세요.` : "여행을 저장하지 못했어요. 잠시 후 다시 시도해주세요.",
+      );
       setSubmitting(false);
       submittingRef.current = false;
       return;
