@@ -19,8 +19,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Home: Story = {};
 
-export const Manage: Story = {
+export const PastTrips: Story = {
   parameters: { nextjs: { navigation: { pathname: "/travels" } } },
+};
+
+export const PastTripDetail: Story = {
+  parameters: { nextjs: { navigation: { pathname: "/travels/abc123" } } },
 };
 
 export const MyPage: Story = {
