@@ -38,6 +38,17 @@ export function hasGuestData(): boolean {
   return readGuestData().trips.length > 0;
 }
 
+/** 여행·지출을 기기에 합쳐 넣는다. 같은 id가 이미 있으면 건너뛴다 (1.x 익명 데이터 내려받기용) */
+export function importGuestData(trips: Trip[], expenses: Expense[]) {
+  const data = readGuestData();
+  const tripIds = new Set(data.trips.map((t) => t.id));
+  const expenseIds = new Set(data.expenses.map((e) => e.id));
+  writeGuestData({
+    trips: [...data.trips, ...trips.filter((t) => !tripIds.has(t.id)).map((t) => ({ ...t, user_id: null }))],
+    expenses: [...data.expenses, ...expenses.filter((e) => !expenseIds.has(e.id))],
+  });
+}
+
 export function clearGuestData() {
   try {
     window.localStorage.removeItem(STORAGE_KEY);
