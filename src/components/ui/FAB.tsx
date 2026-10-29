@@ -19,7 +19,7 @@ export default function FAB({ href, tooltipText }: FABProps) {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
                 d="M12 5V19M5 12H19"
-                stroke="white"
+                stroke="var(--color-gray-white)"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
