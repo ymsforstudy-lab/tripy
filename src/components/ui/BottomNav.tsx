@@ -47,15 +47,15 @@ function MypageIcon({ color }: { color: string }) {
 
 const TABS = [
   {
-    href: "/travels",
-    label: "여행 관리",
-    Icon: ManageIcon,
-  },
-  {
     href: "/home",
     label: "홈",
     Icon: HomeIcon,
     isHome: true,
+  },
+  {
+    href: "/travels",
+    label: "지난 여행",
+    Icon: ManageIcon,
   },
   {
     href: "/mypage",
@@ -71,7 +71,9 @@ export default function BottomNav() {
     <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 border-t border-gray-10 bg-gray-white px-[47px] pb-4 pt-3 shadow-nav max-w-[390px]">
       <div className="flex items-center justify-between">
         {TABS.map(({ href, label, Icon, isHome }) => {
-          const isActive = pathname === href;
+          const isActive =
+            pathname === href ||
+            (href === "/travels" && pathname.startsWith("/travels"));
 
           if (isHome) {
             return (
