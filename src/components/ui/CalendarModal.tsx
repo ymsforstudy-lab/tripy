@@ -159,10 +159,10 @@ export default function CalendarModal({
 
   return (
     <Modal open={open} onClose={onClose}>
-      <div className="rounded-t-2xl bg-white px-4 pb-8 pt-6">
+      <div className="rounded-t-16 bg-gray-white px-4 pb-8 pt-6">
         {/* 헤더 */}
         <div className="mb-4 flex items-center justify-between">
-          <span className="text-xl font-bold text-gray-90">날짜 선택</span>
+          <span className="text-title-m font-bold text-gray-90">날짜 선택</span>
           <button onClick={onClose}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path
@@ -176,7 +176,7 @@ export default function CalendarModal({
         </div>
 
         {/* 선택된 날짜 표시 */}
-        <div className="mb-4 rounded-xl bg-gray-5 px-4 py-3 text-sm">
+        <div className="mb-4 rounded-12 bg-gray-5 px-4 py-3 text-body-m">
           {singleDate ? (
             <span className={start ? "font-medium text-gray-90" : "text-gray-50"}>
               {startLabel}
@@ -215,7 +215,7 @@ export default function CalendarModal({
               />
             </svg>
           </button>
-          <span className="text-base font-bold text-gray-90">
+          <span className="text-body-l font-bold text-gray-90">
             {viewYear}년 {viewMonth}월
           </span>
           <button onClick={handleNextMonth} className="p-1">
@@ -234,7 +234,7 @@ export default function CalendarModal({
         {/* 요일 헤더 */}
         <div className="mb-1 grid grid-cols-7 text-center">
           {DAYS_OF_WEEK.map((d) => (
-            <span key={d} className="py-1 text-xs font-medium text-gray-50">
+            <span key={d} className="py-1 text-body-s font-medium text-gray-50">
               {d}
             </span>
           ))}
@@ -266,7 +266,7 @@ export default function CalendarModal({
                         type="button"
                         disabled={isDisabled}
                         onClick={() => handleDayClick(day)}
-                        className={`relative z-10 mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm ${
+                        className={`relative z-10 mx-auto flex h-9 w-9 items-center justify-center rounded-full text-body-m ${
                           isStart || isEnd
                             ? "bg-gradient font-bold text-white"
                             : isDisabled
