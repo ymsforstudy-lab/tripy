@@ -1,6 +1,6 @@
-import { getCurrencyUnit, type Currency } from "@/lib/constants/currency";
+import { CURRENCIES, getCurrencyUnit, type Currency } from "@/lib/constants/currency";
 import { nightsBetween } from "@/lib/data/dates";
-import type { TripInput } from "@/lib/data/types";
+import type { Trip, TripInput } from "@/lib/data/types";
 
 export interface DateValue {
   year: number;
@@ -37,6 +37,25 @@ export function toISODate(d: DateValue) {
   const mm = String(d.month).padStart(2, "0");
   const dd = String(d.day).padStart(2, "0");
   return `${d.year}-${mm}-${dd}`;
+}
+
+function fromISODate(s: string): DateValue {
+  const [year, month, day] = s.split("-").map(Number);
+  return { year, month, day };
+}
+
+/** 수정 모드: 저장된 여행으로 폼을 채운다. 여행지는 title("일본 여행")에서 꺼낸다 (toTripInput의 반대) */
+export function fromTrip(trip: Trip): TripFormValue {
+  const isDayTrip = trip.start_date === trip.end_date;
+  return {
+    destination: trip.title.replace(/\s*여행$/, "").trim(),
+    departure: fromISODate(trip.start_date),
+    arrival: isDayTrip ? null : fromISODate(trip.end_date),
+    isDayTrip,
+    currency: (CURRENCIES as readonly string[]).includes(trip.currency) ? (trip.currency as Currency) : null,
+    // 1.x는 예산을 건너뛰면 0이 남는다. 0은 미입력으로 보고 다시 받는다
+    amount: trip.total_budget > 0 ? trip.total_budget : null,
+  };
 }
 
 /** 당일치기면 출발일, 아니면 도착일 */
