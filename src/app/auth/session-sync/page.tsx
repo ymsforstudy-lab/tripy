@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { ensureNickname } from "@/lib/nickname";
+import { uploadGuestData } from "@/lib/data/guest-migration";
 
 export default function SessionSyncPage() {
   const router = useRouter();
@@ -38,8 +39,21 @@ export default function SessionSyncPage() {
         console.error("[session-sync] 닉네임 생성 실패:", e);
       }
 
-      // 홈·여행 입력 분기는 01(/)이 맡는다
-      router.replace("/");
+      // 기기에 게스트 데이터가 있으면 계정으로 옮긴다. 실패하면 기기 사본이 남아 다음 로그인 때 다시 시도한다
+      let migrated = false;
+      try {
+        migrated = await uploadGuestData(data.session.user.id);
+      } catch (e) {
+        console.error("[session-sync] 게스트 데이터 이전 실패:", e);
+      }
+
+      // 홈·여행 입력 분기는 01(/)이 맡는다.
+      // 옮긴 여행이 있으면 새로 고침해 TripContext가 이전 전에 불러온 목록을 쓰지 않게 한다
+      if (migrated) {
+        window.location.replace("/");
+      } else {
+        router.replace("/");
+      }
     }
 
     syncSession();
