@@ -64,7 +64,7 @@ export function TripProvider({ children }: { children: ReactNode }) {
     setResult(await loadTrips(repo));
   }, [repo]);
 
-  // 게스트 저장소가 들어오기 전까지 비로그인은 repo가 null → 여행 없음으로 본다
+  // repo는 인증 로딩 중에만 null이다
   const current = repo && result?.repo === repo ? result : null;
   const loading = authLoading || (repo !== null && current === null);
   const trips = current?.trips ?? [];
