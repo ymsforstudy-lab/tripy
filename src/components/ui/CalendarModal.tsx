@@ -268,7 +268,7 @@ export default function CalendarModal({
                         onClick={() => handleDayClick(day)}
                         className={`relative z-10 mx-auto flex h-9 w-9 items-center justify-center rounded-full text-body-m ${
                           isStart || isEnd
-                            ? "bg-gradient font-bold text-white"
+                            ? "bg-gradient font-bold text-gray-white"
                             : isDisabled
                               ? "cursor-not-allowed text-gray-30 opacity-50"
                               : "text-gray-90"
