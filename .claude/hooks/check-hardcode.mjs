@@ -5,8 +5,9 @@
 //                 지금 파일보다 늘어나면 exit 2로 쓰기를 막고, 대체 토큰을 stderr로 알려준다.
 //                 기존 위반은 그대로 두고 "새로 늘리는 것"만 막는다.
 //   --scan        src 전체 위반을 파일별로 집계한다.
-//   --check       --scan 총계가 baseline보다 크면 exit 1 (PR 전 확인용).
-//   --baseline    현재 총계를 baseline으로 저장한다. 줄이는 방향으로만 갱신할 것.
+//   --check       규칙별 건수가 baseline보다 하나라도 크면 exit 1 (PR 전 확인용).
+//   --baseline    현재 건수를 baseline으로 저장한다. 줄이는 방향으로만 갱신할 것.
+//                 (규칙을 새로 추가할 때만 예외적으로 늘어난다.)
 
 import fs from "node:fs";
 import path from "node:path";
@@ -15,11 +16,80 @@ const ROOT = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const TOKENS_DIR = path.join(ROOT, "src/tokens");
 const BASELINE = path.join(ROOT, ".claude/hooks/hardcode-baseline.json");
 
+// 토큰 클래스 검사에 쓰는 prefix별 정보.
+//   ns: 이 prefix 뒤에 올 수 있는 토큰 네임스페이스 (--<ns>-<값>)
+//   ok: 토큰이 아니어도 되는 Tailwind 키워드 (색·크기가 아닌 것)
+const CLASS_PREFIXES = {
+  bg: { ns: ["color"], ok: /^(transparent|current|inherit|none|fixed|local|scroll|cover|contain|auto|center|top|bottom|left|right|repeat|no-repeat|repeat-x|repeat-y|clip-\w+|origin-\w+|blend-[\w-]+|linear-[\w-]+|radial|conic)$/ },
+  text: { ns: ["color", "text"], ok: /^(transparent|current|inherit|left|right|center|justify|start|end|wrap|nowrap|balance|pretty|ellipsis|clip)$/ },
+  border: { ns: ["color"], ok: /^(\d+|transparent|current|solid|dashed|dotted|double|hidden|none|collapse|separate|spacing-[\w-]+)$/ },
+  fill: { ns: ["color"], ok: /^(none|current|transparent)$/ },
+  stroke: { ns: ["color"], ok: /^(\d+|none|current|transparent)$/ },
+  ring: { ns: ["color"], ok: /^(\d+|inset|transparent|current|offset-\d+)$/ },
+  outline: { ns: ["color"], ok: /^(\d+|none|hidden|solid|dashed|dotted|double|offset-\d+)$/ },
+  divide: { ns: ["color"], ok: /^(x|y|\d+|x-\d+|y-\d+|x-reverse|y-reverse|solid|dashed|dotted|double|none)$/ },
+  rounded: { ns: ["radius"], ok: /^(none|full)$/ },
+  shadow: { ns: ["shadow"], ok: /^(none|inner)$/ },
+  leading: { ns: ["leading"], ok: /^(none)$/ },
+};
+const SIDE = /^(t|b|l|r|x|y|s|e|tl|tr|bl|br|ss|se|es|ee)-/;
+
+// Tailwind 기본값 → 같은 값의 토큰 후보 (힌트용. 토큰이 실제로 정의돼 있을 때만 보여준다)
+const DEFAULT_TO_TOKEN = {
+  white: "color-gray-white", black: "color-gray-black",
+  "text-xs": "text-body-s", "text-sm": "text-body-m", "text-base": "text-body-l", "text-xl": "text-title-m", "text-2xl": "text-title-xl",
+  "radius-sm": "radius-4", "radius-lg": "radius-8", "radius-xl": "radius-12", "radius-2xl": "radius-16",
+};
+
 const RULES = [
   { id: "hex", label: "hex 컬러", re: /(?<=["'`\s:([])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/g },
-  { id: "px", label: "임의 px 값", re: /-\[(\d+(?:\.\d+)?)px\]/g },
+  { id: "px", label: "임의 px 값", re: /-\[-?(\d+(?:\.\d+)?)px\]/g },
   { id: "style", label: "inline style 리터럴", re: /style=\{\{/g },
+  {
+    // bg-white, text-sm, rounded-xl, shadow-md처럼 src/tokens에 없는 Tailwind 기본 색·타이포·radius·shadow
+    id: "class",
+    label: "토큰이 아닌 Tailwind 클래스",
+    re: /(?<=[\s"'`{(])(?:[a-z0-9-]+:)*!?-?(bg|text|border|fill|stroke|ring|outline|divide|rounded|shadow|leading)-([a-z0-9-]+(?:\/\d+)?)(?=[\s"'`})])/g,
+    test: (m, defined) => {
+      const prefix = m[1];
+      let val = m[2].replace(/\/\d+$/, "");
+      if ((prefix === "border" || prefix === "rounded") && SIDE.test(val)) val = val.replace(SIDE, "");
+      if (prefix === "border" && /^(t|b|l|r|x|y|s|e)$/.test(val)) return false;
+      const { ns, ok } = CLASS_PREFIXES[prefix];
+      if (ok.test(val)) return false;
+      const cls = m[0].replace(/^(?:[a-z0-9-]+:)*!?-?/, "").replace(/\/\d+$/, "");
+      if (defined.has(`class:${cls}`)) return false;
+      return !ns.some((n) => defined.has(`${n}-${val}`));
+    },
+  },
+  {
+    // SVG 색 속성. none/currentColor/url(#)/정의된 var(--토큰)만 허용. hex 값은 hex 규칙이 센다.
+    id: "svg",
+    label: "SVG 색 리터럴",
+    re: /\b(?:fill|stroke|stopColor|floodColor)="([^"#][^"]*)"/g,
+    test: (m, defined) => {
+      const v = m[1];
+      if (/^(none|currentColor|transparent|inherit)$/.test(v) || v.startsWith("url(#")) return false;
+      const ref = v.match(/^var\(--([\w-]+)\)$/);
+      return !(ref && defined.has(ref[1]));
+    },
+  },
 ];
+
+// src/tokens/*.css에 정의된 변수 이름(--color-gray-white → "color-gray-white")과 유틸리티 클래스("class:bg-gradient")
+let definedCache;
+function loadDefined() {
+  if (definedCache) return definedCache;
+  definedCache = new Set();
+  if (!fs.existsSync(TOKENS_DIR)) return definedCache;
+  for (const f of fs.readdirSync(TOKENS_DIR).filter((f) => f.endsWith(".css"))) {
+    const css = fs.readFileSync(path.join(TOKENS_DIR, f), "utf8");
+    for (const [, name] of css.matchAll(/--([\w-]+)\s*:/g)) definedCache.add(name);
+    for (const [, name] of css.matchAll(/^\s*\.([\w-]+)\s*[{,]/gm)) definedCache.add(`class:${name}`);
+    for (const [, name] of css.matchAll(/@utility\s+([\w-]+)/g)) definedCache.add(`class:${name}`);
+  }
+  return definedCache;
+}
 
 function isTarget(file) {
   const rel = path.relative(ROOT, path.resolve(ROOT, file)).split(path.sep).join("/");
@@ -33,8 +103,12 @@ function isTarget(file) {
 
 function findViolations(text) {
   const found = [];
+  const defined = loadDefined();
   for (const rule of RULES) {
-    for (const m of text.matchAll(rule.re)) found.push({ rule, match: m[0], px: m[1] });
+    for (const m of text.matchAll(rule.re)) {
+      if (rule.test && !rule.test(m, defined)) continue;
+      found.push({ rule, match: m[0], px: m[1] });
+    }
   }
   return found;
 }
@@ -78,6 +152,19 @@ function suggest(v, tokens) {
     if (Number(v.px) % 4 === 0) hints.push(`Tailwind 기본 스케일 ${Number(v.px) / 4} (예: p-${Number(v.px) / 4})`);
     return hints.length ? hints.join(" | ") : "일치하는 토큰 없음 → 가까운 토큰을 쓰거나 token-guardian에게 요청";
   }
+  if (v.rule.id === "class") {
+    // [variant:][prefix]-[side-][value][/opacity] 로 나눠서 value만 토큰 이름으로 바꾼다
+    const [, head, prefix, side = "", val, opacity = ""] = v.match.match(
+      /^(.*?)(bg|text|border|fill|stroke|ring|outline|divide|rounded|shadow|leading)-((?:t|b|l|r|x|y|s|e|tl|tr|bl|br)-)?(.+?)(\/\d+)?$/,
+    );
+    const key = prefix === "rounded" ? `radius-${val}` : DEFAULT_TO_TOKEN[val] ? val : `${prefix}-${val}`;
+    const token = DEFAULT_TO_TOKEN[key];
+    if (token && loadDefined().has(token)) {
+      return `${head}${prefix}-${side}${token.replace(/^(color|radius|text)-/, "")}${opacity} (같은 값의 토큰)`;
+    }
+    return "src/tokens에 없는 값 → 토큰 클래스로 바꾸거나 token-guardian에게 토큰 추가 요청";
+  }
+  if (v.rule.id === "svg") return 'fill/stroke="var(--color-…)" 토큰 또는 "currentColor"';
   return "Tailwind 클래스로 표현. 동적 값만 예외 (예: style={{ width: `${pct}%` }})";
 }
 
@@ -164,14 +251,18 @@ if (!arg) {
   process.exit(runHook());
 } else if (arg === "--scan") {
   const { total, byRule, rows } = scan();
-  for (const r of rows) console.log(`${String(r.total).padStart(4)}  ${r.file}  (hex ${r.hex}, px ${r.px}, style ${r.style})`);
-  console.log(`\n총 ${total}건 (hex ${byRule.hex}, px ${byRule.px}, style ${byRule.style})`);
+  const detail = (o) => RULES.map((r) => `${r.id} ${o[r.id]}`).join(", ");
+  for (const r of rows) console.log(`${String(r.total).padStart(4)}  ${r.file}  (${detail(r)})`);
+  console.log(`\n총 ${total}건 (${detail(byRule)})`);
 } else if (arg === "--check") {
-  const { total } = scan();
-  const base = fs.existsSync(BASELINE) ? JSON.parse(fs.readFileSync(BASELINE, "utf8")).total : 0;
-  console.log(`하드코딩 ${total}건 / baseline ${base}건`);
-  if (total > base) {
-    console.error(`baseline보다 ${total - base}건 늘었습니다. --scan으로 위치를 확인하세요.`);
+  const { total, byRule } = scan();
+  const base = fs.existsSync(BASELINE) ? JSON.parse(fs.readFileSync(BASELINE, "utf8")) : {};
+  console.log(`하드코딩 ${total}건 / baseline ${base.total ?? 0}건`);
+  // 규칙별로 비교한다. 한 규칙을 줄인 만큼 다른 규칙이 늘어나는 것도 막는다.
+  const over = RULES.filter((r) => byRule[r.id] > (base[r.id] ?? 0));
+  if (over.length) {
+    for (const r of over) console.error(`  ${r.label}(${r.id}): ${byRule[r.id]}건 / baseline ${base[r.id] ?? 0}건`);
+    console.error("baseline보다 늘었습니다. --scan으로 위치를 확인하세요.");
     process.exit(1);
   }
 } else if (arg === "--baseline") {
