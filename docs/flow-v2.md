@@ -97,7 +97,7 @@ Figma 플로우에 없는 로직은 아래로 정했다. 디자인이 필요한 
 - 2.0에서 쓰지 않는 1.x 화면은 **한 버전 동안 307 리다이렉트로 남기고**, 다음 버전에 삭제한다(#133). 옛 링크·북마크로 들어와도 길을 잃지 않게 한다.
   - `setup/{country,region,date,confirm}` → `/setup`
   - `/budget` → `/home` (이미 만든 여행이 `/setup`에서 한 번 더 생기지 않게)
-  - `/nickname` → `/` (진입 분기). `auth/session-sync`의 `/nickname` 분기가 지워지면 폴더째 삭제할 수 있다.
+  - `/nickname` → `/` (진입 분기). #134로 `auth/session-sync`가 더 이상 `/nickname`으로 보내지 않으므로 폴더째 삭제할 수 있다.
 - `travels/[id]/edit`(작업자 C)는 아직 정하지 않았다(§7).
 
 ## 6. 1.x 대비 변경점 (코드 반영 필요)
