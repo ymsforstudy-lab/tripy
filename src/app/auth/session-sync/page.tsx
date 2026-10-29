@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { ensureNickname } from "@/lib/nickname";
+import { uploadGuestData } from "@/lib/data/guest-migration";
 
 export default function SessionSyncPage() {
   const router = useRouter();
@@ -30,15 +32,28 @@ export default function SessionSyncPage() {
         return;
       }
 
-      // display_name 확인 후 리다이렉트. 홈·여행 입력 분기는 01(/)이 맡는다
-      // TODO(A 6단계): 닉네임 자동 생성으로 바꾸고 /nickname 분기를 없앤다
-      const { data: profile } = await supabase
-        .from("users")
-        .select("display_name")
-        .eq("id", data.session.user.id)
-        .maybeSingle();
+      // 닉네임이 없으면 자동으로 만든다. 실패해도 로그인은 이어 간다(마이페이지에서 수정 가능)
+      try {
+        await ensureNickname(data.session.user);
+      } catch (e) {
+        console.error("[session-sync] 닉네임 생성 실패:", e);
+      }
 
-      router.replace(profile?.display_name ? "/" : "/nickname");
+      // 기기에 게스트 데이터가 있으면 계정으로 옮긴다. 실패하면 기기 사본이 남아 다음 로그인 때 다시 시도한다
+      let migrated = false;
+      try {
+        migrated = await uploadGuestData(data.session.user.id);
+      } catch (e) {
+        console.error("[session-sync] 게스트 데이터 이전 실패:", e);
+      }
+
+      // 홈·여행 입력 분기는 01(/)이 맡는다.
+      // 옮긴 여행이 있으면 새로 고침해 TripContext가 이전 전에 불러온 목록을 쓰지 않게 한다
+      if (migrated) {
+        window.location.replace("/");
+      } else {
+        router.replace("/");
+      }
     }
 
     syncSession();

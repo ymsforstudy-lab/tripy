@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import CalendarModal from "@/components/ui/CalendarModal";
-import { COUNTRIES } from "@/lib/constants/countries";
+import { searchCountries } from "@/lib/country-search";
 import { CURRENCIES, getCurrencyUnit, type Currency } from "@/lib/constants/currency";
 import {
   formatBudgetSummary,
@@ -67,15 +67,19 @@ export default function TripSetupForm({ value, onChange }: TripSetupFormProps) {
 
 function DestinationInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [focused, setFocused] = useState(false);
-  const query = value.trim();
-  const suggestions = query ? COUNTRIES.filter((c) => c.name.includes(query) && c.name !== query) : [];
+  // 여행지는 자유 입력이다. 목록에 있는 이름이면 정확히 같아도 항목을 보여준다
+  const suggestions = searchCountries(value);
 
   return (
     <div className="relative">
       <label className={FIELD_BOX}>
         <input
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+            // 항목을 고른 뒤 다시 입력하면 목록을 다시 연다
+            setFocused(true);
+          }}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder="국가를 입력해 주세요"
