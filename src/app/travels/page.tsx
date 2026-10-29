@@ -14,28 +14,6 @@ import type { Trip } from "@/lib/data/types";
 
 type TripWithSpent = Trip & { spent: number };
 
-// 게스트용 목업 데이터 (localStorage 저장소 구현 전 임시)
-const MOCK_TRIPS: TripWithSpent[] = [
-  {
-    id: "mock-1", user_id: null, title: "일본 여행", destination: "일본",
-    start_date: "2026-09-10", end_date: "2026-09-14",
-    total_budget: 800000, spent: 600000, currency: "KRW",
-    is_archived: false, created_at: "",
-  },
-  {
-    id: "mock-2", user_id: null, title: "태국 여행", destination: "태국",
-    start_date: "2026-07-01", end_date: "2026-07-05",
-    total_budget: 500000, spent: 650000, currency: "KRW",
-    is_archived: false, created_at: "",
-  },
-  {
-    id: "mock-3", user_id: null, title: "대만 여행", destination: "대만",
-    start_date: "2026-04-15", end_date: "2026-04-22",
-    total_budget: 1200000, spent: 480000, currency: "KRW",
-    is_archived: false, created_at: "",
-  },
-];
-
 function getFlagEmoji(text: string): string {
   const match = COUNTRIES.find((c) => text.includes(c.name) || c.name.includes(text));
   return match?.emoji ?? "🌍";
@@ -61,7 +39,7 @@ function getNightsLabel(start: string, end: string): string {
 }
 
 export default function TravelsPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const repository = useRepository();
   const [trips, setTrips] = useState<TripWithSpent[]>([]);
   const [pageLoading, setPageLoading] = useState(true);
@@ -69,9 +47,7 @@ export default function TravelsPage() {
   useEffect(() => {
     if (authLoading) return;
 
-    // 게스트 또는 저장소 미준비 → 목업 fallback
-    if (!user || !repository) {
-      setTrips(MOCK_TRIPS);
+    if (!repository) {
       setPageLoading(false);
       return;
     }
@@ -98,7 +74,7 @@ export default function TravelsPage() {
     }
 
     fetchData();
-  }, [authLoading, user, repository]);
+  }, [authLoading, repository]);
 
   if (pageLoading || authLoading) {
     return <LoadingScreen />;
