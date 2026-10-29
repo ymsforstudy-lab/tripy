@@ -22,7 +22,7 @@ export default function Modal({ open, onClose, children, maxWidth = 390 }: Modal
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-gray-black/60" onClick={onClose} />
       <div className="relative z-10 mx-auto w-full" style={{ maxWidth: `${maxWidth}px` }}>{children}</div>
     </div>
   );
