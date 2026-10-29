@@ -59,7 +59,7 @@ export default function ExchangeDropdown({
       </button>
 
       {open && (
-        <div className="absolute left-0 top-11 z-20 w-40 overflow-hidden rounded-12 border border-gray-30 bg-gray-white shadow-md">
+        <div className="absolute left-0 top-11 z-20 w-40 overflow-hidden rounded-12 border border-gray-30 bg-gray-white shadow-raised">
           {CURRENCIES.map((code) => (
             <button
               key={code}
