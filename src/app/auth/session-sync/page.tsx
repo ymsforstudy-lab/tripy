@@ -30,14 +30,15 @@ export default function SessionSyncPage() {
         return;
       }
 
-      // display_name 확인 후 리다이렉트
+      // display_name 확인 후 리다이렉트. 홈·여행 입력 분기는 01(/)이 맡는다
+      // TODO(A 6단계): 닉네임 자동 생성으로 바꾸고 /nickname 분기를 없앤다
       const { data: profile } = await supabase
         .from("users")
         .select("display_name")
         .eq("id", data.session.user.id)
-        .single();
+        .maybeSingle();
 
-      router.replace(profile?.display_name ? "/home" : "/nickname");
+      router.replace(profile?.display_name ? "/" : "/nickname");
     }
 
     syncSession();
