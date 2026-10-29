@@ -16,65 +16,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRepository } from "@/hooks/useRepository";
 import type { Trip, Expense } from "@/lib/data/types";
 
-// ── 게스트용 목업 데이터 ──────────────────────────────────────────────────────
-
-const MOCK_TRIPS: Record<string, Trip> = {
-  "mock-1": {
-    id: "mock-1", user_id: null, title: "일본 여행", destination: "일본",
-    start_date: "2026-09-10", end_date: "2026-09-14",
-    total_budget: 800000, currency: "KRW", is_archived: false, created_at: "",
-  },
-  "mock-2": {
-    id: "mock-2", user_id: null, title: "태국 여행", destination: "태국",
-    start_date: "2026-07-01", end_date: "2026-07-05",
-    total_budget: 500000, currency: "KRW", is_archived: false, created_at: "",
-  },
-  "mock-3": {
-    id: "mock-3", user_id: null, title: "대만 여행", destination: "대만",
-    start_date: "2026-04-15", end_date: "2026-04-22",
-    total_budget: 1200000, currency: "KRW", is_archived: false, created_at: "",
-  },
-};
-
-const MOCK_EXPENSES: Record<string, Expense[]> = {
-  "mock-1": [
-    { id: "e1-1", trip_id: "mock-1", amount: 150000, currency: "KRW", category: "accommodation", payment_method: "card", expense_date: "2026-09-10", description: "숙소 1박",           created_at: "" },
-    { id: "e1-2", trip_id: "mock-1", amount: 30000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-09-10", description: "공항 리무진",         created_at: "" },
-    { id: "e1-3", trip_id: "mock-1", amount: 25000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-09-11", description: "라멘",               created_at: "" },
-    { id: "e1-4", trip_id: "mock-1", amount: 100000, currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-09-11", description: "돈키호테",           created_at: "" },
-    { id: "e1-5", trip_id: "mock-1", amount: 80000,  currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-09-12", description: "유니버셜 스튜디오",   created_at: "" },
-    { id: "e1-6", trip_id: "mock-1", amount: 20000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-09-12", description: "타코야키",           created_at: "" },
-    { id: "e1-7", trip_id: "mock-1", amount: 35000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-09-13", description: "오므라이스",         created_at: "" },
-    { id: "e1-8", trip_id: "mock-1", amount: 50000,  currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-09-13", description: "기념품",             created_at: "" },
-    { id: "e1-9", trip_id: "mock-1", amount: 110000, currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-09-14", description: "간사이 공항 라피트", created_at: "" },
-  ],
-  "mock-2": [
-    { id: "e2-1", trip_id: "mock-2", amount: 100000, currency: "KRW", category: "accommodation", payment_method: "card", expense_date: "2026-07-01", description: "방콕 호텔",         created_at: "" },
-    { id: "e2-2", trip_id: "mock-2", amount: 20000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-07-01", description: "그랩",               created_at: "" },
-    { id: "e2-3", trip_id: "mock-2", amount: 30000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-07-02", description: "팟타이",             created_at: "" },
-    { id: "e2-4", trip_id: "mock-2", amount: 120000, currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-07-02", description: "왓포 투어",         created_at: "" },
-    { id: "e2-5", trip_id: "mock-2", amount: 200000, currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-07-03", description: "짜뚜짝 시장",       created_at: "" },
-    { id: "e2-6", trip_id: "mock-2", amount: 25000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-07-03", description: "망고 빙수",         created_at: "" },
-    { id: "e2-7", trip_id: "mock-2", amount: 40000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-07-04", description: "해산물 BBQ",        created_at: "" },
-    { id: "e2-8", trip_id: "mock-2", amount: 50000,  currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-07-04", description: "태국 마사지",       created_at: "" },
-    { id: "e2-9", trip_id: "mock-2", amount: 65000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-07-05", description: "수완나품 공항",     created_at: "" },
-  ],
-  "mock-3": [
-    { id: "e3-1",  trip_id: "mock-3", amount: 100000, currency: "KRW", category: "accommodation", payment_method: "card", expense_date: "2026-04-15", description: "타이페이 호텔",     created_at: "" },
-    { id: "e3-2",  trip_id: "mock-3", amount: 20000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-16", description: "딘타이펑",           created_at: "" },
-    { id: "e3-3",  trip_id: "mock-3", amount: 15000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-04-16", description: "MRT",               created_at: "" },
-    { id: "e3-4",  trip_id: "mock-3", amount: 80000,  currency: "KRW", category: "activity",      payment_method: "card", expense_date: "2026-04-17", description: "지우펀 투어",       created_at: "" },
-    { id: "e3-5",  trip_id: "mock-3", amount: 50000,  currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-04-17", description: "야시장",             created_at: "" },
-    { id: "e3-6",  trip_id: "mock-3", amount: 25000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-18", description: "스테이크",           created_at: "" },
-    { id: "e3-7",  trip_id: "mock-3", amount: 10000,  currency: "KRW", category: "etc",           payment_method: "cash", expense_date: "2026-04-18", description: "기타",               created_at: "" },
-    { id: "e3-8",  trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-19", description: "로컬 식당",         created_at: "" },
-    { id: "e3-9",  trip_id: "mock-3", amount: 70000,  currency: "KRW", category: "shopping",      payment_method: "card", expense_date: "2026-04-20", description: "광화문 기념품",     created_at: "" },
-    { id: "e3-10", trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "food",          payment_method: "cash", expense_date: "2026-04-21", description: "야식",               created_at: "" },
-    { id: "e3-11", trip_id: "mock-3", amount: 20000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-04-21", description: "버스",               created_at: "" },
-    { id: "e3-12", trip_id: "mock-3", amount: 30000,  currency: "KRW", category: "transport",     payment_method: "card", expense_date: "2026-04-22", description: "타오위안 공항",     created_at: "" },
-  ],
-};
-
 // ── 유틸 ──────────────────────────────────────────────────────────────────────
 
 function getFlagEmoji(text: string): string {
@@ -163,7 +104,7 @@ export default function TravelDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const { user, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const repository = useRepository();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -172,10 +113,7 @@ export default function TravelDetailPage() {
   useEffect(() => {
     if (authLoading) return;
 
-    // 게스트 또는 저장소 미준비 → 목업 fallback
-    if (!user || !repository) {
-      setTrip(MOCK_TRIPS[id] ?? null);
-      setExpenses(MOCK_EXPENSES[id] ?? []);
+    if (!repository) {
       setPageLoading(false);
       return;
     }
@@ -196,7 +134,7 @@ export default function TravelDetailPage() {
     }
 
     fetchData();
-  }, [authLoading, user, repository, id]);
+  }, [authLoading, repository, id]);
 
   if (pageLoading || authLoading) {
     return <LoadingScreen />;
