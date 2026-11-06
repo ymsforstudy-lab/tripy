@@ -15,20 +15,13 @@ import { getCurrencyUnit } from "@/lib/constants/currency";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRepository } from "@/hooks/useRepository";
 import type { Trip, Expense } from "@/lib/data/types";
+import { calcDDay, todayLocal } from "@/lib/data/dates";
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────────
 
 function getFlagEmoji(text: string): string {
   const match = COUNTRIES.find((c) => text.includes(c.name) || c.name.includes(text));
   return match?.emoji ?? "🌍";
-}
-
-function calcDPlus(startDate: string): string {
-  const start = new Date(startDate);
-  start.setHours(0, 0, 0, 0);
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  return `D+${Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))}`;
 }
 
 function formatDate(dateStr: string): string {
@@ -174,7 +167,7 @@ export default function TravelDetailPage() {
           </span>
           <span className="text-title-m font-bold text-gray-90">{trip.title}</span>
           <span className="rounded-full bg-info-5 px-3 py-0.5 text-body-s font-bold text-info-50">
-            {calcDPlus(trip.start_date)}
+            {calcDDay(todayLocal(), trip.start_date)}
           </span>
         </div>
         <span className="text-body-s text-gray-50">
