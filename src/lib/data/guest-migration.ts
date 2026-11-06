@@ -39,8 +39,7 @@ export async function uploadGuestData(userId: string): Promise<boolean> {
 
 /**
  * 1.x 익명 계정의 여행·지출을 기기로 내려받는다. 서버 데이터는 지우지 않는다.
- * 성공하면 호출부가 익명 세션을 로그아웃한다.
- * TODO(A 3b): 익명 로그인을 없앨 때 01 앱 시작에서 연결한다.
+ * 성공하면 호출부(01 앱 시작)가 익명 세션을 로그아웃한다.
  */
 export async function downloadAnonymousData(userId: string): Promise<void> {
   const repo = createSupabaseRepository(userId);

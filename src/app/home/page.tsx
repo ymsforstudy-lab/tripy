@@ -3,9 +3,10 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import BottomNav from "@/components/ui/BottomNav";
-import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
+import { useRepository } from "@/hooks/useRepository";
+import type { TripRepository } from "@/lib/data/repository";
+import type { Expense } from "@/lib/data/types";
 import HomeHeader from "@/components/ui/HomeHeader";
 import BudgetCard from "@/components/ui/BudgetCard";
 import HomeFilter from "@/components/ui/HomeFilter";
@@ -41,76 +42,12 @@ function formatDate(dateStr: string) {
   return `${month}.${day} (${dayName})`;
 }
 
-type Trip = {
-  id: string;
-  user_id: string;
-  title: string;
-  destination: string | null;
-  start_date: string;
-  end_date: string;
-  total_budget: number;
-  currency: string;
-  is_archived: boolean;
+/** 어떤 저장소·여행으로 불러온 지출인지 함께 보관해 여행이 바뀌면 이전 결과를 쓰지 않는다 */
+type ExpenseResult = {
+  repo: TripRepository;
+  tripId: string;
+  expenses: Expense[];
 };
-
-type Expense = {
-  id: string;
-  trip_id: string;
-  amount: number;
-  currency: string;
-  category: string;
-  expense_date: string;
-  description: string | null;
-  created_at: string;
-};
-
-const DUMMY_TRIP: Trip = {
-  id: "dummy-trip-1",
-  user_id: "user-1",
-  title: "일본 여행",
-  destination: "오사카",
-  start_date: "2024-03-20",
-  end_date: "2024-03-25",
-  total_budget: 1000000,
-  currency: "KRW",
-  is_archived: false,
-};
-
-const todayStr = new Date().toISOString().split("T")[0];
-const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
-
-function readLocalExpenses(): Expense[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(LOCAL_EXPENSES_KEY);
-    return raw ? (JSON.parse(raw) as Expense[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-const DUMMY_EXPENSES: Expense[] = [
-  {
-    id: "exp-1",
-    trip_id: "dummy-trip-1",
-    amount: 15000,
-    currency: "KRW",
-    category: "food",
-    expense_date: todayStr,
-    description: "라멘",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "exp-2",
-    trip_id: "dummy-trip-1",
-    amount: 50000,
-    currency: "KRW",
-    category: "shopping",
-    expense_date: todayStr,
-    description: "돈키호테",
-    created_at: new Date().toISOString(),
-  },
-];
 
 export default function HomePage() {
   return (
@@ -124,12 +61,10 @@ export default function HomePage() {
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
-  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const { trip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const repository = useRepository();
   const { rates } = useExchangeRates();
-  const [trip, setTrip] = useState<Trip | null>(null);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [expenseResult, setExpenseResult] = useState<ExpenseResult | null>(null);
   const [minLoadDone, setMinLoadDone] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -150,39 +85,34 @@ function HomePageContent() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
+  // 홈 여행이 없으면 여행 정보 입력으로 보낸다. 로딩 중에는 판단하지 않는다
   useEffect(() => {
-    if (authLoading || tripLoading) return;
+    if (!tripLoading && !trip) router.replace("/setup");
+  }, [tripLoading, trip, router]);
 
-    if (!user) {
-      setTrip(DUMMY_TRIP);
-      setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
-      setLoading(false);
-      return;
-    }
+  // 로그인 사용자는 Supabase, 게스트는 이 기기(localStorage)에서 지출을 불러온다
+  useEffect(() => {
+    if (tripLoading || !trip || !repository) return;
+    let cancelled = false;
+    const tripId = trip.id;
+    repository
+      .listExpenses(tripId)
+      .catch((e) => {
+        console.error("지출 내역 조회 실패:", e);
+        return [] as Expense[];
+      })
+      .then((expenses) => {
+        if (!cancelled) setExpenseResult({ repo: repository, tripId, expenses });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tripLoading, trip, repository]);
 
-    if (!cachedTrip) {
-      router.replace("/setup");
-      return;
-    }
-
-    setTrip(cachedTrip as Trip);
-
-    async function fetchExpenses() {
-      const { data: expenseData, error } = await supabase
-        .from("expenses")
-        .select("*")
-        .eq("trip_id", cachedTrip!.id)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("지출 내역 조회 실패:", error.message);
-      }
-      setExpenses(expenseData ?? []);
-      setLoading(false);
-    }
-
-    fetchExpenses();
-  }, [authLoading, tripLoading, user, cachedTrip, router]);
+  const expenseReady =
+    !!trip && expenseResult?.repo === repository && expenseResult?.tripId === trip.id;
+  const expenses = expenseReady ? expenseResult.expenses : [];
+  const loading = tripLoading || !expenseReady;
 
   const filteredExpenses =
     selectedCategories.length > 0
