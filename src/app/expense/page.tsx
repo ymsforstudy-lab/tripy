@@ -9,6 +9,7 @@ import DeleteConfirmModal from "@/components/ui/DeleteConfirmModal";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { readGuestData } from "@/lib/data/local-repo";
 import { useTrip } from "@/contexts/TripContext";
 import { type Currency } from "@/lib/constants/currency";
 import CategoryIcon from "@/components/ui/CategoryIcon";
@@ -26,49 +27,6 @@ const CATEGORIES = [
   { id: "shopping", label: "쇼핑" },
   { id: "etc", label: "기타" },
 ] as const;
-
-// ── 목업 지출 조회 (travels/[id] 목업 데이터와 동기화) ─────────────────────────
-
-type MockExpenseLookup = {
-  amount: number;
-  currency: string;
-  category: string;
-  expense_date: string;
-  description: string | null;
-};
-
-const MOCK_EXPENSE_LOOKUP: Record<string, MockExpenseLookup> = {
-  "e1-1": { amount: 150000, currency: "KRW", category: "accommodation", expense_date: "2026-09-10", description: "숙소 1박" },
-  "e1-2": { amount: 30000,  currency: "KRW", category: "transport",     expense_date: "2026-09-10", description: "공항 리무진" },
-  "e1-3": { amount: 25000,  currency: "KRW", category: "food",          expense_date: "2026-09-11", description: "라멘" },
-  "e1-4": { amount: 100000, currency: "KRW", category: "shopping",      expense_date: "2026-09-11", description: "돈키호테" },
-  "e1-5": { amount: 80000,  currency: "KRW", category: "activity",      expense_date: "2026-09-12", description: "유니버셜 스튜디오" },
-  "e1-6": { amount: 20000,  currency: "KRW", category: "food",          expense_date: "2026-09-12", description: "타코야키" },
-  "e1-7": { amount: 35000,  currency: "KRW", category: "food",          expense_date: "2026-09-13", description: "오므라이스" },
-  "e1-8": { amount: 50000,  currency: "KRW", category: "shopping",      expense_date: "2026-09-13", description: "기념품" },
-  "e1-9": { amount: 110000, currency: "KRW", category: "transport",     expense_date: "2026-09-14", description: "간사이 공항 라피트" },
-  "e2-1": { amount: 100000, currency: "KRW", category: "accommodation", expense_date: "2026-07-01", description: "방콕 호텔" },
-  "e2-2": { amount: 20000,  currency: "KRW", category: "transport",     expense_date: "2026-07-01", description: "그랩" },
-  "e2-3": { amount: 30000,  currency: "KRW", category: "food",          expense_date: "2026-07-02", description: "팟타이" },
-  "e2-4": { amount: 120000, currency: "KRW", category: "activity",      expense_date: "2026-07-02", description: "왓포 투어" },
-  "e2-5": { amount: 200000, currency: "KRW", category: "shopping",      expense_date: "2026-07-03", description: "짜뚜짝 시장" },
-  "e2-6": { amount: 25000,  currency: "KRW", category: "food",          expense_date: "2026-07-03", description: "망고 빙수" },
-  "e2-7": { amount: 40000,  currency: "KRW", category: "food",          expense_date: "2026-07-04", description: "해산물 BBQ" },
-  "e2-8": { amount: 50000,  currency: "KRW", category: "activity",      expense_date: "2026-07-04", description: "태국 마사지" },
-  "e2-9": { amount: 65000,  currency: "KRW", category: "transport",     expense_date: "2026-07-05", description: "수완나품 공항" },
-  "e3-1": { amount: 100000, currency: "KRW", category: "accommodation", expense_date: "2026-04-15", description: "타이페이 호텔" },
-  "e3-2": { amount: 20000,  currency: "KRW", category: "food",          expense_date: "2026-04-16", description: "딘타이펑" },
-  "e3-3": { amount: 15000,  currency: "KRW", category: "transport",     expense_date: "2026-04-16", description: "MRT" },
-  "e3-4": { amount: 80000,  currency: "KRW", category: "activity",      expense_date: "2026-04-17", description: "지우펀 투어" },
-  "e3-5": { amount: 50000,  currency: "KRW", category: "shopping",      expense_date: "2026-04-17", description: "야시장" },
-  "e3-6": { amount: 25000,  currency: "KRW", category: "food",          expense_date: "2026-04-18", description: "스테이크" },
-  "e3-7": { amount: 10000,  currency: "KRW", category: "etc",           expense_date: "2026-04-18", description: "기타" },
-  "e3-8": { amount: 30000,  currency: "KRW", category: "food",          expense_date: "2026-04-19", description: "로컬 식당" },
-  "e3-9": { amount: 70000,  currency: "KRW", category: "shopping",      expense_date: "2026-04-20", description: "광화문 기념품" },
-  "e3-10": { amount: 30000, currency: "KRW", category: "food",          expense_date: "2026-04-21", description: "야식" },
-  "e3-11": { amount: 20000, currency: "KRW", category: "transport",     expense_date: "2026-04-21", description: "버스" },
-  "e3-12": { amount: 30000, currency: "KRW", category: "transport",     expense_date: "2026-04-22", description: "타오위안 공항" },
-};
 
 // ── 유틸 ──────────────────────────────────────────────────────────────────────
 
@@ -97,9 +55,6 @@ function parseIsoDateValue(value: string | null | undefined) {
 function normalizeDate(value: string) {
   return value.replace(/\./g, "-");
 }
-
-const FALLBACK_TRIP_ID = "dummy-trip-1";
-const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
 
 // ── Suspense 래퍼 ─────────────────────────────────────────────────────────────
 
@@ -162,58 +117,35 @@ function ExpensePageContent() {
   // Auth/Trip 준비 후 tripId·통화 설정
   useEffect(() => {
     if (authLoading || tripLoading) return;
-    if (!user) {
-      setTripId(FALLBACK_TRIP_ID);
-      if (!currency) setCurrency("KRW");
-      return;
-    }
     if (cachedTrip) {
       setTripId(cachedTrip.id);
       setCurrentBudget(cachedTrip.total_budget ?? 0);
       if (!currency) setCurrency((cachedTrip.currency as Currency) ?? "KRW");
     } else {
-      setTripId(FALLBACK_TRIP_ID);
+      if (!currency) setCurrency("KRW");
     }
-  }, [authLoading, tripLoading, user, cachedTrip]);
+  }, [authLoading, tripLoading, cachedTrip]);
 
   // 수정 모드: expenseId로 데이터 조회 후 폼 채우기
   useEffect(() => {
     if (!expenseId) return;
 
-    // 1. 목업 지출 (즉시)
-    const mockExpense = MOCK_EXPENSE_LOOKUP[expenseId];
-    if (mockExpense) {
-      setAmount(mockExpense.amount.toLocaleString("ko-KR"));
-      setCurrency(mockExpense.currency as Currency);
-      setCategory(mockExpense.category);
-      setPaymentMethod("card");
-      setDate(mockExpense.expense_date.replace(/-/g, "."));
-      setDescription(mockExpense.description ?? "");
+    // 1. 게스트: localStorage에서 조회 (즉시)
+    if (!user) {
+      const found = readGuestData().expenses.find((e) => e.id === expenseId);
+      if (found) {
+        setAmount(found.amount.toLocaleString("ko-KR"));
+        setCurrency(found.currency as Currency);
+        setCategory(found.category);
+        setPaymentMethod((found.payment_method as PaymentMethod) ?? "card");
+        setDate(found.expense_date.replace(/-/g, "."));
+        setDescription(found.description ?? "");
+      }
       return;
     }
 
-    // 2. localStorage 지출 (즉시)
-    if (expenseId.startsWith("dummy-")) {
-      try {
-        const stored = JSON.parse(localStorage.getItem(LOCAL_EXPENSES_KEY) ?? "[]") as Array<{
-          id: string; amount: number; currency: string; category: string;
-          payment_method: string; expense_date: string; description: string | null;
-        }>;
-        const found = stored.find((e) => e.id === expenseId);
-        if (found) {
-          setAmount(found.amount.toLocaleString("ko-KR"));
-          setCurrency(found.currency as Currency);
-          setCategory(found.category);
-          setPaymentMethod((found.payment_method as PaymentMethod) ?? "card");
-          setDate(found.expense_date.replace(/-/g, "."));
-          setDescription(found.description ?? "");
-        }
-      } catch { /* ignore */ }
-      return;
-    }
-
-    // 3. Supabase 지출 (비동기, 로그인 후)
-    if (authLoading || !user) return;
+    // 2. Supabase 지출 (비동기, 로그인 후)
+    if (authLoading) return;
     supabase
       .from("expenses")
       .select("*")
@@ -244,27 +176,6 @@ function ExpensePageContent() {
     try {
       // ── 수정 모드 ──────────────────────────────────────────────────────────
       if (isEditMode && expenseId) {
-        // 목업 지출: 저장 시뮬레이션
-        if (MOCK_EXPENSE_LOOKUP[expenseId]) {
-          router.replace(from);
-          return;
-        }
-
-        // localStorage 지출
-        if (expenseId.startsWith("dummy-")) {
-          const stored = JSON.parse(localStorage.getItem(LOCAL_EXPENSES_KEY) ?? "[]") as Array<Record<string, unknown>>;
-          const updated = stored.map((e) =>
-            e.id === expenseId
-              ? { ...e, amount: Number(rawAmount), currency, category: category || "etc",
-                  expense_date: normalizeDate(date), description: description || null }
-              : e
-          );
-          localStorage.setItem(LOCAL_EXPENSES_KEY, JSON.stringify(updated));
-          router.replace(from);
-          return;
-        }
-
-        // Supabase 지출 수정
         if (!repository) throw new Error("저장소를 초기화하지 못했습니다.");
         await repository.updateExpense(expenseId, {
           amount: Number(rawAmount),
@@ -280,26 +191,6 @@ function ExpensePageContent() {
       }
 
       // ── 등록 모드 ──────────────────────────────────────────────────────────
-      if (tripId === FALLBACK_TRIP_ID) {
-        if (tab === "expense") {
-          const newExpense = {
-            id: `dummy-${Date.now()}`,
-            trip_id: tripId,
-            amount: Number(rawAmount),
-            currency: currency ?? "KRW",
-            category: category || "etc",
-            payment_method: paymentMethod,
-            expense_date: normalizeDate(date),
-            description: description || null,
-            created_at: new Date().toISOString(),
-          };
-          const existing = JSON.parse(localStorage.getItem(LOCAL_EXPENSES_KEY) || "[]");
-          localStorage.setItem(LOCAL_EXPENSES_KEY, JSON.stringify([newExpense, ...existing]));
-        }
-        router.replace("/home?toast=expense");
-        return;
-      }
-
       if (!repository) throw new Error("저장소를 초기화하지 못했습니다.");
       if (tab === "expense") {
         await repository.createExpense({
@@ -329,21 +220,6 @@ function ExpensePageContent() {
     if (!expenseId) return;
     setSubmitting(true);
     try {
-      // 목업 지출: 삭제 시뮬레이션
-      if (MOCK_EXPENSE_LOOKUP[expenseId]) {
-        router.replace(from);
-        return;
-      }
-
-      // localStorage 지출
-      if (expenseId.startsWith("dummy-")) {
-        const stored = JSON.parse(localStorage.getItem(LOCAL_EXPENSES_KEY) ?? "[]") as Array<Record<string, unknown>>;
-        localStorage.setItem(LOCAL_EXPENSES_KEY, JSON.stringify(stored.filter((e) => e.id !== expenseId)));
-        router.replace(from);
-        return;
-      }
-
-      // Supabase 지출 삭제
       if (!repository) throw new Error("저장소를 초기화하지 못했습니다.");
       await repository.deleteExpense(expenseId);
       await refreshTrip();
