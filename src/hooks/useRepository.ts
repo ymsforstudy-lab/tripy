@@ -8,7 +8,7 @@ import { localRepository } from "@/lib/data/local-repo";
 
 /**
  * 현재 사용자에 맞는 여행·지출 저장소.
- * - 로그인(1.x 익명 세션 포함): Supabase
+ * - 로그인: Supabase (1.x 익명 세션은 01에서 기기로 내려받고 로그아웃한다. 실패해 남아 있는 동안은 Supabase)
  * - 비로그인 게스트: 이 기기의 localStorage
  * 인증 로딩 중에는 null이다.
  */
