@@ -3,324 +3,285 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import CategoryIcon from "@/components/ui/CategoryIcon";
 import TripyCharacter from "@/components/ui/TripyCharacter";
+import { CATEGORIES } from "@/lib/constants/categories";
+import { markLandingSeen } from "@/lib/entry";
+import Reveal from "./_components/Reveal";
+import LandingCTAButton from "./_components/LandingCTAButton";
+import LandingStepRow from "./_components/LandingStepRow";
+import LandingFeatureSlide, {
+  LandingVisualBudget,
+  LandingVisualCategories,
+  LandingVisualCurrency,
+  LandingVisualGuest,
+  LandingVisualTrips,
+} from "./_components/LandingFeatureSlide";
+
+// 디자인 기준: Figma `Landing (코드 기준)` 페이지의 LandingRedesign(1550:685)
+// 첫 방문 사용자에게 01에서 한 번만 보여준다 (docs/flow-v2.md §5 「랜딩」)
+
+const SLIDES = [
+  { title: "간편한 지출 등록", description: "6가지 카테고리로 빠르게 기록하고, 카드·현금 결제도 나눠서 볼 수 있어요.", visual: <LandingVisualCategories /> },
+  { title: "실시간 예산 관리", description: "여행 예산 대비 지금까지 쓴 돈을 한눈에. 예산 초과 걱정 없이 여행하세요.", visual: <LandingVisualBudget /> },
+  { title: "4가지 통화 지원", description: "원·달러·엔·유로로 기록할 수 있어요. 해외여행도 완벽하게.", visual: <LandingVisualCurrency /> },
+  { title: "지난 여행 돌아보기", description: "여행을 여러 개 만들고, 끝난 여행의 예산 결과와 지출 내역을 다시 봐요.", visual: <LandingVisualTrips /> },
+  { title: "가입 없이 바로 기록", description: "로그인하지 않으면 이 기기에만 저장돼요. 나중에 로그인하면 계정으로 옮겨져요.", visual: <LandingVisualGuest /> },
+];
+
+const STEPS = [
+  { step: "01", title: "여행 등록", description: "여행지·기간·예산을 한 화면에서 입력하세요. 국내외 어디든 등록할 수 있어요." },
+  { step: "02", title: "지출 기록", description: "쓴 돈을 금액·결제 수단·카테고리로 기록하세요. 수정과 삭제도 바로 돼요." },
+  { step: "03", title: "한눈에 확인", description: "홈에서 오늘 쓴 돈과 남은 예산을, 지난 여행에서 여행별 결과를 확인해요." },
+];
+
+const DELAY = ["lp-d1", "lp-d2", "lp-d3", "lp-d4", "lp-d5", "lp-d6", "lp-d7", "lp-d8"];
+
+// 반투명 유리 카드
+const GLASS = "rounded-20 border border-gray-white bg-gray-white/80 px-3.5 py-3 shadow-float backdrop-blur-md";
 
 export default function LandingPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [heroCtaHidden, setHeroCtaHidden] = useState(false);
-  const [footerInView, setFooterInView] = useState(false);
-  const heroCtaRef = useRef<HTMLAnchorElement>(null);
-  const footerRef = useRef<HTMLElement>(null);
-
+  // 들어온 순간 본 것으로 기록한다. 다음부터 01은 온보딩으로 바로 보낸다
   useEffect(() => {
-    const heroTarget = heroCtaRef.current;
-    const footerTarget = footerRef.current;
-    if (!heroTarget || !footerTarget) return;
-
-    const heroObserver = new IntersectionObserver(
-      ([entry]) => setHeroCtaHidden(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    const footerObserver = new IntersectionObserver(
-      ([entry]) => setFooterInView(entry.isIntersecting),
-      { threshold: 0 }
-    );
-    heroObserver.observe(heroTarget);
-    footerObserver.observe(footerTarget);
-    return () => {
-      heroObserver.disconnect();
-      footerObserver.disconnect();
-    };
+    markLandingSeen();
   }, []);
 
-  const showStickyCta = heroCtaHidden && !footerInView;
+  return (
+    <div className="min-h-screen-safe bg-gray-white">
+      <Hero />
+      <CategoryMarquee />
+      <Features />
+      <HowItWorks />
+      <AppPreview />
+      <ClosingCTA />
+      <Footer />
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <Reveal className="bg-linear-to-b from-green-10 via-green-0 to-gray-white">
+      <nav data-reveal="fade" className="flex items-center justify-between px-5 py-3.5">
+        <Image src="/tripy-logo.svg" alt="트리피" width={67} height={24} priority />
+        <LandingCTAButton size="S" label="시작하기" />
+      </nav>
+
+      <div className="flex flex-col items-center px-5 pb-6 pt-10 text-center">
+        <h1 data-reveal="up" className="lp-d1 text-display-l font-semibold tracking-tighter text-gray-90">
+          여행의 순간에
+          <br />
+          집중하세요
+        </h1>
+        <p data-reveal="up" className="lp-d2 mt-5 text-body-l text-gray-60">
+          복잡한 지출 관리는 트리피에게 맡기고
+          <br />
+          여행의 설렘을 마음껏 즐기세요.
+        </p>
+        <div data-reveal="pop" className="lp-d4 mt-7">
+          <LandingCTAButton label="무료로 시작하기" />
+        </div>
+        <p data-reveal="fade" className="lp-d5 mt-3 text-body-s text-gray-50">
+          가입 없이 바로 시작 · 완전 무료
+        </p>
+
+        {/* 3D 주인공: 빛 + 트리피 + 떠 있는 유리 카드 */}
+        <div className="relative mt-5 h-82 w-full text-left">
+          <div data-reveal="pop" className="lp-d3 absolute inset-x-0 top-10 mx-auto size-65">
+            <div className="lp-breathe size-full rounded-full bg-green-20 blur-3xl" />
+          </div>
+          <div data-reveal="up" className="lp-d4 absolute inset-x-0 top-7 mx-auto h-66 w-54">
+            <div className="lp-float">
+              {/* TripyCharacter 6(180x220)을 216x264로 키워 쓴다 */}
+              <TripyCharacter variant={6} className="origin-top-left scale-120" />
+            </div>
+          </div>
+          <div data-reveal="slide" className={`lp-d6 absolute right-0 top-6 w-38 ${GLASS}`}>
+            <p className="text-body-s text-gray-50">남은 예산</p>
+            <p className="text-body-l font-bold tracking-tight text-gray-90">
+              350,000<span className="text-body-s font-medium">원</span>
+            </p>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-gray-10">
+              <div className="h-full w-13/20 rounded-full bg-linear-to-r from-green-30 to-green-50" />
+            </div>
+            <p className="mt-1 text-caption-s text-gray-50">예산 65% 사용</p>
+          </div>
+          <div data-reveal="pop" className={`lp-d7 absolute left-0 top-49 ${GLASS}`}>
+            <p className="text-body-s text-gray-50">오늘 지출</p>
+            <p className="text-body-l font-bold tracking-tight text-gray-90">
+              52,000<span className="text-body-s font-medium">원</span>
+            </p>
+            <div className="mt-1 flex gap-1">
+              <CategoryIcon category="food" size={18} />
+              <CategoryIcon category="transport" size={18} />
+              <CategoryIcon category="shopping" size={18} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function CategoryMarquee() {
+  // 끊김 없이 돌도록 같은 목록을 두 번 이어 붙이고 -50%까지 민다
+  const chips = [...CATEGORIES, ...CATEGORIES];
+  return (
+    <Reveal className="overflow-hidden pb-10 pt-5">
+      <div data-reveal="fade" className="lp-d6">
+        <div className="lp-marquee flex w-max gap-2">
+          {chips.map((c, i) => (
+            <span key={`${c.id}-${i}`} className="flex items-center gap-1.5 rounded-full bg-gray-5 py-2 pl-2.5 pr-3.5">
+              <CategoryIcon category={c.id} size={18} />
+              <span className="text-body-m font-medium text-gray-80">{c.label}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function Features() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  const onScroll = () => {
+    const el = trackRef.current;
+    const first = el?.firstElementChild as HTMLElement | null;
+    if (!el || !first) return;
+    // 카드 너비 + 간격 한 칸 단위로 지금 보이는 카드를 찾는다
+    const step = first.offsetWidth + parseFloat(getComputedStyle(el).columnGap || "0");
+    setActive(Math.min(SLIDES.length - 1, Math.round(el.scrollLeft / step)));
+  };
+
+  const goTo = (i: number) => {
+    const card = trackRef.current?.children[i] as HTMLElement | undefined;
+    card?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-5">
-      {/* 모바일 고정 너비 중앙 컨테이너 */}
-      <div className="mx-auto w-full max-w-[390px] bg-white shadow-page">
-
-        {/* ① Nav */}
-        <nav className="sticky top-0 z-50 border-b border-gray-20 bg-white/90 backdrop-blur-sm">
-          <div className="flex items-center justify-between px-5 py-4">
-            <Link href="/">
-              <Image src="/tripy-logo.svg" alt="트리피" width={67} height={24} />
-            </Link>
-            <div className="flex items-center gap-2">
-              <Link
-                href="/"
-                className="rounded-xl bg-green-50 px-4 py-2 text-[13px] font-semibold text-white"
-              >
-                무료로 시작하기
-              </Link>
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="flex size-9 items-center justify-center rounded-lg border border-gray-20"
-                aria-label="메뉴"
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  {menuOpen ? (
-                    <path d="M3 3L15 15M15 3L3 15" stroke="var(--color-gray-80)" strokeWidth="1.8" strokeLinecap="round" />
-                  ) : (
-                    <>
-                      <path d="M2 5H16" stroke="var(--color-gray-80)" strokeWidth="1.8" strokeLinecap="round" />
-                      <path d="M2 9H16" stroke="var(--color-gray-80)" strokeWidth="1.8" strokeLinecap="round" />
-                      <path d="M2 13H16" stroke="var(--color-gray-80)" strokeWidth="1.8" strokeLinecap="round" />
-                    </>
-                  )}
-                </svg>
-              </button>
-            </div>
-          </div>
-          {menuOpen && (
-            <div className="border-t border-gray-10 bg-white px-5 py-2">
-              {[
-                { href: "#features", label: "기능" },
-                { href: "#how", label: "사용방법" },
-                { href: "#preview", label: "미리보기" },
-                { href: "/home", label: "로그인" },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex w-full items-center py-3 text-[14px] font-medium text-gray-70"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          )}
-        </nav>
-
-        {/* ② Hero */}
-        <section className="flex flex-col items-center gap-8 px-5 py-12">
-          <div className="flex flex-col items-center gap-5 text-center">
-            <span className="rounded-full bg-green-10 px-4 py-1.5 text-[12px] font-semibold text-green-60">
-              ✈️ 여행 가계부 서비스 트리피
-            </span>
-            <h1 className="text-[34px] font-bold leading-[1.2] tracking-[-0.68px] text-gray-90">
-              여행의 순간에<br />
-              <span className="text-green-50">집중하세요</span>
-            </h1>
-            <p className="text-[15px] leading-[1.7] text-gray-60">
-              복잡한 지출 관리는 트리피에게 맡기고<br />
-              여행의 설렘을 마음껏 즐기세요.
-            </p>
-          </div>
-
-          {/* 캐릭터 + 플로팅 카드 */}
-          <div className="relative flex h-[280px] w-full items-center justify-center">
-            <div className="absolute h-[240px] w-[240px] rounded-full bg-green-10 opacity-60" />
-            <TripyCharacter variant={7} className="relative z-10" />
-            <div className="absolute left-0 top-6 z-20 w-[148px] rounded-2xl bg-white p-3 shadow-float">
-              <p className="text-[11px] text-gray-50">여행 예산</p>
-              <p className="mt-0.5 text-[16px] font-bold text-gray-90">1,000,000<span className="text-[10px] font-normal text-gray-50">원</span></p>
-              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-gray-10">
-                <div className="h-full w-[65%] rounded-full bg-green-50" />
-              </div>
-              <p className="mt-0.5 text-[10px] text-gray-50">65% 사용 중</p>
-            </div>
-            <div className="absolute bottom-6 right-0 z-20 w-[136px] rounded-2xl bg-white p-3 shadow-float">
-              <p className="text-[11px] text-gray-50">오늘 지출</p>
-              <p className="mt-0.5 text-[16px] font-bold text-gray-90">52,000<span className="text-[10px] font-normal text-gray-50">원</span></p>
-              <div className="mt-1.5 flex items-center gap-1">
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-10 text-[10px]">🍜</span>
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-info-5 text-[10px]">🚌</span>
-                <span className="flex h-5 w-5 items-center justify-center rounded-md bg-green-0 text-[10px]">🛍️</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col gap-3">
-            <Link
-              ref={heroCtaRef}
-              href="/"
-              className="flex h-[52px] w-full items-center justify-center rounded-xl bg-green-50 text-[15px] font-semibold text-white"
-            >
-              무료로 시작하기
-            </Link>
-            <Link href="/home" className="flex h-[52px] w-full items-center justify-center rounded-xl border border-gray-30 text-[15px] font-semibold text-gray-70">
-              서비스 둘러보기
-            </Link>
-          </div>
-          <div className="flex items-center gap-5 text-[12px] text-gray-50">
-            <span>✓ 무료</span>
-            <span>✓ 회원가입 1분</span>
-            <span>✓ 다국적 통화</span>
-          </div>
-        </section>
-
-        {/* ③ Features */}
-        <section id="features" className="bg-gray-5 py-12 px-5">
-          <div className="mb-8 text-center">
-            <h2 className="text-[26px] font-bold leading-[1.3] tracking-[-0.52px] text-gray-90">
-              여행 지출 관리,<br />이제 쉽고 스마트하게
-            </h2>
-            <p className="mt-2 text-[13px] leading-[1.7] text-gray-60">
-              트리피의 핵심 기능으로 더 즐거운 여행을 만들어보세요
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            {[
-              { emoji: "💳", title: "간편한 지출 등록", desc: "6가지 카테고리로 빠르게 기록. 카드/현금 결제도 구분 가능해요.", bg: "bg-green-0", accent: "text-green-60", tag: "bg-green-10 text-green-70", tagText: "지출 관리" },
-              { emoji: "📊", title: "실시간 예산 관리", desc: "여행 예산 대비 현재 지출을 한눈에. 예산 초과 걱정 없이 여행하세요.", bg: "bg-info-5", accent: "text-info-50", tag: "bg-info-5 text-info-50", tagText: "예산 추적" },
-              { emoji: "🌍", title: "다국적 통화 지원", desc: "JPY, USD, EUR 등 다양한 통화 지원. 해외여행도 완벽하게.", bg: "bg-green-0", accent: "text-green-60", tag: "bg-green-10 text-green-70", tagText: "해외여행" },
-            ].map((item) => (
-              <div key={item.title} className={`flex flex-col gap-3 rounded-2xl ${item.bg} p-5`}>
-                <span className="text-[32px]">{item.emoji}</span>
-                <span className={`self-start rounded-full px-2.5 py-0.5 text-[11px] font-bold ${item.tag}`}>{item.tagText}</span>
-                <h3 className={`text-[16px] font-bold ${item.accent}`}>{item.title}</h3>
-                <p className="text-[13px] leading-[1.7] text-gray-60">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ④ How it works */}
-        <section id="how" className="py-12 px-5">
-          <div className="mb-8 text-center">
-            <h2 className="text-[26px] font-bold leading-[1.3] tracking-[-0.52px] text-gray-90">
-              3단계로 시작하는<br />나만의 여행 가계부
-            </h2>
-          </div>
-          <div className="flex flex-col gap-3">
-            {[
-              { step: "01", title: "여행 설정", desc: "목적지 국가와 여행 날짜를 입력하세요. 국내외 어디든 설정할 수 있어요.", icon: "🗺️" },
-              { step: "02", title: "예산 입력", desc: "여행 총 예산을 설정하세요. 통화 단위도 자유롭게 선택 가능해요.", icon: "💰" },
-              { step: "03", title: "지출 기록", desc: "매일 쓴 돈을 카테고리별로 기록하면 자동으로 통계가 만들어져요.", icon: "📝" },
-            ].map((item) => (
-              <div key={item.step} className="flex flex-col gap-3 rounded-2xl border border-gray-20 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold tracking-widest text-green-50">STEP {item.step}</span>
-                  <span className="text-[28px]">{item.icon}</span>
-                </div>
-                <h3 className="text-[17px] font-bold text-gray-90">{item.title}</h3>
-                <p className="text-[13px] leading-[1.7] text-gray-60">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ⑤ Preview — 카테고리 */}
-        <section id="preview" className="bg-gray-5 py-12 px-5">
-          <div className="mb-6 text-center">
-            <span className="inline-flex rounded-full bg-green-10 px-4 py-1.5 text-[12px] font-semibold text-green-60">카테고리 분석</span>
-            <h2 className="mt-3 text-[24px] font-bold leading-[1.3] text-gray-90">
-              어디에 얼마 썼는지<br />한눈에 보여요
-            </h2>
-            <p className="mt-2 text-[13px] leading-[1.7] text-gray-60">
-              6가지 카테고리로 지출을 분류하고<br />나의 소비 패턴을 파악해보세요.
-            </p>
-          </div>
-          <div className="rounded-2xl bg-white p-5 shadow-card">
-            <p className="mb-4 text-[13px] font-bold text-gray-90">카테고리 내역 순위</p>
-            <div className="flex flex-col gap-3">
-              {[
-                { rank: 1, label: "숙소", emoji: "🏨", amount: "320,000", width: "w-full", color: "bg-green-50" },
-                { rank: 2, label: "식비", emoji: "🍜", amount: "180,000", width: "w-[56%]", color: "bg-green-40" },
-                { rank: 3, label: "교통", emoji: "🚌", amount: "95,000", width: "w-[30%]", color: "bg-green-30" },
-                { rank: 4, label: "쇼핑", emoji: "🛍️", amount: "55,000", width: "w-[17%]", color: "bg-green-20" },
-                { rank: 5, label: "액티비티", emoji: "🎡", amount: "25,000", width: "w-[8%]", color: "bg-green-10" },
-              ].map((item) => (
-                <div key={item.rank} className="flex items-center gap-3">
-                  <span className="w-4 text-center text-[11px] font-bold text-gray-40">{item.rank}</span>
-                  <span className="text-[16px]">{item.emoji}</span>
-                  <div className="flex flex-1 flex-col gap-1">
-                    <div className="flex justify-between">
-                      <span className="text-[12px] font-medium text-gray-90">{item.label}</span>
-                      <span className="text-[12px] font-semibold text-gray-80">{item.amount}원</span>
-                    </div>
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-10">
-                      <div className={`h-full ${item.width} ${item.color} rounded-full`} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ⑤-2 Preview — 예산 관리 */}
-        <section className="py-12 px-5">
-          <div className="mb-6 text-center">
-            <span className="inline-flex rounded-full bg-info-5 px-4 py-1.5 text-[12px] font-semibold text-info-50">예산 관리</span>
-            <h2 className="mt-3 text-[24px] font-bold leading-[1.3] text-gray-90">
-              예산 초과 걱정 없이<br />여행하세요
-            </h2>
-            <p className="mt-2 text-[13px] leading-[1.7] text-gray-60">
-              실시간으로 남은 예산을 확인하고<br />과소비 없는 스마트한 여행을 즐기세요.
-            </p>
-          </div>
-          <div className="rounded-2xl bg-white p-5 shadow-card">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-[13px] font-bold text-gray-90">일본 여행 🇯🇵</p>
-              <span className="rounded-full bg-info-5 px-2.5 py-0.5 text-[11px] font-bold text-info-50">진행중</span>
-            </div>
-            <div className="mb-4 flex justify-between">
-              <div>
-                <p className="text-[11px] text-gray-50">총 지출</p>
-                <p className="text-[22px] font-bold text-gray-90">650,000<span className="text-[12px] font-normal text-gray-50">원</span></p>
-              </div>
-              <div className="text-right">
-                <p className="text-[11px] text-gray-50">총 예산</p>
-                <p className="text-[22px] font-bold text-gray-90">1,000,000<span className="text-[12px] font-normal text-gray-50">원</span></p>
-              </div>
-            </div>
-            <div className="mb-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-10">
-              <div className="h-full w-[65%] rounded-full bg-green-50" />
-            </div>
-            <div className="flex justify-between text-[11px] text-gray-50">
-              <span>65% 사용</span>
-              <span>남은 예산 350,000원</span>
-            </div>
-          </div>
-        </section>
-
-        {/* ⑥ CTA Banner */}
-        <section className="bg-green-50 py-14 px-5">
-          <div className="flex flex-col items-center gap-5 text-center">
-            <h2 className="text-[26px] font-bold leading-[1.3] text-white">
-              다음 여행, 트리피와 함께<br />더 스마트하게 떠나세요
-            </h2>
-            <p className="text-[13px] leading-[1.7] text-green-10">
-              지금 바로 무료로 시작하세요.<br />가입 후 5분이면 첫 여행을 설정할 수 있어요.
-            </p>
-            <Link href="/" className="flex h-[52px] w-full items-center justify-center rounded-xl bg-white text-[15px] font-bold text-green-60">
-              무료로 시작하기 →
-            </Link>
-            <div className="flex items-center gap-5 text-[12px] text-green-20">
-              <span>✓ 완전 무료</span>
-              <span>✓ 광고 없음</span>
-              <span>✓ 언제든 탈퇴</span>
-            </div>
-          </div>
-        </section>
-
-        {/* ⑦ Footer */}
-        <footer ref={footerRef} className="border-t border-gray-20 bg-white px-5 pt-8 pb-24">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <Image src="/tripy-logo.svg" alt="트리피" width={67} height={24} />
-            <p className="text-[12px] text-gray-50">© 2024 Tripy. 여행의 모든 지출을 스마트하게.</p>
-            <div className="flex gap-5 text-[12px] text-gray-50">
-              <a href="https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be" target="_blank" rel="noopener noreferrer" className="hover:text-gray-80">개인정보처리방침</a>
-              <Link href="/mypage/settings" className="hover:text-gray-80">이용약관</Link>
-            </div>
-          </div>
-        </footer>
-
-      </div>
-
-      {/* 하단 고정 CTA — 히어로의 시작하기 버튼이 스크롤로 안 보일 때만 노출 */}
+    <Reveal className="py-16">
+      <h2 data-reveal="up" className="px-5 text-headline-l font-semibold tracking-tight text-gray-90">
+        여행 지출 관리,
+        <br />
+        이제 쉽고 스마트하게
+      </h2>
       <div
-        className={`fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-[390px] border-t border-gray-20 bg-white px-5 pb-6 pt-3 shadow-nav transition-transform duration-300 ${
-          showStickyCta ? "translate-y-0" : "translate-y-full"
-        }`}
+        ref={trackRef}
+        onScroll={onScroll}
+        className="mt-7 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 [scrollbar-width:none]"
       >
-        <Link href="/" className="flex h-[52px] w-full items-center justify-center rounded-xl bg-green-50 text-[15px] font-semibold text-white">
-          무료로 시작하기
-        </Link>
+        {SLIDES.map((s, i) => (
+          <LandingFeatureSlide key={s.title} {...s} className={`${DELAY[i]}`} data-reveal="slide" />
+        ))}
       </div>
-    </div>
+      <div data-reveal="fade" className="lp-d4 mt-4 flex gap-1.5 px-5">
+        {SLIDES.map((s, i) => (
+          <button
+            key={s.title}
+            type="button"
+            aria-label={`${i + 1}번째 기능 보기`}
+            onClick={() => goTo(i)}
+            className={`h-1.5 rounded-full transition-all ${i === active ? "w-5 bg-gray-90" : "w-1.5 bg-gray-20"}`}
+          />
+        ))}
+      </div>
+    </Reveal>
+  );
+}
+
+function HowItWorks() {
+  return (
+    <Reveal className="px-5 pb-18 pt-6">
+      <h2 data-reveal="up" className="text-headline-l font-semibold tracking-tight text-gray-90">
+        3단계면
+        <br />
+        여행 가계부 완성
+      </h2>
+      <div className="mt-6">
+        {STEPS.map((s, i) => (
+          <div key={s.step} data-reveal="up" className={DELAY[i + 1]}>
+            <LandingStepRow {...s} />
+          </div>
+        ))}
+      </div>
+    </Reveal>
+  );
+}
+
+function AppPreview() {
+  return (
+    <Reveal className="px-5 pb-6">
+      <div data-reveal="up" className="flex flex-col items-center gap-7 overflow-hidden rounded-30 bg-linear-to-b from-green-10 to-green-0 pt-10 text-center">
+        <div className="flex flex-col gap-2.5 px-6">
+          <h2 data-reveal="up" className="lp-d1 text-title-xl font-semibold tracking-tight text-gray-90">
+            여행 중에 보는 화면,
+            <br />
+            이렇게 생겼어요
+          </h2>
+          <p data-reveal="up" className="lp-d2 text-body-m text-gray-60">
+            오늘 쓴 돈과 남은 예산을 한눈에 확인해요.
+          </p>
+        </div>
+        <div className="relative h-95 w-full">
+          <div data-reveal="rise" className="lp-d3 absolute inset-x-0 top-0 mx-auto w-fit rounded-30 bg-gray-90 p-1.75 shadow-phone">
+            <Image
+              src="/images/landing/app-home.png"
+              alt="트리피 홈 화면: 오늘 쓴 돈, 남은 금액, 지출 내역"
+              width={240}
+              height={512}
+              className="h-128 w-60 rounded-20"
+            />
+          </div>
+          <div data-reveal="pop" className={`lp-d6 absolute right-0 top-62 flex items-center gap-2.5 text-left ${GLASS}`}>
+            <CategoryIcon category="accommodation" size={28} />
+            <div>
+              <p className="text-body-s text-gray-50">이번 여행 지출 1위</p>
+              <p className="text-body-l font-bold tracking-tight text-gray-90">숙소 320,000원</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function ClosingCTA() {
+  return (
+    <Reveal className="flex flex-col items-center gap-5 px-5 py-18 text-center">
+      <div data-reveal="pop" className="h-26 w-24">
+        <div className="lp-float">
+          {/* TripyCharacter 7(142x154)을 96x104로 줄여 쓴다 */}
+          <TripyCharacter variant={7} className="origin-top-left scale-68" />
+        </div>
+      </div>
+      <h2 data-reveal="up" className="lp-d1 text-headline-l font-semibold tracking-tighter text-gray-90">
+        다음 여행,
+        <br />
+        트리피와 함께 떠나요
+      </h2>
+      <p data-reveal="up" className="lp-d2 text-body-l text-gray-60">
+        로그인 없이 바로 첫 여행을 등록할 수 있어요.
+      </p>
+      <div data-reveal="pop" className="lp-d3">
+        <LandingCTAButton label="무료로 시작하기" />
+      </div>
+    </Reveal>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="flex flex-col gap-3.5 bg-gray-5 px-5 pb-10 pt-7">
+      <Image src="/tripy-logo.svg" alt="트리피" width={67} height={24} />
+      <p className="text-body-s text-gray-50">© 2026 Tripy. 여행의 모든 지출을 스마트하게.</p>
+      <div className="flex gap-4 text-body-s font-medium text-gray-60">
+        <a href="https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be" target="_blank" rel="noopener noreferrer">
+          개인정보처리방침
+        </a>
+        <Link href="/mypage/settings">이용약관</Link>
+      </div>
+    </footer>
   );
 }
