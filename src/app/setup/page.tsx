@@ -11,7 +11,7 @@ import SetupScreen from "./_components/SetupScreen";
 import { EMPTY_TRIP_FORM, fromTrip } from "./_lib/tripForm";
 
 // /setup            새 여행 등록 (createTrip)
-// /setup?tripId=…   여행 정보 수정 (updateTrip). 진입점은 docs/flow-v2.md §7 결정 후 연결한다
+// /setup?tripId=…   여행 정보 수정 (updateTrip). 진입점은 여행 상세(C 담당)가 연결한다
 //   &from=/travels/… 저장 후 돌아갈 경로. 없으면 /home
 export default function SetupPage() {
   return (
