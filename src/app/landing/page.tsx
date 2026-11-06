@@ -44,7 +44,7 @@ export default function LandingPage() {
         <nav className="sticky top-0 z-50 border-b border-gray-20 bg-white/90 backdrop-blur-sm">
           <div className="flex items-center justify-between px-5 py-4">
             <Link href="/">
-              <Image src="/tripy-logo.svg" alt="트리피" width={72} height={24} />
+              <Image src="/tripy-logo.svg" alt="트리피" width={67} height={24} />
             </Link>
             <div className="flex items-center gap-2">
               <Link
@@ -300,7 +300,7 @@ export default function LandingPage() {
         {/* ⑦ Footer */}
         <footer ref={footerRef} className="border-t border-gray-20 bg-white px-5 pt-8 pb-24">
           <div className="flex flex-col items-center gap-4 text-center">
-            <Image src="/tripy-logo.svg" alt="트리피" width={72} height={24} />
+            <Image src="/tripy-logo.svg" alt="트리피" width={67} height={24} />
             <p className="text-[12px] text-gray-50">© 2024 Tripy. 여행의 모든 지출을 스마트하게.</p>
             <div className="flex gap-5 text-[12px] text-gray-50">
               <a href="https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be" target="_blank" rel="noopener noreferrer" className="hover:text-gray-80">개인정보처리방침</a>

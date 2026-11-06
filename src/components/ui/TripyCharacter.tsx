@@ -7,21 +7,19 @@ interface TripyCharacterProps {
   className?: string;
 }
 
+// PNG는 이미 잘린 크기(180×220, 7번은 80×82)로 내보내져 있다.
+// 위치·크기를 %로 늘리면 비율이 깨지므로 object-fit으로만 맞춘다.
 const VARIANT_CONFIG: Record<
   TripyCharacterVariant,
   {
     containerW: number;
     containerH: number;
-    imgStyle?: React.CSSProperties;
-    overflow?: boolean;
     objectFit?: string;
   }
 > = {
   1: {
     containerW: 180,
     containerH: 220,
-    overflow: true,
-    imgStyle: { width: "100%", height: "125.69%", top: "-8.28%", left: "0" },
   },
   2: {
     containerW: 163,
@@ -31,39 +29,24 @@ const VARIANT_CONFIG: Record<
   3: {
     containerW: 120,
     containerH: 198,
-    objectFit: "object-contain",
   },
   4: {
     containerW: 142,
     containerH: 198,
-    overflow: true,
-    imgStyle: {
-      width: "105.56%",
-      height: "108.73%",
-      top: "-3.86%",
-      left: "-0.67%",
-    },
   },
   5: {
     containerW: 138,
     containerH: 143,
-    overflow: true,
-    imgStyle: {
-      width: "113.04%",
-      height: "157.8%",
-      top: "-40.85%",
-      left: "-6%",
-    },
+    // 위쪽(얼굴·차트)을 남기고 아래를 자른다
+    objectFit: "object-cover object-top",
   },
   6: {
     containerW: 180,
     containerH: 220,
-    objectFit: "object-contain",
   },
   7: {
     containerW: 142,
     containerH: 154,
-    objectFit: "object-contain",
   },
 };
 
@@ -72,23 +55,6 @@ export default function TripyCharacter({
   className = "",
 }: TripyCharacterProps) {
   const config = VARIANT_CONFIG[variant];
-
-  if (config.overflow && config.imgStyle) {
-    return (
-      <div
-        className={`relative overflow-hidden ${className}`}
-        style={{ width: config.containerW, height: config.containerH }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`/images/tripy/tripy-${variant}.png`}
-          alt="트리피 캐릭터"
-          className="absolute pointer-events-none"
-          style={config.imgStyle}
-        />
-      </div>
-    );
-  }
 
   return (
     <div
