@@ -28,3 +28,19 @@ export function nightsBetween(start: string, end: string): number {
 export function daysBetween(start: string, end: string): number {
   return nightsBetween(start, end) + 1;
 }
+
+/**
+ * D-day 칩 문자열. 'YYYY-MM-DD' 문자열만 받아 로컬 타임존 없이 계산한다.
+ * - 출발 전: "D-N" (예: "D-8")
+ * - 당일:   "D-Day"
+ * - 출발 후: "D+N" (예: "D+3")
+ *
+ * @param today     오늘 날짜 (todayLocal() 로 얻은 'YYYY-MM-DD')
+ * @param startDate 여행 출발일 ('YYYY-MM-DD')
+ */
+export function calcDDay(today: string, startDate: string): string {
+  const diff = toUtcDay(today) - toUtcDay(startDate);
+  if (diff === 0) return "D-Day";
+  if (diff < 0) return `D${diff}`;   // diff already has the minus sign
+  return `D+${diff}`;
+}

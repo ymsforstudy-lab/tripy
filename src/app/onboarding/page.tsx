@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import TripyCharacter from "@/components/ui/TripyCharacter";
-import { signInWithGoogle, startGuest } from "@/lib/auth";
+import { signInWithGoogle } from "@/lib/auth";
 
 // 기존 스플래시 로그인 버튼과 같은 외곽선 스타일. 공용 Button에는 이 variant가 없다
 const OUTLINE_BUTTON =
@@ -35,17 +35,9 @@ export default function OnboardingPage() {
     }
   };
 
-  const handleGuestBrowse = async () => {
-    setPending(true);
-    setErrorMessage(null);
-    try {
-      await startGuest();
-      router.replace("/setup");
-    } catch (e) {
-      console.error("둘러보기 시작 실패:", e);
-      setErrorMessage("둘러보기를 시작하지 못했어요. 다시 시도해주세요.");
-      setPending(false);
-    }
+  // 게스트는 세션 없이 이 기기(localStorage)에만 저장한다 (docs/flow-v2.md §5)
+  const handleGuestBrowse = () => {
+    router.replace("/setup");
   };
 
   return (
