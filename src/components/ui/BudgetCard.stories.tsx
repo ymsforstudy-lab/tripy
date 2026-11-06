@@ -9,9 +9,13 @@ const meta = {
     currency: { control: "select", options: CURRENCIES },
   },
   args: {
-    todaySpent: 45000,
-    dailyBudget: 100000,
-    progressRatio: 0.45,
+    tripName: "대한민국 여행",
+    tripDateStr: "2025.03.26 ~ 2025.03.30",
+    nightsLabel: "3박 4일",
+    todaySpent: 130000,
+    remaining: 670000,
+    totalBudget: 800000,
+    progressRatio: 0.17,
     currency: "KRW",
   },
   decorators: [
@@ -30,24 +34,33 @@ export const Default: Story = {};
 
 /** 아직 지출이 없는 상태 */
 export const NoSpending: Story = {
-  args: { todaySpent: 0, progressRatio: 0 },
+  args: { todaySpent: 0, remaining: 800000, progressRatio: 0 },
 };
 
-/** 하루 예산을 다 쓴 상태 */
-export const Full: Story = {
-  args: { todaySpent: 100000, progressRatio: 1 },
+/** 예산을 절반 쓴 상태 */
+export const Half: Story = {
+  args: { todaySpent: 50000, remaining: 400000, totalBudget: 800000, progressRatio: 0.5 },
 };
 
-/** 하루 예산 초과 — danger 배지와 게이지 색상 확인 */
+/** 예산 초과 — danger 색상 확인 */
 export const OverBudget: Story = {
-  args: { todaySpent: 138000, progressRatio: 1.38 },
+  args: {
+    todaySpent: 50000,
+    remaining: -50000,
+    totalBudget: 800000,
+    progressRatio: 1.06,
+  },
 };
 
 /** 해외 통화 표기 */
 export const ForeignCurrency: Story = {
   args: {
+    tripName: "일본 여행",
+    tripDateStr: "2025.04.01 ~ 2025.04.05",
+    nightsLabel: "4박 5일",
     todaySpent: 8400,
-    dailyBudget: 15000,
+    remaining: 6600,
+    totalBudget: 15000,
     progressRatio: 0.56,
     currency: "JPY",
   },

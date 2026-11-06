@@ -3,9 +3,9 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import BottomNav from "@/components/ui/BottomNav";
-import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrip } from "@/contexts/TripContext";
+import { useRepository } from "@/hooks/useRepository";
 import HomeHeader from "@/components/ui/HomeHeader";
 import BudgetCard from "@/components/ui/BudgetCard";
 import HomeFilter from "@/components/ui/HomeFilter";
@@ -18,6 +18,7 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import Toast from "@/components/ui/Toast";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { convertExpensesToBaseCurrency, FALLBACK_RATES } from "@/lib/exchange-rates";
+import type { Expense } from "@/lib/data/types";
 
 const CATEGORY_LABEL: Record<string, string> = {
   accommodation: "숙소",
@@ -41,77 +42,6 @@ function formatDate(dateStr: string) {
   return `${month}.${day} (${dayName})`;
 }
 
-type Trip = {
-  id: string;
-  user_id: string;
-  title: string;
-  destination: string | null;
-  start_date: string;
-  end_date: string;
-  total_budget: number;
-  currency: string;
-  is_archived: boolean;
-};
-
-type Expense = {
-  id: string;
-  trip_id: string;
-  amount: number;
-  currency: string;
-  category: string;
-  expense_date: string;
-  description: string | null;
-  created_at: string;
-};
-
-const DUMMY_TRIP: Trip = {
-  id: "dummy-trip-1",
-  user_id: "user-1",
-  title: "일본 여행",
-  destination: "오사카",
-  start_date: "2024-03-20",
-  end_date: "2024-03-25",
-  total_budget: 1000000,
-  currency: "KRW",
-  is_archived: false,
-};
-
-const todayStr = new Date().toISOString().split("T")[0];
-const LOCAL_EXPENSES_KEY = "tripy_dummy_expenses";
-
-function readLocalExpenses(): Expense[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(LOCAL_EXPENSES_KEY);
-    return raw ? (JSON.parse(raw) as Expense[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-const DUMMY_EXPENSES: Expense[] = [
-  {
-    id: "exp-1",
-    trip_id: "dummy-trip-1",
-    amount: 15000,
-    currency: "KRW",
-    category: "food",
-    expense_date: todayStr,
-    description: "라멘",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "exp-2",
-    trip_id: "dummy-trip-1",
-    amount: 50000,
-    currency: "KRW",
-    category: "shopping",
-    expense_date: todayStr,
-    description: "돈키호테",
-    created_at: new Date().toISOString(),
-  },
-];
-
 export default function HomePage() {
   return (
     <Suspense fallback={<LoadingScreen />}>
@@ -120,23 +50,16 @@ export default function HomePage() {
   );
 }
 
-
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const repository = useRepository();
   const { rates } = useExchangeRates();
-  const [trip, setTrip] = useState<Trip | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
-  const [minLoadDone, setMinLoadDone] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMinLoadDone(true), 1500);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     if (searchParams.get("toast") === "expense") {
@@ -151,44 +74,33 @@ function HomePageContent() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    if (authLoading || tripLoading) return;
-
-    if (!user) {
-      setTrip(DUMMY_TRIP);
-      setExpenses([...readLocalExpenses(), ...DUMMY_EXPENSES]);
-      setLoading(false);
-      return;
-    }
+    if (authLoading || tripLoading || !repository) return;
 
     if (!cachedTrip) {
       router.replace("/setup");
       return;
     }
 
-    setTrip(cachedTrip as Trip);
-
     async function fetchExpenses() {
-      const { data: expenseData, error } = await supabase
-        .from("expenses")
-        .select("*")
-        .eq("trip_id", cachedTrip!.id)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("지출 내역 조회 실패:", error.message);
+      try {
+        const data = await repository!.listExpenses(cachedTrip!.id);
+        setExpenses(data);
+      } catch (err) {
+        console.error("지출 내역 조회 실패:", err);
+        setExpenses([]);
       }
-      setExpenses(expenseData ?? []);
       setLoading(false);
     }
 
     fetchExpenses();
-  }, [authLoading, tripLoading, user, cachedTrip, router]);
+  }, [authLoading, tripLoading, repository, cachedTrip, router]);
 
   const filteredExpenses =
     selectedCategories.length > 0
       ? expenses.filter((e) => selectedCategories.includes(e.category))
       : expenses;
 
+  const trip = cachedTrip;
   const nights = trip
     ? Math.max(
         0,
@@ -199,29 +111,30 @@ function HomePageContent() {
       )
     : 0;
 
-  // 오늘 쓴 돈 — 기기 로컬 날짜 기준 (toISOString은 UTC라 KST 오전 9시 전엔 전날이 된다)
   const now = new Date();
   const localToday = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const baseCurrency = trip?.currency ?? "KRW";
+  const effectiveRates = rates ?? FALLBACK_RATES;
+
   const todaySpent = convertExpensesToBaseCurrency(
     expenses.filter((e) => e.expense_date === localToday),
     baseCurrency,
-    rates ?? FALLBACK_RATES
+    effectiveRates
   );
 
-  // 하루 예산 — 총예산을 여행 일수(박 + 1)로 균등 분배
-  const dailyBudget = Math.round((trip?.total_budget ?? 0) / (nights + 1));
-  const progressRatio = dailyBudget > 0 ? todaySpent / dailyBudget : 0;
+  const totalSpent = convertExpensesToBaseCurrency(expenses, baseCurrency, effectiveRates);
+  const totalBudget = trip?.total_budget ?? 0;
+  const remaining = totalBudget - totalSpent;
+  const progressRatio = totalBudget > 0 ? totalSpent / totalBudget : 0;
 
   const tripDateStr = trip
     ? `${trip.start_date.replace(/-/g, ".")} ~ ${trip.end_date.replace(/-/g, ".")}`
     : "";
-
   const nightsLabel = !trip ? "" : nights === 0 ? "당일치기" : `${nights}박 ${nights + 1}일`;
+  const tripName = trip?.title ?? "";
+  const unit = getCurrencyUnit(trip?.currency);
 
-  const tripName = trip ? trip.title : "";
-
-  if (loading || !minLoadDone) {
+  if (loading || authLoading || tripLoading) {
     return <LoadingScreen />;
   }
 
@@ -229,27 +142,23 @@ function HomePageContent() {
     <div className="relative flex min-h-screen-safe w-full flex-col bg-white pb-[84px]">
       <HomeHeader />
 
-      <div className="mt-4">
-        <BudgetCard
-          todaySpent={todaySpent}
-          dailyBudget={dailyBudget}
-          progressRatio={progressRatio}
-          currency={trip?.currency}
-        />
-      </div>
+      <BudgetCard
+        tripName={tripName}
+        tripDateStr={tripDateStr}
+        nightsLabel={nightsLabel}
+        todaySpent={todaySpent}
+        remaining={remaining}
+        totalBudget={totalBudget}
+        progressRatio={progressRatio}
+        currency={trip?.currency}
+      />
 
       {/* 구분선 */}
       <div className="mt-6 h-2 w-full border-t border-gray-30 bg-gray-10" />
 
-      {/* 여행 정보 + 지출 리스트 */}
-      <div className="relative flex flex-col gap-[6px] px-4 pt-6 pb-20">
-        <HomeFilter
-          tripName={tripName}
-          hasTrip={!!trip}
-          dateRange={tripDateStr}
-          nightsLabel={nightsLabel}
-          onFilterClick={() => setIsFilterOpen(!isFilterOpen)}
-        />
+      {/* 지출 내역 */}
+      <div className="relative flex flex-col gap-1.5 px-4 pt-6 pb-20">
+        <HomeFilter onFilterClick={() => setIsFilterOpen(!isFilterOpen)} />
 
         {isFilterOpen && (
           <FilterCategory
@@ -265,7 +174,6 @@ function HomePageContent() {
           />
         )}
 
-        {/* 지출 리스트 */}
         {filteredExpenses.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-2 py-16">
             <CircleAlertInfo />
@@ -278,10 +186,14 @@ function HomePageContent() {
             {filteredExpenses.map((expense) => (
               <div
                 key={expense.id}
-                className="flex items-center gap-4 overflow-hidden rounded-2xl bg-white px-2.5 py-3"
+                className="flex items-center gap-4 overflow-hidden rounded-16 bg-white px-2.5 py-3"
+                onClick={() => router.push(`/expense?id=${expense.id}`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter") router.push(`/expense?id=${expense.id}`); }}
               >
                 <div className="flex flex-1 items-center gap-2">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-info-5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-8 bg-info-5">
                     <CategoryIcon category={expense.category} size={20} />
                   </div>
                   <div className="flex flex-col leading-default">
@@ -294,7 +206,7 @@ function HomePageContent() {
                   </div>
                 </div>
                 <span className="text-body-m font-medium text-gray-90">
-                  -{formatAmount(expense.amount)}{getCurrencyUnit(expense.currency)}
+                  -{formatAmount(expense.amount)}{unit}
                 </span>
               </div>
             ))}
@@ -302,7 +214,6 @@ function HomePageContent() {
         )}
       </div>
 
-      {/* FAB 버튼 */}
       <FAB href="/expense" tooltipText="경비를 등록해 볼까요?" />
 
       <Toast message="경비 등록이 완료되었습니다." visible={toastVisible} />
