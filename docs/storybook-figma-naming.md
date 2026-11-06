@@ -433,7 +433,7 @@ Figma 변수와 코드 토큰은 이름 표기가 다르지만, 아래 변환 �
 
 - **글자 굵기 400**: Figma는 `font/weight/regular`, 코드는 Tailwind 기본 이름인 `--font-weight-normal`입니다. code syntax로 연결하고 이름은 두 쪽 그대로 둡니다.
 - **Semantic 색상 49개**: 코드 `--color-<그룹>-<이름>`으로 가져왔고 code syntax도 넣었습니다(2026-10-21). 예: `surface/default` → `var(--color-surface-default)`, Tailwind `bg-surface-default`, `text-text-primary`.
-- **코드에만 있는 토큰**: `--color-green-120`, Spacing 4개, Shadow 6개는 Figma에 대응 변수가 없습니다.
+- **코드에만 있는 토큰**: `--color-green-120`, Spacing 4개, Shadow 6개는 Figma에 대응 변수가 없습니다. 랜딩 리디자인용 `--text-display-l`, `--text-headline-l`, `--shadow-cta-glow`, `--shadow-phone`도 Figma 변수 없이 코드에만 있습니다.
 - **텍스트 스타일 이름**: `타이틀_볼드_XL`, `바디_볼드_L`은 실제 굵기가 SemiBold(600)입니다. 한글 스타일 이름은 디자이너가 쓰는 이름이라 이번 규칙에서는 바꾸지 않습니다.
 
 ### 적용 현황

@@ -8,9 +8,9 @@ import { useTrip } from "@/contexts/TripContext";
 import { supabase } from "@/lib/supabase";
 import { hasGuestData } from "@/lib/data/local-repo";
 import { downloadAnonymousData } from "@/lib/data/guest-migration";
-import { resolveEntry } from "@/lib/entry";
+import { hasSeenLanding, resolveEntry } from "@/lib/entry";
 
-/** 01 앱 시작. 버튼 없이 로그인·여행 상태를 확인해 홈 / 여행 정보 입력 / 온보딩으로 보낸다 */
+/** 01 앱 시작. 버튼 없이 로그인·여행 상태를 확인해 홈 / 여행 정보 입력 / 온보딩(첫 방문은 랜딩)으로 보낸다 */
 export default function AppStartPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -46,6 +46,7 @@ export default function AppStartPage() {
         isLoggedIn: !!user,
         hasGuestData: hasGuestData(),
         hasHomeTrip: !!trip,
+        hasSeenLanding: hasSeenLanding(),
       }),
     );
   }, [authLoading, tripLoading, user, trip, anonFailed, router]);

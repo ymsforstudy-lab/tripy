@@ -8,5 +8,7 @@
   --shadow-nav: 0px -2px 4px rgba(0, 0, 0, 0.04);      /* 하단 네비게이션 */
   --shadow-budget: 0 4px 4px rgba(107, 194, 15, 0.2);  /* 예산 카드(그린 틴트) */
   --shadow-raised: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* FAB·환율 드롭다운 (Figma effect 변수 없음, Tailwind 기본 shadow-md 값 유지) */
+  --shadow-cta-glow: 0 10px 28px -4px color-mix(in srgb, var(--color-green-50) 45%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.35); /* 랜딩 시작 버튼 초록 빛 + 위쪽 하이라이트 (Figma 변수 없음) */
+  --shadow-phone: 0 20px 40px rgba(0, 0, 0, 0.14);    /* 랜딩 휴대폰 목업 (Figma 변수 없음) */
   --drop-shadow-subtle: 0px 2px 2px rgba(0, 0, 0, 0.04); /* 마이페이지 프로필 카드 */
 }
