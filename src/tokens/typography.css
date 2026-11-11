@@ -6,6 +6,10 @@
 
   /* ── Font Size (Figma Typography 변수) ── */
   /* Tailwind v4는 --text-* 접두사로 font-size 유틸리티를 생성합니다 */
+  --text-display-l: 44px;  /* 랜딩 전용, Figma 변수 없음(코드에만 있는 토큰) — 첫 화면 큰 제목·예산 % 숫자 */
+  --text-display-l--line-height: 1.12;
+  --text-headline-l: 30px; /* 랜딩 전용, Figma 변수 없음(코드에만 있는 토큰) — 섹션 제목 */
+  --text-headline-l--line-height: 1.2;
   --text-title-xl: 24px;   /* 타이틀_볼드_XL (font/size/2xl) */
   --text-title-xl--line-height: 1.5;
   --text-title-m: 20px;    /* 타이틀_볼드_M (font/size/xl) */
