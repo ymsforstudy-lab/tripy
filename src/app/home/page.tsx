@@ -17,6 +17,7 @@ import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Toast from "@/components/ui/Toast";
 import Button from "@/components/ui/Button";
+import TripyCharacter from "@/components/ui/TripyCharacter";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { convertExpensesToBaseCurrency, FALLBACK_RATES } from "@/lib/exchange-rates";
 import type { Expense } from "@/lib/data/types";
@@ -136,21 +137,36 @@ function HomePageContent() {
   const tripName = trip?.title ?? "";
   const unit = getCurrencyUnit(trip?.currency);
 
-  // 지난 여행만 있는 사용자: 진행 중·예정 여행이 없으므로 새 여행 등록을 유도한다 (2026-11-11 결정, Figma 미반영)
+  // 지난 여행만 있는 사용자: 진행 중·예정 여행이 없으므로 새 여행 등록을 유도한다
+  // 디자인: Figma 「Tripy 2.0 · 홈 빈 상태 시안」 A안 (2026-11-11 확정)
   if (!authLoading && !tripLoading && !cachedTrip && trips.length > 0) {
     return (
       <div className="relative flex min-h-screen-safe w-full flex-col bg-white pb-[84px]">
         <HomeHeader />
-        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
-          <div className="flex flex-col items-center gap-2">
-            <CircleAlertInfo />
-            <span className="text-center text-body-m text-gray-50">
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6">
+          <TripyCharacter variant={6} />
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-title-m font-bold leading-default text-gray-90">
+              다음 여행, 어디로 떠나볼까요?
+            </h1>
+            <p className="text-body-m leading-default text-gray-50">
               진행 중이거나 예정된 여행이 없어요.
               <br />
-              새 여행을 등록해 볼까요?
-            </span>
+              새 여행을 등록하고 예산을 관리해 보세요.
+            </p>
           </div>
-          <Button label="새 여행 등록하기" size="M" onClick={() => router.push("/setup")} />
+          <div className="w-50">
+            <Button
+              label="새 여행 등록하기"
+              size="M"
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 5V19M5 12H19" stroke="var(--color-gray-white)" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              }
+              onClick={() => router.push("/setup")}
+            />
+          </div>
         </div>
         <BottomNav />
       </div>

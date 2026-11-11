@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import TripyCharacter from "@/components/ui/TripyCharacter";
 import { signInWithGoogle } from "@/lib/auth";
 
-// 기존 스플래시 로그인 버튼과 같은 외곽선 스타일. 공용 Button에는 이 variant가 없다
+// Figma 03 온보딩(1391:3637)의 외곽선 버튼: border/strong 테두리 + text/action-secondary 글자, 50% 불투명. 공용 Button에는 이 variant가 없다
 const OUTLINE_BUTTON =
-  "flex h-14 w-full items-center justify-center gap-2 rounded-12 border border-gray-30 bg-gray-white text-body-l font-bold leading-default text-gray-50 disabled:opacity-50";
+  "flex h-14 w-full items-center justify-center gap-2 rounded-12 border border-border-strong bg-gray-white text-body-l font-semibold leading-default text-text-action-secondary opacity-50";
 
 /** 03 온보딩. 로그인하지 않았고 기기에 게스트 데이터도 없는 사용자만 본다 */
 export default function OnboardingPage() {
@@ -42,10 +41,22 @@ export default function OnboardingPage() {
 
   return (
     <div className="flex h-screen-safe flex-col bg-gray-white">
-      <div className="flex flex-1 flex-col items-center justify-center gap-8">
+      {/* pt-16: Figma 헤더(64px) 자리. 아이콘은 투명이라 그리지 않는다 */}
+      <div className="flex flex-1 flex-col items-center justify-center gap-8.5 pt-16">
         <Image src="/tripy-logo.svg" alt="Tripy" width={67} height={24} priority />
-        <TripyCharacter variant={1} />
-        <h1 className="text-center text-title-xl font-bold leading-default text-gray-90">
+        {/* Figma TripyCharacter Welcome. 공용 tripy-6(180×220)은 흐려서 Figma 원본(572×1024)을 쓴다.
+            원본 파일이 가로로 눌린 채 저장돼 있어, Figma처럼 138×198 칸에 맞춰 늘려 그려야 원래 모습이 된다 */}
+        <div className="flex h-55 w-45 items-center justify-center p-2">
+          <Image
+            src="/images/onboarding/tripy-welcome.png"
+            alt="손을 흔드는 트리피"
+            width={572}
+            height={1024}
+            priority
+            className="h-49.5 w-34.5 object-fill"
+          />
+        </div>
+        <h1 className="text-center text-title-xl font-semibold leading-default text-text-primary">
           여행 비용 정리는
           <br />
           이제 트리피에서!
