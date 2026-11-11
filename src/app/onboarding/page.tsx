@@ -44,7 +44,8 @@ export default function OnboardingPage() {
       {/* pt-16: Figma 헤더(64px) 자리. 아이콘은 투명이라 그리지 않는다 */}
       <div className="flex flex-1 flex-col items-center justify-center gap-8.5 pt-16">
         <Image src="/tripy-logo.svg" alt="Tripy" width={67} height={24} priority />
-        {/* Figma TripyCharacter Welcome. 공용 tripy-6(180×220)은 흐려서 Figma 원본(572×1024)을 쓴다 */}
+        {/* Figma TripyCharacter Welcome. 공용 tripy-6(180×220)은 흐려서 Figma 원본(572×1024)을 쓴다.
+            원본 파일이 가로로 눌린 채 저장돼 있어, Figma처럼 138×198 칸에 맞춰 늘려 그려야 원래 모습이 된다 */}
         <div className="flex h-55 w-45 items-center justify-center p-2">
           <Image
             src="/images/onboarding/tripy-welcome.png"
@@ -52,7 +53,7 @@ export default function OnboardingPage() {
             width={572}
             height={1024}
             priority
-            className="h-49.5 w-auto"
+            className="h-49.5 w-34.5 object-fill"
           />
         </div>
         <h1 className="text-center text-title-xl font-semibold leading-default text-text-primary">
