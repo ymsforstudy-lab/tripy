@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 
 const NICKNAME_PATTERN = /^[가-힣a-zA-Z0-9]{3,10}$/;
 const MAX_ATTEMPTS = 5;
-/** Postgres unique_violation. display_name에 unique 제약이 있을 때 중복이면 이 코드가 온다 */
+/** Postgres unique_violation. users.display_name unique 제약(20261111 마이그레이션)에 걸리면 이 코드가 온다 */
 const UNIQUE_VIOLATION = "23505";
 
 export function isValidNickname(value: string): boolean {
