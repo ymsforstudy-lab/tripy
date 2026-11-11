@@ -16,6 +16,7 @@ import FAB from "@/components/ui/FAB";
 import CircleAlertInfo from "@/components/ui/CircleAlertInfo";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import Toast from "@/components/ui/Toast";
+import Button from "@/components/ui/Button";
 import { useExchangeRates } from "@/hooks/useExchangeRates";
 import { convertExpensesToBaseCurrency, FALLBACK_RATES } from "@/lib/exchange-rates";
 import type { Expense } from "@/lib/data/types";
@@ -54,7 +55,7 @@ function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { loading: authLoading } = useAuth();
-  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const { trip: cachedTrip, trips, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const repository = useRepository();
   const { rates } = useExchangeRates();
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -77,7 +78,8 @@ function HomePageContent() {
     if (authLoading || tripLoading || !repository) return;
 
     if (!cachedTrip) {
-      router.replace("/setup");
+      // 여행이 아예 없으면 04로 보낸다. 지난 여행만 있으면 아래 빈 상태를 보여준다
+      if (trips.length === 0) router.replace("/setup");
       return;
     }
 
@@ -93,7 +95,7 @@ function HomePageContent() {
     }
 
     fetchExpenses();
-  }, [authLoading, tripLoading, repository, cachedTrip, router]);
+  }, [authLoading, tripLoading, repository, cachedTrip, trips.length, router]);
 
   const filteredExpenses =
     selectedCategories.length > 0
@@ -133,6 +135,27 @@ function HomePageContent() {
   const nightsLabel = !trip ? "" : nights === 0 ? "당일치기" : `${nights}박 ${nights + 1}일`;
   const tripName = trip?.title ?? "";
   const unit = getCurrencyUnit(trip?.currency);
+
+  // 지난 여행만 있는 사용자: 진행 중·예정 여행이 없으므로 새 여행 등록을 유도한다 (2026-11-11 결정, Figma 미반영)
+  if (!authLoading && !tripLoading && !cachedTrip && trips.length > 0) {
+    return (
+      <div className="relative flex min-h-screen-safe w-full flex-col bg-white pb-[84px]">
+        <HomeHeader />
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
+          <div className="flex flex-col items-center gap-2">
+            <CircleAlertInfo />
+            <span className="text-center text-body-m text-gray-50">
+              진행 중이거나 예정된 여행이 없어요.
+              <br />
+              새 여행을 등록해 볼까요?
+            </span>
+          </div>
+          <Button label="새 여행 등록하기" size="M" onClick={() => router.push("/setup")} />
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   if (loading || authLoading || tripLoading) {
     return <LoadingScreen />;

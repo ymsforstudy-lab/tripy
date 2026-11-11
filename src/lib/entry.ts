@@ -6,16 +6,18 @@ export type EntryDestination = "/home" | "/setup" | "/onboarding" | "/landing";
 export function resolveEntry({
   isLoggedIn,
   hasGuestData,
-  hasHomeTrip,
+  hasAnyTrip,
   hasSeenLanding,
 }: {
   isLoggedIn: boolean;
   hasGuestData: boolean;
-  hasHomeTrip: boolean;
+  /** 지난 여행을 포함해 여행이 하나라도 있는지 */
+  hasAnyTrip: boolean;
   hasSeenLanding: boolean;
 }): EntryDestination {
   if (!isLoggedIn && !hasGuestData) return hasSeenLanding ? "/onboarding" : "/landing";
-  return hasHomeTrip ? "/home" : "/setup";
+  // 지난 여행만 있어도 홈으로 보낸다. 홈은 빈 상태에서 새 여행 등록을 유도한다 (2026-11-11 결정)
+  return hasAnyTrip ? "/home" : "/setup";
 }
 
 // 랜딩은 이 기기에서 처음 한 번만 자동으로 보여준다 (docs/flow-v2.md §5 「랜딩」).

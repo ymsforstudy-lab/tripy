@@ -20,7 +20,7 @@ export function isPastTrip(trip: Trip, today: string): boolean {
  * 홈에 보여줄 여행 (docs/flow-v2.md §5 「여러 여행」)
  * 1. 진행 중인 여행. 여러 개면 출발일이 가장 늦은 것
  * 2. 없으면 출발일이 가장 가까운 예정 여행
- * 3. 둘 다 없으면 null → /setup
+ * 3. 둘 다 없으면 null. 지난 여행만 있으면 홈 빈 상태, 여행이 아예 없으면 /setup
  */
 export function pickHomeTrip(trips: Trip[], today: string): Trip | null {
   const ongoing = trips
