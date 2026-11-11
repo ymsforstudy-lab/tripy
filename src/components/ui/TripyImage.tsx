@@ -14,7 +14,7 @@ export default function TripyImage() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/tripy/tripy-7.png"
+          src="/images/tripy/tripy-home.png"
           alt="트리피 마스코트"
           className="absolute max-w-none"
           style={{
