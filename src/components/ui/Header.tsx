@@ -1,12 +1,15 @@
 "use client";
 
+import type React from "react";
+
 interface HeaderProps {
   onBack?: () => void;
   title?: string;
   onClose?: () => void;
+  rightAction?: React.ReactNode;
 }
 
-export default function Header({ onBack, title, onClose }: HeaderProps) {
+export default function Header({ onBack, title, onClose, rightAction }: HeaderProps) {
   return (
     <div className="flex items-center px-4 pb-4 pt-6">
       <button onClick={onBack} className="shrink-0">
@@ -37,6 +40,8 @@ export default function Header({ onBack, title, onClose }: HeaderProps) {
             />
           </svg>
         </button>
+      ) : rightAction ? (
+        <div className="shrink-0">{rightAction}</div>
       ) : (
         title && <div className="size-6 shrink-0" />
       )}

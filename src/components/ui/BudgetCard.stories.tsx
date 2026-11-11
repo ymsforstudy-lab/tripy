@@ -42,7 +42,7 @@ export const Half: Story = {
   args: { todaySpent: 50000, remaining: 400000, totalBudget: 800000, progressRatio: 0.5 },
 };
 
-/** 예산 초과 — danger 색상 확인 */
+/** 예산 초과 — 남은 금액 "예산 초과" 텍스트·danger 색상 확인 */
 export const OverBudget: Story = {
   args: {
     todaySpent: 50000,
@@ -50,6 +50,11 @@ export const OverBudget: Story = {
     totalBudget: 800000,
     progressRatio: 1.06,
   },
+};
+
+/** 예산 미등록 — 입력 유도 문구 표시 */
+export const NoBudget: Story = {
+  args: { totalBudget: 0, remaining: 0, progressRatio: 0, todaySpent: 0 },
 };
 
 /** 해외 통화 표기 */

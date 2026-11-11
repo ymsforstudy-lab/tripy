@@ -157,7 +157,26 @@ export default function TravelDetailPage() {
   return (
     <div className="relative flex min-h-screen-safe w-full flex-col bg-gray-white pb-21">
       {/* 헤더 */}
-      <Header onBack={() => router.push("/travels")} />
+      <Header
+        onBack={() => router.push("/travels")}
+        rightAction={
+          <button
+            aria-label="여행 정보 수정"
+            onClick={() => router.push(`/setup?tripId=${id}&from=${encodeURIComponent(`/travels/${id}`)}`)}
+            className="flex items-center justify-center p-1"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M14.5 2.5a1.414 1.414 0 0 1 2 2L6 15 2 16l1-4L14.5 2.5Z"
+                stroke="var(--color-gray-60)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        }
+      />
 
       {/* 여행 정보 */}
       <div className="flex flex-col gap-1.5 px-4 pb-4">
@@ -199,17 +218,24 @@ export default function TravelDetailPage() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-body-s text-gray-50">
-                총 예산 {formatAmount(trip.total_budget)}{unit}
-              </span>
-              <span className={`text-body-s font-medium ${isOver ? "text-danger-50" : "text-gray-60"}`}>
-                {isOver ? `예산 ${pct - 100}% 초과` : `예산 ${pct}% 사용`}
-              </span>
+          {trip.total_budget > 0 ? (
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-body-s text-gray-50">
+                  총 예산 {formatAmount(trip.total_budget)}{unit}
+                </span>
+                <span className={`text-body-s font-medium ${isOver ? "text-danger-50" : "text-gray-60"}`}>
+                  {isOver ? `예산 ${pct - 100}% 초과` : `예산 ${pct}% 사용`}
+                </span>
+              </div>
+              <BudgetProgressBar ratio={ratio} />
             </div>
-            <BudgetProgressBar ratio={ratio} />
-          </div>
+          ) : (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-body-s font-medium text-gray-60">등록된 예산이 없어요.</span>
+              <span className="text-body-s text-gray-50">예산을 등록하면 소비 비율을 확인할 수 있어요.</span>
+            </div>
+          )}
         </div>
       </div>
 

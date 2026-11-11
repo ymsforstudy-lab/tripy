@@ -58,7 +58,12 @@ export default function TravelsPage() {
           spentByTrip.set(e.trip_id, (spentByTrip.get(e.trip_id) ?? 0) + e.amount);
         }
 
-        setTrips(tripList.map((t) => ({ ...t, spent: spentByTrip.get(t.id) ?? 0 })));
+        const today = todayLocal();
+        setTrips(
+          tripList
+            .filter((t) => t.end_date < today)
+            .map((t) => ({ ...t, spent: spentByTrip.get(t.id) ?? 0 }))
+        );
       } catch (err) {
         console.error("여행 목록 조회 실패:", err);
       } finally {
@@ -89,7 +94,8 @@ export default function TravelsPage() {
           </div>
         ) : (
           trips.map((trip) => {
-            const ratio = trip.total_budget > 0 ? trip.spent / trip.total_budget : 0;
+            const hasBudget = trip.total_budget > 0;
+            const ratio = hasBudget ? trip.spent / trip.total_budget : 0;
             const pct = Math.round(ratio * 100);
             const isOver = pct > 100;
 
@@ -116,16 +122,23 @@ export default function TravelsPage() {
                   </span>
 
                   {/* 예산 사용률 + 진행바 */}
-                  <div className="flex flex-col gap-1.5">
-                    <span
-                      className={`text-body-s font-medium ${
-                        isOver ? "text-danger-50" : "text-gray-60"
-                      }`}
-                    >
-                      {isOver ? `예산 ${pct - 100}% 초과` : `예산 ${pct}% 사용`}
-                    </span>
-                    <BudgetProgressBar ratio={ratio} />
-                  </div>
+                  {trip.total_budget > 0 ? (
+                    <div className="flex flex-col gap-1.5">
+                      <span
+                        className={`text-body-s font-medium ${
+                          isOver ? "text-danger-50" : "text-gray-60"
+                        }`}
+                      >
+                        {isOver ? `예산 ${pct - 100}% 초과` : `예산 ${pct}% 사용`}
+                      </span>
+                      <BudgetProgressBar ratio={ratio} />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-body-s font-medium text-gray-60">등록된 예산이 없어요.</span>
+                      <span className="text-body-s text-gray-50">예산을 등록하면 소비 비율을 확인할 수 있어요.</span>
+                    </div>
+                  )}
                 </div>
               </Link>
             );

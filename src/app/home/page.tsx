@@ -210,10 +210,10 @@ function HomePageContent() {
               <div
                 key={expense.id}
                 className="flex items-center gap-4 overflow-hidden rounded-16 bg-white px-2.5 py-3"
-                onClick={() => router.push(`/expense?id=${expense.id}`)}
+                onClick={() => router.push(`/expense?expenseId=${expense.id}&from=/home`)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter") router.push(`/expense?id=${expense.id}`); }}
+                onKeyDown={(e) => { if (e.key === "Enter") router.push(`/expense?expenseId=${expense.id}&from=/home`); }}
               >
                 <div className="flex flex-1 items-center gap-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-8 bg-info-5">

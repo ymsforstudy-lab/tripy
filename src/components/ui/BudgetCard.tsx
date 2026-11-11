@@ -67,30 +67,41 @@ export default function BudgetCard({
             <div className="flex flex-1 flex-col gap-1.5">
               <span className="text-body-m leading-default text-gray-80">남은 금액</span>
               <div className="flex items-baseline gap-0.5 font-bold">
-                <span className="text-title-m text-gray-90">
-                  {formatAmount(Math.max(0, remaining))}
-                </span>
-                <span className="text-body-m font-bold leading-default text-gray-90">{unit}</span>
+                {isOver ? (
+                  <span className="text-title-m text-danger-50">예산 초과</span>
+                ) : (
+                  <>
+                    <span className="text-title-m text-gray-90">{formatAmount(remaining)}</span>
+                    <span className="text-body-m font-bold leading-default text-gray-90">{unit}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
           {/* 예산 요약 + 진행바 */}
-          <div className="flex h-16 w-full flex-col items-center justify-center rounded-12 bg-gray-white px-3.5">
-            <div className="flex w-full max-w-[285px] flex-col gap-2">
-              <div className="flex items-center justify-between text-body-s leading-default">
-                <span className="whitespace-nowrap text-gray-80">
-                  총 예산 {formatAmount(totalBudget)}{unit}
-                </span>
-                <div className="flex items-center gap-0.5">
-                  <span className={`font-bold ${isOver ? "text-danger-50" : "text-green-60"}`}>
-                    {pct}%
+          <div className="flex w-full flex-col items-center justify-center rounded-12 bg-gray-white px-3.5 py-3">
+            {totalBudget > 0 ? (
+              <div className="flex w-full max-w-[285px] flex-col gap-2">
+                <div className="flex items-center justify-between text-body-s leading-default">
+                  <span className="whitespace-nowrap text-gray-80">
+                    총 예산 {formatAmount(totalBudget)}{unit}
                   </span>
-                  <span className="text-gray-80">소비했어요!</span>
+                  <div className="flex items-center gap-0.5">
+                    <span className={`font-bold ${isOver ? "text-danger-50" : "text-green-60"}`}>
+                      {pct}%
+                    </span>
+                    <span className="text-gray-80">소비했어요!</span>
+                  </div>
                 </div>
+                <BudgetProgressBar ratio={progressRatio} />
               </div>
-              <BudgetProgressBar ratio={progressRatio} />
-            </div>
+            ) : (
+              <div className="flex w-full flex-col gap-0.5">
+                <span className="text-body-s font-medium text-gray-70">등록된 예산이 없어요.</span>
+                <span className="text-body-s text-gray-50">예산을 등록하면 소비 비율을 확인할 수 있어요.</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
