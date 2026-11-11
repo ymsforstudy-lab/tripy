@@ -53,7 +53,7 @@ export default function BudgetCard({
       </div>
 
       {/* 예산 카드 */}
-      <div className="rounded-20 border border-green-20 bg-green-10 p-4">
+      <div className="relative z-10 rounded-20 border border-green-20 bg-green-10 p-4">
         <div className="flex flex-col gap-3">
           {/* 오늘 쓴 돈 | 남은 금액 */}
           <div className="flex gap-1 items-center">
