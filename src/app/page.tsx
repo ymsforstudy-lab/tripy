@@ -14,7 +14,7 @@ import { hasSeenLanding, resolveEntry } from "@/lib/entry";
 export default function AppStartPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const { trip, loading: tripLoading } = useTrip();
+  const { trips, loading: tripLoading } = useTrip();
   const anonAttempted = useRef(false);
   const [anonFailed, setAnonFailed] = useState(false);
 
@@ -45,11 +45,11 @@ export default function AppStartPage() {
       resolveEntry({
         isLoggedIn: !!user,
         hasGuestData: hasGuestData(),
-        hasHomeTrip: !!trip,
+        hasAnyTrip: trips.length > 0,
         hasSeenLanding: hasSeenLanding(),
       }),
     );
-  }, [authLoading, tripLoading, user, trip, anonFailed, router]);
+  }, [authLoading, tripLoading, user, trips, anonFailed, router]);
 
   return (
     <div className="flex h-screen-safe flex-col items-center justify-center gap-gap-5 bg-gray-white">
