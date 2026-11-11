@@ -32,7 +32,7 @@ src/tokens/         디자인 토큰 단일 출처 (색·간격·타이포·radi
 src/contexts/       AuthContext(로그인 유저), TripContext(활성 여행)
 src/hooks/          useExchangeRates, useKeyboardInset
 src/lib/            supabase.ts(클라이언트) supabase-server.ts constants/{categories,countries,currency}
-supabase/migrations/ RLS 정책, payment_method 추가 (테이블 생성 스키마는 아직 없음)
+supabase/migrations/ RLS 정책, payment_method 추가, display_name unique (테이블 생성 스키마는 아직 없음)
 .claude/agents/     component-builder, token-guardian, qa-reporter
 ```
 

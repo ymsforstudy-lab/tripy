@@ -9,6 +9,9 @@ import Input from "@/components/ui/Input";
 
 type CheckStatus = "idle" | "available" | "taken" | "invalid" | "unchanged";
 
+/** Postgres unique_violation. users.display_name unique 제약 (20261111 마이그레이션) */
+const UNIQUE_VIOLATION = "23505";
+
 export default function ProfileEditPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,12 +62,16 @@ export default function ProfileEditPage() {
       setCheckStatus("unchanged");
       return;
     }
-    const { data } = await supabase
-      .from("users")
-      .select("id")
-      .eq("display_name", nickname)
-      .maybeSingle();
-    setCheckStatus(data ? "taken" : "available");
+    // RLS 때문에 다른 사람 행은 조회할 수 없어 DB 함수로 사용 가능 여부만 받는다
+    const { data: available, error } = await supabase.rpc("is_display_name_available", {
+      name: nickname,
+    });
+    if (error) {
+      console.error("닉네임 중복 확인 실패:", error);
+      setCheckStatus("idle");
+      return;
+    }
+    setCheckStatus(available ? "available" : "taken");
   };
 
   const handleAvatarClick = () => {
@@ -119,7 +126,13 @@ export default function ProfileEditPage() {
       }
 
       if (Object.keys(updates).length > 0) {
-        await supabase.from("users").update(updates).eq("id", userId);
+        const { error } = await supabase.from("users").update(updates).eq("id", userId);
+        // 중복 확인 뒤 다른 사람이 먼저 같은 닉네임을 저장한 경우 (unique 제약)
+        if (error?.code === UNIQUE_VIOLATION) {
+          setCheckStatus("taken");
+          return;
+        }
+        if (error) throw error;
       }
 
       router.push("/mypage");
