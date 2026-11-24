@@ -242,7 +242,7 @@ function ExpensePageContent() {
 
       {/* 탭 — 수정 모드에서는 숨김 */}
       {!isEditMode && (
-        <div className="mx-auto mt-0 flex w-[343px] gap-[5px] rounded-xl bg-gray-5 p-2">
+        <div className="mx-auto mt-0 flex w-[343px] gap-[5px] rounded-12 bg-gray-5 p-2">
           <button
             onClick={() => setTab("expense")}
             className={`flex flex-1 items-center justify-center rounded-[10px] py-2 text-body-m font-bold transition-colors ${
@@ -289,7 +289,7 @@ function ExpensePageContent() {
                 key={method}
                 onClick={() => setPaymentMethod(method)}
                 className={`flex flex-1 items-center justify-center rounded-[8px] py-2 text-body-m font-bold transition-colors ${
-                  paymentMethod === method ? "bg-green-50 text-white" : "bg-gray-20 text-gray-70"
+                  paymentMethod === method ? "bg-green-50 text-gray-white" : "bg-gray-20 text-gray-70"
                 }`}
               >
                 {method === "card" ? "카드" : "현금"}
@@ -307,7 +307,7 @@ function ExpensePageContent() {
                 <div key={cat.id} className="flex flex-col items-center gap-2">
                   <button
                     onClick={() => setCategory(cat.id)}
-                    className={`flex size-12 items-center justify-center rounded-xl transition-all ${
+                    className={`flex size-12 items-center justify-center rounded-12 transition-all ${
                       category === cat.id
                         ? "border-[2.2px] border-green-50 bg-green-0"
                         : "bg-gray-10"
@@ -339,7 +339,7 @@ function ExpensePageContent() {
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
-            className="flex w-full items-center justify-between rounded-xl bg-gray-5 px-3 py-3 text-left"
+            className="flex w-full items-center justify-between rounded-12 bg-gray-5 px-3 py-3 text-left"
             aria-label="날짜 선택 열기"
           >
             <span
@@ -370,7 +370,7 @@ function ExpensePageContent() {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="내용을 입력해 주세요"
             rows={4}
-            className="h-[98px] w-full resize-none rounded-xl border border-gray-30 bg-white px-4 py-2 text-base text-gray-90 outline-none placeholder:text-gray-50"
+            className="h-[98px] w-full resize-none rounded-12 border border-gray-30 bg-white px-4 py-2 text-body-m text-gray-90 outline-none placeholder:text-gray-50"
           />
         </div>
       </div>
@@ -387,7 +387,7 @@ function ExpensePageContent() {
             submitting ||
             (tab === "expense" || isEditMode ? !isExpenseValid : !isBudgetValid)
           }
-          className="flex h-14 w-full items-center justify-center rounded-xl bg-green-50 text-body-l font-bold text-white opacity-50 disabled:opacity-50 enabled:opacity-100 transition-opacity"
+          className="flex h-14 w-full items-center justify-center rounded-12 bg-green-50 text-body-l font-bold text-gray-white opacity-50 disabled:opacity-50 enabled:opacity-100 transition-opacity"
         >
           {isEditMode ? "수정하기" : "추가하기"}
         </button>
