@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import CategoryIcon from "@/components/ui/CategoryIcon";
 import TripyCharacter from "@/components/ui/TripyCharacter";
@@ -280,7 +279,9 @@ function Footer() {
         <a href="https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be" target="_blank" rel="noopener noreferrer">
           개인정보처리방침
         </a>
-        <Link href="/mypage/settings">이용약관</Link>
+        <a href="https://tulip-homegrown-8f7.notion.site/423e275303578015b8face3d2c663bf6" target="_blank" rel="noopener noreferrer">
+          이용약관
+        </a>
       </div>
     </footer>
   );
