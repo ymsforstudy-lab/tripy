@@ -50,7 +50,6 @@ const TABS = [
     href: "/home",
     label: "홈",
     Icon: HomeIcon,
-    isHome: true,
   },
   {
     href: "/travels",
@@ -70,26 +69,12 @@ export default function BottomNav() {
   return (
     <div className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 border-t border-gray-10 bg-gray-white px-[47px] pb-4 pt-3 shadow-nav max-w-[390px]">
       <div className="flex items-center justify-between">
-        {TABS.map(({ href, label, Icon, isHome }) => {
+        {TABS.map(({ href, label, Icon }) => {
           const isActive =
             pathname === href ||
             (href === "/travels" && pathname.startsWith("/travels"));
 
-          if (isHome) {
-            return (
-              <Link key={href} href={href}>
-                <div
-                  className="flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-16 border border-green-50 bg-(image:--gradient-nav-home)"
-                >
-                  <Icon color="var(--color-gray-white)" />
-                  <span className="text-body-s font-normal leading-default text-gray-white">
-                    {label}
-                  </span>
-                </div>
-              </Link>
-            );
-          }
-
+          // Figma 2.0: 홈도 다른 탭과 같은 모양이고, 지금 있는 탭만 초록으로 표시한다
           const color = isActive ? "var(--color-green-50)" : "var(--color-gray-70)";
 
           return (
