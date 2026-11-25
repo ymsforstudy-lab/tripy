@@ -6,12 +6,16 @@ import Header from "@/components/ui/Header";
 const PRIVACY_POLICY_URL =
   "https://tulip-homegrown-8f7.notion.site/36de275303578051ae43da64326a72be";
 
+const TERMS_OF_SERVICE_URL =
+  "https://tulip-homegrown-8f7.notion.site/423e275303578015b8face3d2c663bf6";
+
 const SECTION_1 = [
   { label: "공지사항" },
   { label: "이용안내" },
 ];
 
 const SECTION_2 = [
+  { label: "이용약관", href: TERMS_OF_SERVICE_URL },
   { label: "개인정보 처리방침", href: PRIVACY_POLICY_URL },
   { label: "피드백 남기기", href: "https://forms.gle/x7gJpfYKPWLxfT7A8" },
   { label: "트리피 메일 문의", href: "mailto:ymsforstudy@gmail.com" },
