@@ -76,7 +76,7 @@ function ExpensePageContent() {
   const isEditMode = !!expenseId;
 
   const { user, loading: authLoading } = useAuth();
-  const { trip: cachedTrip, loading: tripLoading, refresh: refreshTrip } = useTrip();
+  const { trip: cachedTrip, trips, loading: tripLoading, refresh: refreshTrip } = useTrip();
   const repository = useRepository();
 
   const [tab, setTab] = useState<Tab>("expense");
@@ -87,10 +87,13 @@ function ExpensePageContent() {
   const [category, setCategory] = useState<string>("");
   const [date, setDate] = useState("");
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarKey, setCalendarKey] = useState(0);
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [tripId, setTripId] = useState<string | null>(null);
+  // 수정 모드: 이 지출이 속한 여행. 홈 여행과 다를 수 있다 (지난·예정 여행의 지출)
+  const [expenseTripId, setExpenseTripId] = useState<string | null>(null);
   const [currentBudget, setCurrentBudget] = useState<number>(0);
   const currencyRef = useRef<HTMLDivElement>(null);
   const keyboardInset = useKeyboardInset();
@@ -134,6 +137,7 @@ function ExpensePageContent() {
     if (!user) {
       const found = readGuestData().expenses.find((e) => e.id === expenseId);
       if (found) {
+        setExpenseTripId(found.trip_id);
         setAmount(found.amount.toLocaleString("ko-KR"));
         setCurrency(found.currency as Currency);
         setCategory(found.category);
@@ -153,6 +157,7 @@ function ExpensePageContent() {
       .single()
       .then(({ data, error }) => {
         if (!error && data) {
+          setExpenseTripId(data.trip_id);
           setAmount(data.amount.toLocaleString("ko-KR"));
           setCurrency(data.currency as Currency);
           setCategory(data.category);
@@ -166,8 +171,11 @@ function ExpensePageContent() {
   const rawAmount = amount.replace(/,/g, "");
   const isExpenseValid = !!rawAmount && !!paymentMethod && !!date;
   const isBudgetValid = !!rawAmount && !!date;
-  const tripStartDate = parseIsoDateValue(cachedTrip?.start_date);
-  const tripEndDate = parseIsoDateValue(cachedTrip?.end_date);
+  // 날짜 선택 범위: 수정 모드는 지출이 속한 여행 기간, 등록 모드는 홈 여행 기간
+  const dateRangeTrip =
+    (isEditMode ? trips.find((t) => t.id === expenseTripId) : null) ?? cachedTrip;
+  const tripStartDate = parseIsoDateValue(dateRangeTrip?.start_date);
+  const tripEndDate = parseIsoDateValue(dateRangeTrip?.end_date);
 
   async function handleSubmit() {
     if (!isEditMode && !tripId) return;
@@ -338,7 +346,10 @@ function ExpensePageContent() {
           </div>
           <button
             type="button"
-            onClick={() => setCalendarOpen(true)}
+            onClick={() => {
+              setCalendarKey((k) => k + 1);
+              setCalendarOpen(true);
+            }}
             className="flex w-full items-center justify-between rounded-xl bg-gray-5 px-3 py-3 text-left"
             aria-label="날짜 선택 열기"
           >
@@ -412,6 +423,8 @@ function ExpensePageContent() {
       />
 
       <CalendarModal
+        // 열 때마다 현재 날짜·여행 기간으로 다시 그린다 (CalendarModal은 첫 마운트 때만 초기값을 읽는다)
+        key={calendarKey}
         open={calendarOpen}
         onClose={() => setCalendarOpen(false)}
         singleDate={true}
