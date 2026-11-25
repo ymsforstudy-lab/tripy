@@ -1,5 +1,6 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from "eslint-plugin-storybook";
+import reactHooks from "eslint-plugin-react-hooks";
 
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
@@ -15,11 +16,14 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Claude Code agent worktrees
+    ".claude/**",
   ]),
   ...storybook.configs["flat/recommended"],
   {
     // 기존 5곳(home, Toast, TripContext, useExchangeRates)이 걸려 있다. 동작을 바꾸는 리팩터링이라
     // 별도 작업으로 고치고, 그 전까지는 경고로 둔다. 새 코드에서는 이 패턴을 쓰지 않는다.
+    plugins: { "react-hooks": reactHooks },
     rules: { "react-hooks/set-state-in-effect": "warn" },
   },
 ]);

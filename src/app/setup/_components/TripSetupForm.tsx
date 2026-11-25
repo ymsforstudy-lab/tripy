@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import CalendarModal from "@/components/ui/CalendarModal";
 import { searchCountries } from "@/lib/country-search";
+import { COUNTRIES } from "@/lib/constants/countries";
 import { CURRENCIES, getCurrencyUnit, type Currency } from "@/lib/constants/currency";
 import {
   formatBudgetSummary,
@@ -66,23 +67,19 @@ export default function TripSetupForm({ value, onChange }: TripSetupFormProps) {
 }
 
 function DestinationInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const [focused, setFocused] = useState(false);
-  // 여행지는 자유 입력이다. 목록에 있는 이름이면 정확히 같아도 항목을 보여준다
-  const suggestions = searchCountries(value);
+  const [open, setOpen] = useState(false);
+  // 포커스 시 전체 목록, 입력 시 필터 목록
+  const suggestions = value ? searchCountries(value) : COUNTRIES;
 
   return (
     <div className="relative">
       <label className={FIELD_BOX}>
         <input
           value={value}
-          onChange={(e) => {
-            onChange(e.target.value);
-            // 항목을 고른 뒤 다시 입력하면 목록을 다시 연다
-            setFocused(true);
-          }}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          placeholder="국가를 입력해 주세요"
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          placeholder="국가를 검색하세요"
           aria-label="여행지"
           className="min-w-0 flex-1 bg-transparent text-body-m text-text-strong outline-none placeholder:text-text-muted"
         />
@@ -91,8 +88,8 @@ function DestinationInput({ value, onChange }: { value: string; onChange: (v: st
         </span>
       </label>
 
-      {/* 국가 추천 목록 (Figma 미반영) */}
-      {focused && suggestions.length > 0 && (
+      {/* 국가 드롭다운 (Figma 미반영) */}
+      {open && suggestions.length > 0 && (
         <ul className="absolute inset-x-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-12 border border-border-subtle bg-surface-default py-1 shadow-raised">
           {suggestions.map((c) => (
             <li key={c.name}>
@@ -102,7 +99,7 @@ function DestinationInput({ value, onChange }: { value: string; onChange: (v: st
                 onMouseDown={(e) => {
                   e.preventDefault();
                   onChange(c.name);
-                  setFocused(false);
+                  setOpen(false);
                 }}
                 className="flex w-full items-center gap-2 px-3 py-2 text-left text-body-m text-text-primary"
               >
