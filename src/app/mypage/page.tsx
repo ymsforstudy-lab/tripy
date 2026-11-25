@@ -13,6 +13,10 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import IconSetting from "@/components/ui/IconSetting";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTrip } from "@/contexts/TripContext";
+import { useRepository } from "@/hooks/useRepository";
+import { daysBetween } from "@/lib/data/dates";
+import type { Expense } from "@/lib/data/types";
 
 type CategoryRank = {
   rank: number;
@@ -23,6 +27,8 @@ type CategoryRank = {
 export default function MyPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { trips, loading: tripLoading } = useTrip();
+  const repository = useRepository();
   const [loading, setLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -46,72 +52,50 @@ export default function MyPage() {
   };
 
   useEffect(() => {
-    if (authLoading) return;
+    // 여행 목록까지 다 불러온 뒤에 계산한다 (게스트는 repository가 기기 저장소를 읽는다)
+    if (authLoading || tripLoading || !repository) return;
 
     async function fetchData() {
-      if (!user) {
-        setLoading(false);
-        return;
+      if (user) {
+        // 프로필 닉네임 + 아바타 (로그인 사용자만)
+        const { data: profile, error: profileError } = await supabase
+          .from("users")
+          .select("display_name, avatar_url")
+          .eq("id", user.id)
+          .single();
+
+        if (profileError) {
+          console.error("프로필 조회 실패:", profileError.message);
+        }
+
+        if (profile?.display_name) {
+          setNickname(profile.display_name);
+        }
+        if (profile?.avatar_url) {
+          setAvatarUrl(profile.avatar_url);
+        }
       }
 
-      // 프로필 닉네임 + 아바타
-      const { data: profile, error: profileError } = await supabase
-        .from("users")
-        .select("display_name, avatar_url")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError) {
-        console.error("프로필 조회 실패:", profileError.message);
-      }
-
-      if (profile?.display_name) {
-        setNickname(profile.display_name);
-      }
-      if (profile?.avatar_url) {
-        setAvatarUrl(profile.avatar_url);
-      }
-
-      // 전체 여행 조회
-      const { data: trips, error: tripsError } = await supabase
-        .from("trips")
-        .select("id, start_date, end_date")
-        .eq("user_id", user.id);
-
-      if (tripsError) {
-        console.error("여행 조회 실패:", tripsError.message);
-      }
-
-      if (!trips || trips.length === 0) {
+      // 여행 목록은 TripContext에서 받는다. 게스트도 기기에 저장된 여행이 들어 있다
+      if (trips.length === 0) {
         setLoading(false);
         return;
       }
 
       setTripCount(trips.length);
 
-      // 여행 ��수 계산
-      const days = trips.reduce((sum, trip) => {
-        const start = new Date(trip.start_date);
-        const end = new Date(trip.end_date);
-        const diff = Math.floor(
-          (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-        ) + 1;
-        return sum + Math.max(diff, 0);
-      }, 0);
-      setTotalDays(days);
+      // 여행 일수: 날짜 문자열로만 계산한다 (docs/flow-v2.md §5 「저장과 실패 처리」)
+      setTotalDays(trips.reduce((sum, trip) => sum + daysBetween(trip.start_date, trip.end_date), 0));
 
       // 전체 지출 조회
-      const tripIds = trips.map((t) => t.id);
-      const { data: expenses, error: expensesError } = await supabase
-        .from("expenses")
-        .select("amount, category, created_at")
-        .in("trip_id", tripIds);
-
-      if (expensesError) {
-        console.error("지출 조회 실패:", expensesError.message);
+      let expenses: Expense[] = [];
+      try {
+        expenses = await repository!.listExpensesByTrips(trips.map((t) => t.id));
+      } catch (err) {
+        console.error("지출 조회 실패:", err);
       }
 
-      if (expenses && expenses.length > 0) {
+      if (expenses.length > 0) {
         // 총 지출
         const total = expenses.reduce((sum, e) => sum + e.amount, 0);
         setTotalExpense(total);
@@ -147,9 +131,9 @@ export default function MyPage() {
     }
 
     fetchData();
-  }, [authLoading, user]);
+  }, [authLoading, tripLoading, user, trips, repository]);
 
-  if (loading || authLoading) {
+  if (loading || authLoading || tripLoading) {
     return <LoadingScreen />;
   }
 

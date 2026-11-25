@@ -292,6 +292,8 @@ export default function TravelDetailPage() {
           </div>
         )}
       </div>
+
+      <BottomNav />
     </div>
   );
 }
